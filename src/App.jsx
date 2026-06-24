@@ -25,6 +25,13 @@ import AdminUsersPage     from './pages/admin/AdminUsersPage';
 import AdminProgramsPage  from './pages/admin/AdminProgramsPage';
 import AdminTryoutsPage   from './pages/admin/AdminTryoutsPage';
 import AdminLivePage      from './pages/admin/AdminLivePage';
+import AdminMentorsPage   from './pages/admin/AdminMentorsPage';
+import AdminLandingPage   from './pages/admin/AdminLandingPage';
+import AdminCouponsPage   from './pages/admin/AdminCouponsPage';
+import AdminAuditLogsPage from './pages/admin/AdminAuditLogsPage';
+import AdminTransactionsPage from './pages/admin/AdminTransactionsPage';
+import AdminNotificationsPage from './pages/admin/AdminNotificationsPage';
+import AdminMateriPage    from './pages/admin/AdminMateriPage';
 import LandingPage        from './pages/LandingPage';
 import ForgotPassword     from './pages/ForgotPassword';
 // ─── GUARDS ───────────────────────────────────────────────────────
@@ -114,6 +121,13 @@ export default function App() {
           <Route path="programs"  element={<AdminProgramsPage />}  />
           <Route path="tryouts"   element={<AdminTryoutsPage />}   />
           <Route path="live"      element={<AdminLivePage />}      />
+          <Route path="mentors"   element={<AdminMentorsPage />}   />
+          <Route path="landing"   element={<AdminLandingPage />}   />
+          <Route path="coupons"   element={<AdminCouponsPage />}   />
+          <Route path="audit-logs" element={<AdminAuditLogsPage />} />
+          <Route path="transactions" element={<AdminTransactionsPage />} />
+          <Route path="notifications" element={<AdminNotificationsPage />} />
+          <Route path="materi"    element={<AdminMateriPage />}     />
         </Route>
 
         {/* ── Fallback ── */}

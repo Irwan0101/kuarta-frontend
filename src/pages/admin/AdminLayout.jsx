@@ -4,16 +4,22 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, BookOpen, FileText, Video,
   LogOut, Menu, X, ChevronRight, Shield,
+  GraduationCap, Layout, Tag, CreditCard, Bell, ScrollText, Library,
 } from 'lucide-react';
-import { useTheme } from '@/hooks/useTheme';
-import { useAuthStore } from '@/store/authStore';
 
 const NAV = [
-  { to: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard'   },
-  { to: '/admin/users',     icon: Users,           label: 'Users'       },
-  { to: '/admin/programs',  icon: BookOpen,        label: 'Programs'    },
-  { to: '/admin/tryouts',   icon: FileText,        label: 'Tryouts'     },
-  { to: '/admin/live',      icon: Video,           label: 'Live Class'  },
+  { to: '/admin/dashboard',     icon: LayoutDashboard,   label: 'Dashboard'      },
+  { to: '/admin/users',         icon: Users,             label: 'Users'          },
+  { to: '/admin/programs',      icon: BookOpen,          label: 'Programs'       },
+  { to: '/admin/tryouts',       icon: FileText,          label: 'Tryouts'        },
+  { to: '/admin/live',          icon: Video,             label: 'Live Class'     },
+  { to: '/admin/materi',        icon: Library,           label: 'Materi'         },
+  { to: '/admin/mentors',       icon: GraduationCap,     label: 'Mentors'        },
+  { to: '/admin/transactions',  icon: CreditCard,        label: 'Transaksi'      },
+  { to: '/admin/coupons',       icon: Tag,               label: 'Kupon'          },
+  { to: '/admin/landing',       icon: Layout,            label: 'Landing Page'   },
+  { to: '/admin/notifications', icon: Bell,              label: 'Notifikasi'     },
+  { to: '/admin/audit-logs',    icon: ScrollText,        label: 'Audit Log'      },
 ];
 
 const ORG = '#FF6B00';
