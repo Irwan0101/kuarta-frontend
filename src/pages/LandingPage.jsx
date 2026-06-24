@@ -435,6 +435,10 @@ export default function LandingPage() {
           animation: cursor-blink 1s step-end infinite;
         }
 
+        @media (max-width: 768px) {
+          .hero-model { display: none !important; }
+        }
+
         .hero-headline {
           font-family: 'Clash Display', 'Outfit', sans-serif;
           font-weight: 700;
@@ -686,7 +690,15 @@ export default function LandingPage() {
         padding: "120px 5% 80px",
         flexDirection: "column",
         textAlign: "center",
-      }}>
+        }}>
+        <div style={{
+          position: "absolute", inset: 0,
+          backgroundImage: "url(/bg.png)",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          opacity: 0.06,
+          pointerEvents: "none", zIndex: 0,
+        }} />
         {darkMode && <>
           <div className="orb" style={{ width: 700, height: 700, background: "#FF6B0012", top: -150, left: -250 }} />
           <div className="orb" style={{ width: 500, height: 500, background: "#3B82F610", top: 150, right: -150, animationDelay: "4s" }} />
@@ -700,6 +712,20 @@ export default function LandingPage() {
           backgroundSize: "32px 32px",
           pointerEvents: "none",
         }} />
+
+        <div className="hero-model" style={{
+          position: "absolute", right: 0, bottom: 0,
+          width: "min(45%, 500px)", height: "85%",
+          display: "flex", alignItems: "flex-end", justifyContent: "center",
+          pointerEvents: "none", zIndex: 1,
+          opacity: 0,
+          animation: "fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.15s forwards",
+        }}>
+          <img src="/model.png" alt="" style={{
+            width: "100%", height: "auto", objectFit: "contain",
+            filter: "drop-shadow(0 20px 60px rgba(255,107,0,0.15))",
+          }} />
+        </div>
 
         <div style={{
           display: "inline-flex", alignItems: "center", gap: 8,
