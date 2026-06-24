@@ -437,6 +437,33 @@ export default function LandingPage() {
 
         @media (max-width: 768px) {
           .hero-model { display: none !important; }
+          .hero-orb { display: none !important; }
+          .hero-scroll { display: none !important; }
+          .nav-links { display: none !important; }
+          .stat-grid { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 !important; }
+          .stat-grid .stat-item { padding: 12px 16px !important; }
+          .stat-grid .stat-item:nth-child(2) { border-right: none !important; }
+          .testimonial-grid { grid-template-columns: 1fr !important; }
+          .footer-links { flex-direction: column !important; align-items: center !important; gap: 12px !important; }
+          .hero-btn { width: 100% !important; justify-content: center !important; }
+          .program-header { height: 80px !important; }
+          .program-card-body { padding: 14px 16px 18px !important; }
+          .program-icon { font-size: 28px !important; }
+          .feature-card { padding: 20px !important; }
+          .feature-icon { width: 40px !important; height: 40px !important; font-size: 18px !important; }
+          .testimonial-card { padding: 20px !important; }
+          .wa-btn { width: 50px !important; height: 50px !important; }
+          .wa-fab { bottom: 16px !important; right: 16px !important; }
+          .wa-panel { width: min(320px, calc(100vw - 24px)) !important; }
+          .btn-primary { padding: 10px 20px !important; }
+          .btn-outline { padding: 10px 18px !important; }
+          .nav-link { font-size: 12px !important; }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .hero-model { width: min(35%, 400px) !important; }
+          .testimonial-grid { grid-template-columns: repeat(2, 1fr) !important; }
+          .stat-grid .stat-item { padding: 0 24px !important; }
         }
 
         .hero-headline {
@@ -631,7 +658,7 @@ export default function LandingPage() {
           }}>Kuarta</span>
         </div>
 
-        <div style={{ display: "flex", gap: 36, alignItems: "center" }}>
+        <div className="nav-links" style={{ display: "flex", gap: 36, alignItems: "center" }}>
           {NAV_ITEMS.map(({ label, id }) => {
             const isActive = activeNav === id;
             return (
@@ -700,9 +727,9 @@ export default function LandingPage() {
           pointerEvents: "none", zIndex: 0,
         }} />
         {darkMode && <>
-          <div className="orb" style={{ width: 700, height: 700, background: "#FF6B0012", top: -150, left: -250 }} />
-          <div className="orb" style={{ width: 500, height: 500, background: "#3B82F610", top: 150, right: -150, animationDelay: "4s" }} />
-          <div className="orb" style={{ width: 350, height: 350, background: "#FF8C0008", bottom: 0, left: "45%", animationDelay: "7s" }} />
+          <div className="orb hero-orb" style={{ width: 700, height: 700, background: "#FF6B0012", top: -150, left: -250 }} />
+          <div className="orb hero-orb" style={{ width: 500, height: 500, background: "#3B82F610", top: 150, right: -150, animationDelay: "4s" }} />
+          <div className="orb hero-orb" style={{ width: 350, height: 350, background: "#FF8C0008", bottom: 0, left: "45%", animationDelay: "7s" }} />
         </>}
 
         <div style={{
@@ -793,15 +820,15 @@ export default function LandingPage() {
           opacity: 0,
           animation: "fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.55s forwards",
         }}>
-          <button className="btn-primary" style={{ fontSize: 16, padding: "16px 36px" }} onClick={() => window.location.href = "/register"}>
+          <button className="btn-primary hero-btn" style={{ fontSize: 16, padding: "16px 36px" }} onClick={() => window.location.href = "/register"}>
             <span>🚀 Mulai Belajar Gratis</span>
           </button>
-          <button className="btn-outline" style={{ fontSize: 15, padding: "15px 28px" }} onClick={() => scrollToSection("programs")}>
+          <button className="btn-outline hero-btn" style={{ fontSize: 15, padding: "15px 28px" }} onClick={() => scrollToSection("programs")}>
             Lihat Program →
           </button>
         </div>
 
-        <div style={{
+        <div className="stat-grid" style={{
           display: "flex", gap: 0,
           background: D.statBg,
           border: `1px solid ${D.border}`,
@@ -821,7 +848,7 @@ export default function LandingPage() {
           ))}
         </div>
 
-        <div style={{
+        <div className="hero-scroll" style={{
           position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)",
           display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
           opacity: scrollY > 50 ? 0 : 0.4, transition: "opacity 0.3s",
@@ -883,7 +910,7 @@ export default function LandingPage() {
               className={`program-card section-enter ${isVisible("programs") ? "visible" : ""}`}
               style={{ transitionDelay: `${i * 0.08}s` }}
             >
-              <div style={{
+              <div className="program-header" style={{
                 height: 110,
                 background: `linear-gradient(135deg, ${p.color}22, ${p.color}06)`,
                 borderBottom: `1px solid ${p.color}20`,
@@ -895,11 +922,11 @@ export default function LandingPage() {
                   background: `radial-gradient(circle, ${p.color}18, transparent)`,
                   borderRadius: "50%",
                 }} />
-                <span style={{ position: "relative", zIndex: 1, animation: "float 3s ease-in-out infinite", animationDelay: `${i * 0.3}s` }}>
+                <span className="program-icon" style={{ position: "relative", zIndex: 1, animation: "float 3s ease-in-out infinite", animationDelay: `${i * 0.3}s` }}>
                   {p.icon}
                 </span>
               </div>
-              <div style={{ padding: "18px 20px 20px" }}>
+              <div className="program-card-body" style={{ padding: "18px 20px 20px" }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: p.color, letterSpacing: "0.1em", marginBottom: 6 }}>{p.cat}</div>
                 <h3 className="hero-headline" style={{ fontSize: 16, color: D.text, marginBottom: 6, lineHeight: 1.2 }}>{p.name}</h3>
                 <div style={{ display: "flex", alignItems: "center", gap: 3, marginBottom: 14 }}>
@@ -957,7 +984,7 @@ export default function LandingPage() {
               className={`feature-card section-enter ${isVisible("features") ? "visible" : ""}`}
               style={{ transitionDelay: `${i * 0.07}s` }}
             >
-              <div style={{
+              <div className="feature-icon" style={{
                 width: 48, height: 48, background: D.tagBg, borderRadius: 12,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 22, marginBottom: 16,
@@ -981,10 +1008,10 @@ export default function LandingPage() {
             Mereka Sudah <span className="glow-text">Membuktikannya</span>
           </h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, maxWidth: 960, margin: "0 auto" }}>
+        <div className="testimonial-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, maxWidth: 960, margin: "0 auto" }}>
           {TESTIMONIALS.map((t, i) => (
             <div key={i}
-              className={`section-enter ${isVisible("testimonials") ? "visible" : ""}`}
+              className={`testimonial-card section-enter ${isVisible("testimonials") ? "visible" : ""}`}
               style={{
                 background: D.bgCard,
                 border: `1px solid ${activeTestimonial === i ? "#FF6B0060" : D.border}`,
@@ -1088,7 +1115,7 @@ export default function LandingPage() {
             <span style={{ fontFamily: "Clash Display, sans-serif", fontWeight: 700, color: D.text, fontSize: 18 }}>Kuarta</span>
           </div>
 
-          <div style={{ display: "flex", gap: 28 }}>
+          <div className="footer-links" style={{ display: "flex", gap: 28 }}>
             {["Tentang", "Program", "Blog", "Kontak", "Privasi"].map(item => (
               <a key={item} className="nav-link" style={{ fontSize: 13, color: D.text2 }}>{item}</a>
             ))}
