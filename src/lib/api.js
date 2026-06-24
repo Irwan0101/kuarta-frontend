@@ -164,6 +164,34 @@ export const adminApi = {
   getVideos:     (topicId)       => http.get(`/admin/materi/topics/${topicId}/videos`),
   addVideo:      (topicId, payload) =>
     http.post(`/admin/materi/topics/${topicId}/videos`, payload),
+  updateVideo:   (id, payload) => http.put(`/admin/materi/videos/${id}`, payload),
   deleteVideo:   (id)            => http.delete(`/admin/materi/videos/${id}`),
+
+  /* ── Mentors ─────────────────────────────────────────────────── */
+  getMentors:    ()              => http.get('/admin/mentors'),
+  updateMentor:  (id, payload)   => http.put(`/admin/mentors/${id}`, payload),
+  createUser:    (payload)       => http.post('/admin/users', payload),
+
+  /* ── Landing Page ────────────────────────────────────────────── */
+  getBanners:    ()              => http.get('/admin/landing/banners'),
+  createBanner:  (payload)       => http.post('/admin/landing/banners', payload),
+  updateBanner:  (id, payload)   => http.put(`/admin/landing/banners/${id}`, payload),
+  deleteBanner:  (id)            => http.delete(`/admin/landing/banners/${id}`),
+  getPromotions: ()              => http.get('/admin/landing/promotions'),
+  createPromotion:(payload)      => http.post('/admin/landing/promotions', payload),
+  updatePromotion:(id, payload)  => http.put(`/admin/landing/promotions/${id}`, payload),
+  deletePromotion:(id)           => http.delete(`/admin/landing/promotions/${id}`),
+  getSections:   ()              => http.get('/admin/landing/sections'),
+  updateSection: (key, payload)  => http.put(`/admin/landing/sections/${key}`, payload),
+  getSettings:   ()              => http.get('/admin/landing/settings'),
+  updateSetting: (key, payload)  => http.put(`/admin/landing/settings/${key}`, payload),
+
+  /* ── Coupons ─────────────────────────────────────────────────── */
+  getCoupons:    ()              => http.get('/admin/coupons'),
+  createCoupon:  (payload)       => http.post('/admin/coupons', payload),
+  deleteCoupon:  (id)            => http.delete(`/admin/coupons/${id}`),
+
+  /* ── Audit Logs ──────────────────────────────────────────────── */
+  getAuditLogs:  (params)        => http.get('/admin/audit-logs', { params }),
 };
 export default http;
