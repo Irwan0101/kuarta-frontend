@@ -220,13 +220,13 @@ export default function LandingPage() {
     <div style={{
       background: D.bg,
       color: D.text,
-      fontFamily: "'Outfit', sans-serif",
+      fontFamily: "'Inter', sans-serif",
       minHeight: "100vh",
       overflowX: "hidden",
       transition: "background 0.4s, color 0.4s",
     }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Clash+Display:wght@600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -301,7 +301,7 @@ export default function LandingPage() {
           border: none;
           padding: 14px 28px;
           border-radius: 12px;
-          font-family: 'Outfit', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-weight: 700;
           font-size: 15px;
           cursor: pointer;
@@ -322,7 +322,7 @@ export default function LandingPage() {
           border: 1.5px solid ${D.border};
           padding: 13px 24px;
           border-radius: 12px;
-          font-family: 'Outfit', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-weight: 600;
           font-size: 14px;
           cursor: pointer;
@@ -467,7 +467,7 @@ export default function LandingPage() {
         }
 
         .hero-headline {
-          font-family: 'Clash Display', 'Outfit', sans-serif;
+          font-family: 'Inter', sans-serif;
           font-weight: 700;
           line-height: 1.05;
           letter-spacing: -0.03em;
@@ -616,7 +616,7 @@ export default function LandingPage() {
           transition: all 0.2s;
           text-align: left;
           width: 100%;
-          font-family: 'Outfit', sans-serif;
+          font-family: 'Inter', sans-serif;
         }
         .wa-template-item:hover {
           background: ${D.waItemHover};
@@ -649,11 +649,11 @@ export default function LandingPage() {
             width: 36, height: 36, borderRadius: 10,
             background: "linear-gradient(135deg, #FF6B00, #FF8C00)",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontFamily: "Clash Display, sans-serif", fontWeight: 700,
+            fontFamily: "Inter, sans-serif", fontWeight: 700,
             fontSize: 17, color: "white", letterSpacing: "-0.02em",
           }}>K</div>
           <span style={{
-            fontFamily: "Clash Display, sans-serif", fontWeight: 700, fontSize: 22,
+            fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: 22,
             color: D.text, letterSpacing: "-0.03em",
           }}>Kuarta</span>
         </div>
@@ -789,7 +789,7 @@ export default function LandingPage() {
           <br />
           <span style={{ color: D.text }}>Bersama </span>
           <span style={{
-            fontFamily: "Clash Display, sans-serif",
+            fontFamily: "Inter, sans-serif",
             ...(darkMode ? {
               background: "linear-gradient(135deg, #E8E8F0, #9999B3)",
               WebkitBackgroundClip: "text",
@@ -840,7 +840,7 @@ export default function LandingPage() {
           {STATS.map((s, i) => (
             <div key={i} className="stat-item">
               <div style={{
-                fontFamily: "Clash Display, sans-serif", fontWeight: 700,
+                fontFamily: "Inter, sans-serif", fontWeight: 700,
                 fontSize: 28, color: D.text, marginBottom: 4,
               }}>{s.value}</div>
               <div style={{ fontSize: 12, color: D.text3, fontWeight: 500 }}>{s.label}</div>
@@ -1031,7 +1031,7 @@ export default function LandingPage() {
                   width: 42, height: 42, borderRadius: "50%",
                   background: "linear-gradient(135deg, #FF6B00, #FF8C00)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  fontFamily: "Clash Display, sans-serif", fontWeight: 700, fontSize: 13, color: "white",
+                  fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: 13, color: "white",
                 }}>{t.avatar}</div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, color: D.text }}>{t.name}</div>
@@ -1110,9 +1110,9 @@ export default function LandingPage() {
               width: 32, height: 32, borderRadius: 8,
               background: "linear-gradient(135deg, #FF6B00, #FF8C00)",
               display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "Clash Display, sans-serif", fontWeight: 700, fontSize: 15, color: "white",
+              fontFamily: "Inter, sans-serif", fontWeight: 700, fontSize: 15, color: "white",
             }}>K</div>
-            <span style={{ fontFamily: "Clash Display, sans-serif", fontWeight: 700, color: D.text, fontSize: 18 }}>Kuarta</span>
+            <span style={{ fontFamily: "Inter, sans-serif", fontWeight: 700, color: D.text, fontSize: 18 }}>Kuarta</span>
           </div>
 
           <div className="footer-links" style={{ display: "flex", gap: 28 }}>
@@ -1127,7 +1127,7 @@ export default function LandingPage() {
             </div>
             <div style={{
               fontSize: 11, color: D.text4,
-              fontFamily: "Clash Display, sans-serif", letterSpacing: "0.06em",
+              fontFamily: "Inter, sans-serif", letterSpacing: "0.06em",
             }}>
               A{" "}
               <span style={{ color: "#FF6B00", fontWeight: 700 }}>ONE PROJECT</span>
@@ -1149,7 +1149,7 @@ export default function LandingPage() {
             <div className="wa-panel-header">
               <div className="wa-avatar">🎓</div>
               <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, fontSize: 15, color: "white", fontFamily: "Clash Display, sans-serif" }}>
+                <div style={{ fontWeight: 700, fontSize: 15, color: "white", fontFamily: "Inter, sans-serif" }}>
                   Kuarta Support
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2 }}>
