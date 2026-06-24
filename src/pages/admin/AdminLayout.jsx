@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks/useTheme';
+import { useAuthStore } from '@/store/authStore';
 import {
   LayoutDashboard, Users, BookOpen, FileText, Video,
   LogOut, Menu, X, ChevronRight, Shield,
