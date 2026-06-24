@@ -1,6 +1,7 @@
 // src/pages/admin/AdminLayout.jsx
 import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useTheme } from '@/hooks/useTheme';
 import {
   LayoutDashboard, Users, BookOpen, FileText, Video,
   LogOut, Menu, X, ChevronRight, Shield,
