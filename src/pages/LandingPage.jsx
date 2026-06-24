@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, FileText, Film, BarChart3, Smartphone, Star, Play, Calendar, ArrowRight } from 'lucide-react';
 
 const PROGRAMS = [
-  { icon: "🏛️", cat: "CPNS", name: "SKD CPNS – Kedinasan", price: "900.000", videos: 150, tryouts: 30, months: 3, color: "#FF6B00", rating: 4.8 },
-  { icon: "🎯", cat: "UNIVERSITAS", name: "UTBK – SNBT", price: "850.000", videos: 180, tryouts: 50, months: 6, color: "#3B82F6", rating: 4.8 },
-  { icon: "📗", cat: "SEKOLAH", name: "Bimbel SD", price: "350.000", videos: 80, tryouts: 0, months: 3, color: "#22C55E", rating: 5.0 },
-  { icon: "📘", cat: "SEKOLAH", name: "Bimbel SMA", price: "550.000", videos: 200, tryouts: 0, months: 6, color: "#8B5CF6", rating: 4.9 },
-  { icon: "🏆", cat: "OLIMPIADE", name: "Persiapan OSN", price: "600.000", videos: 160, tryouts: 0, months: 6, color: "#F59E0B", rating: 5.0 },
-  { icon: "💼", cat: "KARIER", name: "Persiapan Karier", price: "300.000", videos: 90, tryouts: 0, months: 2, color: "#EC4899", rating: 4.9 },
+  { icon: Landmark, cat: "CPNS", name: "SKD CPNS – Kedinasan", price: "900.000", videos: 150, tryouts: 30, months: 3, color: "#FF6B00", rating: 4.8 },
+  { icon: Crosshair, cat: "UNIVERSITAS", name: "UTBK – SNBT", price: "850.000", videos: 180, tryouts: 50, months: 6, color: "#3B82F6", rating: 4.8 },
+  { icon: BookOpen, cat: "SEKOLAH", name: "Bimbel SD", price: "350.000", videos: 80, tryouts: 0, months: 3, color: "#22C55E", rating: 5.0 },
+  { icon: BookOpen, cat: "SEKOLAH", name: "Bimbel SMA", price: "550.000", videos: 200, tryouts: 0, months: 6, color: "#8B5CF6", rating: 4.9 },
+  { icon: Trophy, cat: "OLIMPIADE", name: "Persiapan OSN", price: "600.000", videos: 160, tryouts: 0, months: 6, color: "#F59E0B", rating: 5.0 },
+  { icon: Briefcase, cat: "KARIER", name: "Persiapan Karier", price: "300.000", videos: 90, tryouts: 0, months: 2, color: "#EC4899", rating: 4.9 },
 ];
 
 const STATS = [
@@ -23,12 +24,12 @@ const TESTIMONIALS = [
 ];
 
 const FEATURES = [
-  { icon: "📹", title: "Video HD Interaktif", desc: "Ratusan video berkualitas tinggi dari pengajar berpengalaman, bisa ditonton kapan saja." },
-  { icon: "📝", title: "Tryout Mirip Asli", desc: "Simulasi tryout dengan soal yang diperbarui setiap bulan, sesuai kisi-kisi terbaru." },
-  { icon: "🎥", title: "Live Class Rutin", desc: "Sesi belajar langsung bersama mentor setiap minggu, bisa tanya jawab real-time." },
-  { icon: "📊", title: "Analitik Performa", desc: "Pantau perkembangan nilai dan identifikasi kelemahan dengan grafik yang detail." },
-  { icon: "🏆", title: "Leaderboard Nasional", desc: "Bersaing dengan ribuan siswa dari seluruh Indonesia, motivasi diri setiap hari." },
-  { icon: "📱", title: "Akses Multi-Device", desc: "Belajar dari HP, tablet, atau laptop — sinkronisasi otomatis di semua perangkat." },
+  { icon: Video, title: "Video HD Interaktif", desc: "Ratusan video berkualitas tinggi dari pengajar berpengalaman, bisa ditonton kapan saja." },
+  { icon: FileText, title: "Tryout Mirip Asli", desc: "Simulasi tryout dengan soal yang diperbarui setiap bulan, sesuai kisi-kisi terbaru." },
+  { icon: Film, title: "Live Class Rutin", desc: "Sesi belajar langsung bersama mentor setiap minggu, bisa tanya jawab real-time." },
+  { icon: BarChart3, title: "Analitik Performa", desc: "Pantau perkembangan nilai dan identifikasi kelemahan dengan grafik yang detail." },
+  { icon: Trophy, title: "Leaderboard Nasional", desc: "Bersaing dengan ribuan siswa dari seluruh Indonesia, motivasi diri setiap hari." },
+  { icon: Smartphone, title: "Akses Multi-Device", desc: "Belajar dari HP, tablet, atau laptop — sinkronisasi otomatis di semua perangkat." },
 ];
 
 const HERO_WORDS = ["Prestasi", "Masa Depan", "Impianmu", "Karirmu", "Nilai Terbaik"];
@@ -340,11 +341,12 @@ export default function LandingPage() {
           overflow: hidden;
           cursor: pointer;
           transition: all 0.3s cubic-bezier(0.22,1,0.36,1);
+          box-shadow: ${D.shadowCard};
         }
         .program-card:hover {
           border-color: ${D.borderHover};
           transform: translateY(-6px);
-          box-shadow: ${D.shadowCard};
+          box-shadow: 0 20px 60px rgba(0,0,0,.2);
         }
 
         .feature-card {
@@ -353,11 +355,12 @@ export default function LandingPage() {
           border-radius: 16px;
           padding: 28px;
           transition: all 0.3s;
+          box-shadow: 0 4px 20px rgba(0,0,0,.04);
         }
         .feature-card:hover {
-          border-color: #FF6B0040;
+          border-color: #FF6B0030;
           transform: translateY(-4px);
-          box-shadow: ${D.shadowCard};
+          box-shadow: 0 12px 40px rgba(0,0,0,.1);
         }
 
         .stat-item {
@@ -366,6 +369,14 @@ export default function LandingPage() {
           border-right: 1px solid ${D.border};
         }
         .stat-item:last-child { border-right: none; }
+
+        .testimonial-card {
+          transition: all 0.4s cubic-bezier(0.22,1,0.36,1);
+          box-shadow: 0 4px 16px rgba(0,0,0,.04);
+        }
+        .testimonial-card:hover {
+          box-shadow: 0 20px 60px #FF6B0020;
+        }
 
         .ticker-wrap { overflow: hidden; white-space: nowrap; }
         .ticker-inner {
@@ -922,31 +933,31 @@ export default function LandingPage() {
                   background: `radial-gradient(circle, ${p.color}18, transparent)`,
                   borderRadius: "50%",
                 }} />
-                <span className="program-icon" style={{ position: "relative", zIndex: 1, animation: "float 3s ease-in-out infinite", animationDelay: `${i * 0.3}s` }}>
-                  {p.icon}
+                <span className="program-icon" style={{ position: "relative", zIndex: 1, animation: "float 3s ease-in-out infinite", animationDelay: `${i * 0.3}s`, display: "flex" }}>
+                  <p.icon size={28} strokeWidth={1.5} />
                 </span>
               </div>
               <div className="program-card-body" style={{ padding: "18px 20px 20px" }}>
                 <div style={{ fontSize: 10, fontWeight: 700, color: p.color, letterSpacing: "0.1em", marginBottom: 6 }}>{p.cat}</div>
                 <h3 className="hero-headline" style={{ fontSize: 16, color: D.text, marginBottom: 6, lineHeight: 1.2 }}>{p.name}</h3>
                 <div style={{ display: "flex", alignItems: "center", gap: 3, marginBottom: 14 }}>
-                  {"★★★★★".split("").map((s, si) => (
-                    <span key={si} style={{ color: "#F59E0B", fontSize: 12 }}>{s}</span>
+                  {[1,2,3,4,5].map((s, si) => (
+                    <Star key={si} size={11} fill="#F59E0B" color="#F59E0B" strokeWidth={0} />
                   ))}
                   <span style={{ fontSize: 11, color: D.text3, marginLeft: 4 }}>{p.rating}</span>
                 </div>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
                   {[
-                    { icon: "🎬", val: `${p.videos} Video` },
-                    { icon: "📝", val: p.tryouts ? `${p.tryouts} TO` : null },
-                    { icon: "📅", val: `${p.months} Bulan` },
+                    { icon: Play, val: `${p.videos} Video` },
+                    { icon: FileText, val: p.tryouts ? `${p.tryouts} TO` : null },
+                    { icon: Calendar, val: `${p.months} Bulan` },
                   ].filter(m => m.val).map((m, mi) => (
                     <span key={mi} style={{
                       fontSize: 11, color: D.text2,
                       background: D.metaBg, padding: "4px 10px",
                       borderRadius: 6, display: "flex", alignItems: "center", gap: 4,
                     }}>
-                      {m.icon} {m.val}
+                      <m.icon size={12} strokeWidth={1.5} /> {m.val}
                     </span>
                   ))}
                 </div>
@@ -987,8 +998,8 @@ export default function LandingPage() {
               <div className="feature-icon" style={{
                 width: 48, height: 48, background: D.tagBg, borderRadius: 12,
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 22, marginBottom: 16,
-              }}>{f.icon}</div>
+                color: "#FF6B00", marginBottom: 16,
+              }}><f.icon size={22} strokeWidth={1.5} /></div>
               <h3 className="hero-headline" style={{ fontSize: 16, color: D.text, marginBottom: 8 }}>{f.title}</h3>
               <p style={{ fontSize: 13, color: D.text3, lineHeight: 1.7 }}>{f.desc}</p>
             </div>
@@ -1074,7 +1085,7 @@ export default function LandingPage() {
             display: "flex", alignItems: "center", justifyContent: "center",
             fontSize: 36, boxShadow: "0 0 60px #FF6B0040",
             animation: "float 3s ease-in-out infinite",
-          }}>🚀</div>
+          }}><ArrowRight size={28} strokeWidth={2} style={{ filter: "drop-shadow(0 0 20px #FF6B0060)" }} /></div>
           <h2 className="hero-headline" style={{ fontSize: "clamp(30px, 5vw, 54px)", color: D.text, lineHeight: 1.1, marginBottom: 16 }}>
             Siap Meraih<br />
             <span className="glow-text">Mimpimu?</span>
@@ -1084,7 +1095,7 @@ export default function LandingPage() {
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
             <button className="btn-primary" style={{ fontSize: 16, padding: "16px 40px" }} onClick={() => window.location.href = "/register"}>
-              <span>✨ Daftar Sekarang — Gratis</span>
+              <span>Daftar Sekarang — Gratis</span>
             </button>
             <button
               className="btn-outline"
