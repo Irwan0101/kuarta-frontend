@@ -49,6 +49,19 @@ export const useAuthStore = create(
                 }
             },
 
+            googleLogin: async (credential) => {
+                set({ loading: true, error: null });
+                try {
+                    const { data } = await axios.post(`${BASE}/auth/google`, { credential });
+                    set({ user: data.user, token: data.token, refreshToken: data.refreshToken, loading: false });
+                    return { ok: true, user: data.user };
+                } catch (err) {
+                    const msg = err.response?.data?.error || 'Gagal login dengan Google.';
+                    set({ loading: false, error: msg });
+                    return { ok: false, message: msg };
+                }
+            },
+
             logout: () => set({ user: null, token: null, refreshToken: null }),
 
             updateUser: (patch) => set(s => ({ user: { ...s.user, ...patch } })),

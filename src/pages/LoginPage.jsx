@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowRight, Shield } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '@/store/authStore';
 import { useTheme }     from '@/hooks/useTheme';
 import { Button }       from '@/components/ui/Button';
@@ -84,7 +85,7 @@ function DemoChip({ label, email, password, onFill, C, T }) {
 export default function LoginPage({ mode: initMode = 'login' }) {
   const { T, C }                           = useTheme();
   const navigate                           = useNavigate();
-  const { login, register, loading }       = useAuthStore();
+  const { login, register, googleLogin, loading }       = useAuthStore();
   const isAdmin                            = useAuthStore(s => s.isAdmin());
 
   const [mode,   setMode]   = useState(initMode);
@@ -240,6 +241,34 @@ export default function LoginPage({ mode: initMode = 'login' }) {
               <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
             </button>
           </form>
+
+          {/* Google SSO */}
+          <div style={{ marginTop: 18, marginBottom: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14 }}>
+              <div style={{ flex: 1, height: 1, background: T.border }} />
+              <span style={{ fontSize: 11, color: T.text4, fontWeight: 500, whiteSpace: 'nowrap' }}>atau lanjut dengan</span>
+              <div style={{ flex: 1, height: 1, background: T.border }} />
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <GoogleLogin
+                size="large"
+                shape="rectangular"
+                theme="outline"
+                text="continue_with"
+                onSuccess={async ({ credential }) => {
+                  const res = await googleLogin(credential);
+                  if (res.ok) {
+                    toast.success('Selamat datang! 👋');
+                    const dest = res.user?.role === 'admin' ? '/admin/dashboard' : '/dashboard';
+                    navigate(dest, { replace: true });
+                  } else {
+                    toast.error(res.message);
+                  }
+                }}
+                onError={() => toast.error('Gagal login dengan Google')}
+              />
+            </div>
+          </div>
 
           {/* Demo credentials */}
           <div style={{ marginTop: 18, padding: '12px 14px', background: T.bg3, borderRadius: 10 }}>
