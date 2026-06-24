@@ -1,6 +1,6 @@
 // src/pages/admin/AdminUsersPage.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, UserX, Edit2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Search, UserX, Edit2, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { useTheme } from '@/hooks/useTheme';
 import {
@@ -8,7 +8,7 @@ import {
     Modal, FormGroup, FormRow, TableHead, EmptyRow, ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
-const ROLE_COLORS = { admin: RED, premium: '#F59E0B', free: '#6b7280' };
+const ROLE_COLORS = { admin: RED, mentor: '#8B5CF6', premium: '#F59E0B', user: '#3B82F6', free: '#6b7280' };
 
 export default function AdminUsersPage() {
     const { T } = useTheme();
@@ -19,6 +19,8 @@ export default function AdminUsersPage() {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [editUser, setEditUser] = useState(null);
+    const [createOpen, setCreateOpen] = useState(false);
+    const [createForm, setCreateForm] = useState({ name: '', email: '', password: '', role: 'user', plan: 'free' });
     const [saving, setSaving] = useState(false);
     const PER = 10;
 
@@ -49,6 +51,21 @@ export default function AdminUsersPage() {
         finally { setSaving(false); }
     };
 
+    const handleCreate = async () => {
+        if (!createForm.name || !createForm.email || !createForm.password) {
+            alert('Nama, email, dan password wajib diisi');
+            return;
+        }
+        setSaving(true);
+        try {
+            await adminApi.createUser(createForm);
+            setCreateOpen(false);
+            setCreateForm({ name: '', email: '', password: '', role: 'user', plan: 'free' });
+            load();
+        } catch (e) { alert(e?.message || 'Gagal membuat user.'); }
+        finally { setSaving(false); }
+    };
+
     const totalPages = Math.max(1, Math.ceil(total / PER));
 
     return (
@@ -62,14 +79,17 @@ export default function AdminUsersPage() {
                 <CardHead
                     title="Daftar Pengguna"
                     action={
-                        <div style={{ position: 'relative', width: 220 }}>
-                            <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', opacity: .4 }} />
-                            <input
-                                value={search}
-                                onChange={e => { setSearch(e.target.value); setPage(1); }}
-                                placeholder="Cari nama / email..."
-                                style={{ width: '100%', padding: '8px 12px 8px 30px', fontSize: 12, borderRadius: 8, background: T.bg3, border: `1px solid ${T.border}`, color: T.text, outline: 'none', boxSizing: 'border-box' }}
-                            />
+                        <div style={{ display: 'flex', gap: 8 }}>
+                            <Btn size="sm" onClick={() => setCreateOpen(true)}><Plus size={14} /> Tambah User</Btn>
+                            <div style={{ position: 'relative', width: 220 }}>
+                                <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', opacity: .4 }} />
+                                <input
+                                    value={search}
+                                    onChange={e => { setSearch(e.target.value); setPage(1); }}
+                                    placeholder="Cari nama / email..."
+                                    style={{ width: '100%', padding: '8px 12px 8px 30px', fontSize: 12, borderRadius: 8, background: T.bg3, border: `1px solid ${T.border}`, color: T.text, outline: 'none', boxSizing: 'border-box' }}
+                                />
+                            </div>
                         </div>
                     }
                 />
@@ -147,6 +167,7 @@ export default function AdminUsersPage() {
                                 style={{ width: '100%', padding: '9px 12px', fontSize: 13, borderRadius: 9, background: T.bg3, border: `1px solid ${T.border}`, color: T.text, outline: 'none' }}>
                                 <option value="free">Free</option>
                                 <option value="premium">Premium</option>
+                                <option value="mentor">Mentor</option>
                                 <option value="admin">Admin</option>
                             </select>
                         </FormGroup>
@@ -154,6 +175,49 @@ export default function AdminUsersPage() {
                     <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
                         <Btn variant="outline" color={T.text4} onClick={() => setEditUser(null)}>Batal</Btn>
                         <Btn onClick={handleSaveEdit} disabled={saving}>{saving ? 'Menyimpan...' : 'Simpan'}</Btn>
+                    </div>
+                </Modal>
+            )}
+
+            {/* Create modal */}
+            {createOpen && (
+                <Modal title="Tambah User" onClose={() => setCreateOpen(false)}>
+                    <FormRow>
+                        <FormGroup label="Nama">
+                            <input value={createForm.name} onChange={e => setCreateForm(f => ({ ...f, name: e.target.value }))}
+                                style={{ width: '100%', padding: '9px 12px', fontSize: 13, borderRadius: 9, background: T.bg3, border: `1px solid ${T.border}`, color: T.text, outline: 'none', boxSizing: 'border-box' }} />
+                        </FormGroup>
+                        <FormGroup label="Email">
+                            <input value={createForm.email} onChange={e => setCreateForm(f => ({ ...f, email: e.target.value }))} type="email"
+                                style={{ width: '100%', padding: '9px 12px', fontSize: 13, borderRadius: 9, background: T.bg3, border: `1px solid ${T.border}`, color: T.text, outline: 'none', boxSizing: 'border-box' }} />
+                        </FormGroup>
+                    </FormRow>
+                    <FormRow>
+                        <FormGroup label="Password">
+                            <input value={createForm.password} onChange={e => setCreateForm(f => ({ ...f, password: e.target.value }))} type="password"
+                                style={{ width: '100%', padding: '9px 12px', fontSize: 13, borderRadius: 9, background: T.bg3, border: `1px solid ${T.border}`, color: T.text, outline: 'none', boxSizing: 'border-box' }} />
+                        </FormGroup>
+                        <FormGroup label="Role">
+                            <select value={createForm.role} onChange={e => setCreateForm(f => ({ ...f, role: e.target.value }))}
+                                style={{ width: '100%', padding: '9px 12px', fontSize: 13, borderRadius: 9, background: T.bg3, border: `1px solid ${T.border}`, color: T.text, outline: 'none' }}>
+                                <option value="user">User</option>
+                                <option value="premium">Premium</option>
+                                <option value="mentor">Mentor</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </FormGroup>
+                    </FormRow>
+                    <FormGroup label="Plan">
+                        <select value={createForm.plan} onChange={e => setCreateForm(f => ({ ...f, plan: e.target.value }))}
+                            style={{ width: '100%', padding: '9px 12px', fontSize: 13, borderRadius: 9, background: T.bg3, border: `1px solid ${T.border}`, color: T.text, outline: 'none' }}>
+                            <option value="free">Free</option>
+                            <option value="premium">Premium</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                    </FormGroup>
+                    <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 8 }}>
+                        <Btn variant="outline" color={T.text4} onClick={() => setCreateOpen(false)}>Batal</Btn>
+                        <Btn onClick={handleCreate} disabled={saving}>{saving ? 'Menyimpan...' : 'Buat User'}</Btn>
                     </div>
                 </Modal>
             )}
