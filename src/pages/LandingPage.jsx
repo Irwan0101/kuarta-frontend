@@ -1088,10 +1088,12 @@ export default function LandingPage() {
                   ))}
                 </div>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <div>
-                    <span className="hero-headline" style={{ fontSize: 20, color: "#FF6B00" }}>Rp {p.price}</span>
-                    <span style={{ fontSize: 11, color: D.text3 }}>/bulan</span>
-                  </div>
+                  {getCF('programs', 'show_price', true) !== false && (
+                    <div>
+                      <span className="hero-headline" style={{ fontSize: 20, color: "#FF6B00" }}>Rp {p.price}</span>
+                      <span style={{ fontSize: 11, color: D.text3 }}>/bulan</span>
+                    </div>
+                  )}
                   <button className="btn-primary" style={{ padding: "9px 18px", fontSize: 13 }} onClick={() => window.location.href = "/register"}>
                     <span>Pilih →</span>
                   </button>

@@ -500,6 +500,22 @@ export default function AdminLandingPage() {
           <div style={{ marginTop: 8 }}>
             <Field label="Badge Text" value={getContent('programs').badge_text || ''} onChange={v => updateContent('programs', 'badge_text', v)} T={T} inpStyle={inpStyle} placeholder="PROGRAM UNGGULAN" />
           </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12 }}>
+            <label style={{ ...lbl, margin: 0, cursor: 'pointer' }}>Tampilkan Harga</label>
+            <div onClick={() => updateContent('programs', 'show_price', getContent('programs').show_price === false ? true : false)}
+              style={{
+                width: 40, height: 22, borderRadius: 11,
+                background: getContent('programs').show_price === false ? '#555' : '#FF6B00',
+                position: 'relative', cursor: 'pointer', transition: 'background 0.2s',
+              }}>
+              <div style={{
+                width: 18, height: 18, borderRadius: '50%', background: '#fff',
+                position: 'absolute', top: 2,
+                left: getContent('programs').show_price === false ? 2 : 20,
+                transition: 'left 0.2s',
+              }} />
+            </div>
+          </div>
         </SectionCard>
       )}
 
