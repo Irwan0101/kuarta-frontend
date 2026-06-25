@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, FileText, Film, BarChart3, Smartphone, Star, Play, Calendar, ArrowRight } from 'lucide-react';
+import axios from 'axios';
+import SEO from '@/components/SEO';
+import { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, FileText, Star, Play, Calendar, ArrowRight } from 'lucide-react';
 
 const PROGRAMS = [
   { icon: Landmark, cat: "CPNS", name: "SKD CPNS – Kedinasan", price: "900.000", videos: 150, tryouts: 30, months: 3, color: "#FF6B00", rating: 4.8 },
@@ -10,29 +12,28 @@ const PROGRAMS = [
   { icon: Briefcase, cat: "KARIER", name: "Persiapan Karier", price: "300.000", videos: 90, tryouts: 0, months: 2, color: "#EC4899", rating: 4.9 },
 ];
 
-const STATS = [
+const DEFAULT_STATS = [
   { value: "120K+", label: "Siswa Aktif" },
   { value: "4.9★", label: "Rating Platform" },
   { value: "98%", label: "Tingkat Lulus" },
   { value: "500+", label: "Materi & Video" },
 ];
 
-const TESTIMONIALS = [
+const DEFAULT_FEATURES = [
+  { icon: "📹", title: "Video HD Interaktif", desc: "Ratusan video berkualitas tinggi dari pengajar berpengalaman, bisa ditonton kapan saja." },
+  { icon: "📝", title: "Tryout Mirip Asli", desc: "Simulasi tryout dengan soal yang diperbarui setiap bulan, sesuai kisi-kisi terbaru." },
+  { icon: "🎥", title: "Live Class Rutin", desc: "Sesi belajar langsung bersama mentor setiap minggu, bisa tanya jawab real-time." },
+  { icon: "📊", title: "Analitik Performa", desc: "Pantau perkembangan nilai dan identifikasi kelemahan dengan grafik yang detail." },
+  { icon: "🏆", title: "Leaderboard Nasional", desc: "Bersaing dengan ribuan siswa dari seluruh Indonesia, motivasi diri setiap hari." },
+  { icon: "📱", title: "Akses Multi-Device", desc: "Belajar dari HP, tablet, atau laptop — sinkronisasi otomatis di semua perangkat." },
+];
+
+const DEFAULT_TESTIMONIALS = [
   { name: "Rizki Firmansyah", role: "Lulus CPNS Kemenkeu 2024", avatar: "RF", score: 478, text: "Berkat Kuarta saya lulus SKD dengan skor tertinggi di batch saya. Tryout-nya sangat mirip soal asli!" },
   { name: "Siti Rahayu", role: "Mahasiswa UI – Kedokteran", avatar: "SR", score: 820, text: "UTBK-ku naik 150 poin dalam 3 bulan. Live class-nya sangat membantu, mentornya sabar dan profesional." },
   { name: "Bagas Pratama", role: "Lulus IPDN 2024", avatar: "BP", score: 461, text: "Platform terbaik untuk persiapan kedinasan. Materinya lengkap, tryout-nya akurat, harganya sangat terjangkau." },
 ];
 
-const FEATURES = [
-  { icon: Video, title: "Video HD Interaktif", desc: "Ratusan video berkualitas tinggi dari pengajar berpengalaman, bisa ditonton kapan saja." },
-  { icon: FileText, title: "Tryout Mirip Asli", desc: "Simulasi tryout dengan soal yang diperbarui setiap bulan, sesuai kisi-kisi terbaru." },
-  { icon: Film, title: "Live Class Rutin", desc: "Sesi belajar langsung bersama mentor setiap minggu, bisa tanya jawab real-time." },
-  { icon: BarChart3, title: "Analitik Performa", desc: "Pantau perkembangan nilai dan identifikasi kelemahan dengan grafik yang detail." },
-  { icon: Trophy, title: "Leaderboard Nasional", desc: "Bersaing dengan ribuan siswa dari seluruh Indonesia, motivasi diri setiap hari." },
-  { icon: Smartphone, title: "Akses Multi-Device", desc: "Belajar dari HP, tablet, atau laptop — sinkronisasi otomatis di semua perangkat." },
-];
-
-const HERO_WORDS = ["Prestasi", "Masa Depan", "Impianmu", "Karirmu", "Nilai Terbaik"];
 
 const NAV_ITEMS = [
   { label: "Program",   id: "programs"     },
@@ -94,6 +95,54 @@ export default function LandingPage() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // ── Load dynamic landing sections ──
+  const [sections, setSections] = useState({});
+  const [banners, setBanners] = useState([]);
+  const [activeBanner, setActiveBanner] = useState(0);
+  const [waNumber, setWaNumber] = useState('6281234567890');
+  useEffect(() => {
+    const BASE = import.meta.env.VITE_API_URL || '/api';
+    Promise.all([
+      axios.get(`${BASE}/landing/sections`).then(r => r.data || {}).catch(() => ({})),
+      axios.get(`${BASE}/landing/banners`).then(r => Array.isArray(r.data) ? r.data : []).catch(() => []),
+      axios.get(`${BASE}/landing/settings/wa_number`).then(r => r.data?.number || '6281234567890').catch(() => '6281234567890'),
+    ])      .then(([secs, bnr, wa]) => {
+      setSections(secs);
+      setBanners(bnr);
+      if (wa) setWaNumber(wa);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (banners.length < 2) return;
+    const t = setInterval(() => setActiveBanner(i => (i + 1) % banners.length), 5000);
+    return () => clearInterval(t);
+  }, [banners.length]);
+
+  const getSec = (key) => sections[key] || {};
+  const getCont = (key) => getSec(key).content || {};
+  const getF = (key, field, def) => getSec(key)[field] || def;
+  const getCF = (key, field, def) => {
+    const v = getCont(key)[field];
+    return v !== undefined && v !== null ? v : def;
+  };
+
+  // Derive stats from sections
+  const rawStats = getCF('hero', 'stats', []);
+  const STATS = rawStats.length > 0
+    ? rawStats.map(s => ({
+        value: s.fmt
+          ? (Number(s.target) >= 1000 ? `${(Number(s.target)/1000).toFixed(0)}${s.fmt}` : `${s.target}${s.fmt}`)
+          : `${Number(s.target).toLocaleString()}`,
+        label: s.label,
+      }))
+    : DEFAULT_STATS;
+
+  const HERO_WORDS = getCF('hero', 'words', ["Prestasi", "Masa Depan", "Impianmu", "Karirmu", "Nilai Terbaik"]);
+  const FEATURES_ITEMS = getCF('features', 'items', DEFAULT_FEATURES);
+  const TESTIMONIALS = getCF('testimonials', 'items', DEFAULT_TESTIMONIALS)
+    .map(t => ({ ...t, avatar: t.avatar || t.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }));
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -172,7 +221,7 @@ export default function LandingPage() {
 
   const openWa = (message) => {
     const encoded = encodeURIComponent(message);
-    window.open(`https://wa.me/${WA_NUMBER}?text=${encoded}`, "_blank");
+    window.open(`https://wa.me/${waNumber}?text=${encoded}`, "_blank");
   };
 
   const D = darkMode ? {
@@ -218,16 +267,22 @@ export default function LandingPage() {
   };
 
   return (
-    <div style={{
-      background: D.bg,
-      color: D.text,
-      fontFamily: "'Inter', sans-serif",
-      minHeight: "100vh",
-      overflowX: "hidden",
-      transition: "background 0.4s, color 0.4s",
-    }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+    <>
+      <SEO
+        title={getF('hero', 'title', 'Platform Belajar Online Terbaik')}
+        description={getCF('hero', 'badge_text', '') + ' — ' + getF('hero', 'subtitle', 'Kuarta Bimbel: platform belajar online lengkap untuk CPNS, UTBK, OSN & Bimbel SD/SMP/SMA. 120.000+ siswa. Gratis!')}
+        url="/"
+      />
+      <div style={{
+        background: D.bg,
+        color: D.text,
+        fontFamily: "'Inter', sans-serif",
+        minHeight: "100vh",
+        overflowX: "hidden",
+        transition: "background 0.4s, color 0.4s",
+      }}>
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -777,7 +832,7 @@ export default function LandingPage() {
             animation: "pulse-ring 2s infinite",
           }} />
           <span style={{ fontSize: 13, color: "#FF6B00", fontWeight: 600 }}>
-            Platform Belajar #1 di Indonesia
+            {getCF('hero', 'badge_text', 'Platform Belajar #1 di Indonesia')}
           </span>
         </div>
 
@@ -792,13 +847,13 @@ export default function LandingPage() {
             color: D.text,
           }}
         >
-          Raih{" "}
+          {getF('hero', 'title', 'Raih')}{" "}
           <span className="glow-text">
             {HERO_WORDS[wordIndex].slice(0, letterIndex)}
           </span>
           <span className="word-cursor" />
           <br />
-          <span style={{ color: D.text }}>Bersama </span>
+          <span style={{ color: D.text }}>{getF('hero', 'subtitle', 'Bersama ')}</span>
           <span style={{
             fontFamily: "Inter, sans-serif",
             ...(darkMode ? {
@@ -821,8 +876,7 @@ export default function LandingPage() {
           opacity: 0,
           animation: "fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.4s forwards",
         }}>
-          Platform belajar online lengkap untuk CPNS, UTBK, Olimpiade, dan lebih banyak lagi.
-          Video HD, tryout akurat, dan live class bersama mentor terbaik.
+          {getCF('hero', 'description', 'Platform belajar online lengkap untuk CPNS, UTBK, Olimpiade, dan lebih banyak lagi. Video HD, tryout akurat, dan live class bersama mentor terbaik.')}
         </p>
 
         <div style={{
@@ -831,8 +885,8 @@ export default function LandingPage() {
           opacity: 0,
           animation: "fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.55s forwards",
         }}>
-          <button className="btn-primary hero-btn" style={{ fontSize: 16, padding: "16px 36px" }} onClick={() => window.location.href = "/register"}>
-            <span>🚀 Mulai Belajar Gratis</span>
+          <button className="btn-primary hero-btn" style={{ fontSize: 16, padding: "16px 36px" }} onClick={() => window.location.href = getCF('hero', 'button_link', '/register')}>
+            <span>{getCF('hero', 'button_text', 'Mulai Belajar Gratis')}</span>
           </button>
           <button className="btn-outline hero-btn" style={{ fontSize: 15, padding: "15px 28px" }} onClick={() => scrollToSection("programs")}>
             Lihat Program →
@@ -883,7 +937,7 @@ export default function LandingPage() {
           <div className="ticker-inner">
             {[...Array(2)].map((_, ri) => (
               <span key={ri}>
-                {["CPNS 2025", "UTBK SNBT", "Olimpiade OSN", "Bimbel SD SMP SMA", "Persiapan Karier", "Live Class Rutin", "Tryout Akurat", "Kuarta"].map((t, i) => (
+                {(getCF('ticker', 'items', ['CPNS 2025', 'UTBK SNBT', 'Olimpiade OSN', 'Bimbel SD SMP SMA', 'Persiapan Karier', 'Live Class Rutin', 'Tryout Akurat', 'Kuarta'])).map((t, i) => (
                   <span key={i} style={{ fontSize: 12, fontWeight: 700, color: "white", marginRight: 44, letterSpacing: "0.08em" }}>
                     ✦ {t}
                   </span>
@@ -894,6 +948,78 @@ export default function LandingPage() {
         </div>
       </div>
 
+      {/* ── BANNERS ── */}
+      {banners.length > 0 && (
+        <section style={{ padding: "60px 5%", background: D.bgCard2 }} id="banners" data-animate>
+          <div className={`section-enter ${isVisible("banners") ? "visible" : ""}`}
+            style={{ position: "relative", maxWidth: 1100, margin: "0 auto" }}>
+            <div style={{
+              position: "relative", overflow: "hidden", borderRadius: 20,
+              boxShadow: `0 8px 40px ${darkMode ? "rgba(0,0,0,0.3)" : "rgba(0,0,0,0.08)"}`,
+              background: D.bg,
+            }}>
+              <a href={banners[activeBanner]?.cta_link || '#'}
+                style={{ display: "block", textDecoration: "none", color: "inherit" }}>
+                <div style={{ position: "relative", aspectRatio: "21/9", overflow: "hidden" }}>
+                  <img
+                    src={banners[activeBanner]?.image_url}
+                    alt={banners[activeBanner]?.title || ''}
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                  <div style={{
+                    position: "absolute", inset: 0,
+                    background: "linear-gradient(90deg, rgba(0,0,0,0.6) 0%, transparent 60%)",
+                    display: "flex", flexDirection: "column", justifyContent: "center",
+                    padding: "clamp(20px, 5vw, 60px)",
+                  }}>
+                    {banners[activeBanner]?.badge_text && (
+                      <div style={{
+                        display: "inline-block", fontSize: 10, fontWeight: 700,
+                        color: "#FF6B00", letterSpacing: "0.14em",
+                        background: "rgba(255,107,0,0.15)", padding: "4px 12px",
+                        borderRadius: 99, marginBottom: 12, width: "fit-content",
+                      }}>{banners[activeBanner].badge_text}</div>
+                    )}
+                    {banners[activeBanner]?.title && (
+                      <h3 style={{ fontSize: "clamp(18px, 3vw, 36px)", fontWeight: 700, color: "#fff", margin: 0, marginBottom: 6 }}>
+                        {banners[activeBanner].title}
+                      </h3>
+                    )}
+                    {banners[activeBanner]?.subtitle && (
+                      <p style={{ fontSize: "clamp(12px, 1.5vw, 16px)", color: "rgba(255,255,255,0.8)", margin: 0, marginBottom: 16 }}>
+                        {banners[activeBanner].subtitle}
+                      </p>
+                    )}
+                    {banners[activeBanner]?.cta_text && (
+                      <span style={{
+                        display: "inline-flex", alignItems: "center", gap: 6,
+                        fontSize: 13, fontWeight: 600, color: "#FF6B00",
+                        background: "#fff", padding: "8px 20px", borderRadius: 99,
+                        width: "fit-content",
+                      }}>
+                        {banners[activeBanner].cta_text}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </div>
+            {banners.length > 1 && (
+              <div style={{ display: "flex", justifyContent: "center", gap: 8, marginTop: 16 }}>
+                {banners.map((_, i) => (
+                  <button key={i} onClick={() => setActiveBanner(i)}
+                    style={{
+                      width: 10, height: 10, borderRadius: "50%", border: "none", cursor: "pointer",
+                      background: i === activeBanner ? "#FF6B00" : D.border,
+                      transition: "background 0.3s",
+                    }} />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* ── PROGRAMS ── */}
       <section style={{ padding: "100px 5%", background: D.bg }} id="programs" data-animate>
         <div className={`section-enter ${isVisible("programs") ? "visible" : ""}`}
@@ -902,12 +1028,12 @@ export default function LandingPage() {
             display: "inline-block", fontSize: 11, fontWeight: 700,
             color: "#FF6B00", letterSpacing: "0.14em",
             background: D.tagBg, padding: "6px 16px", borderRadius: 99, marginBottom: 16,
-          }}>PROGRAM UNGGULAN</div>
+          }}>{getCF('programs', 'badge_text', 'PROGRAM UNGGULAN')}</div>
           <h2 className="hero-headline" style={{
             fontSize: "clamp(30px, 5vw, 52px)", color: D.text,
           }}>
-            Pilih Program<br />
-            <span className="glow-text">Sesuai Tujuanmu</span>
+            {getF('programs', 'title', 'Pilih Program')}<br />
+            <span className="glow-text">{getF('programs', 'subtitle', 'Sesuai Tujuanmu')}</span>
           </h2>
         </div>
 
@@ -983,14 +1109,14 @@ export default function LandingPage() {
           <div style={{
             fontSize: 11, fontWeight: 700, color: "#FF6B00", letterSpacing: "0.14em",
             background: D.tagBg, display: "inline-block", padding: "6px 16px", borderRadius: 99, marginBottom: 16,
-          }}>MENGAPA KUARTA</div>
+          }}>{getCF('features', 'badge_text', 'MENGAPA KUARTA')}</div>
           <h2 className="hero-headline" style={{ fontSize: "clamp(28px, 4vw, 48px)", color: D.text }}>
-            Semua yang Kamu Butuhkan<br />
-            <span className="glow-text">Ada di Sini</span>
+            {getF('features', 'title', 'Semua yang Kamu Butuhkan')}<br />
+            <span className="glow-text">{getF('features', 'subtitle', 'Ada di Sini')}</span>
           </h2>
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 16 }}>
-          {FEATURES.map((f, i) => (
+          {FEATURES_ITEMS.map((f, i) => (
             <div key={i}
               className={`feature-card section-enter ${isVisible("features") ? "visible" : ""}`}
               style={{ transitionDelay: `${i * 0.07}s` }}
@@ -998,8 +1124,8 @@ export default function LandingPage() {
               <div className="feature-icon" style={{
                 width: 48, height: 48, background: D.tagBg, borderRadius: 12,
                 display: "flex", alignItems: "center", justifyContent: "center",
-                color: "#FF6B00", marginBottom: 16,
-              }}><f.icon size={22} strokeWidth={1.5} /></div>
+                color: "#FF6B00", marginBottom: 16, fontSize: 22,
+              }}>{f.icon}</div>
               <h3 className="hero-headline" style={{ fontSize: 16, color: D.text, marginBottom: 8 }}>{f.title}</h3>
               <p style={{ fontSize: 13, color: D.text3, lineHeight: 1.7 }}>{f.desc}</p>
             </div>
@@ -1014,9 +1140,9 @@ export default function LandingPage() {
           <div style={{
             fontSize: 11, fontWeight: 700, color: "#FF6B00", letterSpacing: "0.14em",
             background: D.tagBg, display: "inline-block", padding: "6px 16px", borderRadius: 99, marginBottom: 16,
-          }}>TESTIMONI</div>
+          }}>{getCF('testimonials', 'badge_text', 'TESTIMONI')}</div>
           <h2 className="hero-headline" style={{ fontSize: "clamp(28px, 4vw, 48px)", color: D.text }}>
-            Mereka Sudah <span className="glow-text">Membuktikannya</span>
+            {getF('testimonials', 'title', 'Mereka Sudah')} <span className="glow-text">{getF('testimonials', 'subtitle', 'Membuktikannya')}</span>
           </h2>
         </div>
         <div className="testimonial-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20, maxWidth: 960, margin: "0 auto" }}>
@@ -1087,15 +1213,15 @@ export default function LandingPage() {
             animation: "float 3s ease-in-out infinite",
           }}><ArrowRight size={28} strokeWidth={2} style={{ filter: "drop-shadow(0 0 20px #FF6B0060)" }} /></div>
           <h2 className="hero-headline" style={{ fontSize: "clamp(30px, 5vw, 54px)", color: D.text, lineHeight: 1.1, marginBottom: 16 }}>
-            Siap Meraih<br />
-            <span className="glow-text">Mimpimu?</span>
+            {getF('cta', 'title', 'Siap Meraih')}<br />
+            <span className="glow-text">{getF('cta', 'subtitle', 'Mimpimu?')}</span>
           </h2>
           <p style={{ fontSize: 16, color: D.text2, lineHeight: 1.7, maxWidth: 480, margin: "0 auto 36px" }}>
-            Bergabung dengan 120.000+ siswa yang sudah membuktikan. Daftar sekarang dan mulai belajar hari ini — gratis!
+            {getCF('cta', 'description', 'Bergabung dengan 120.000+ siswa yang sudah membuktikan. Daftar sekarang dan mulai belajar hari ini — gratis!')}
           </p>
           <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <button className="btn-primary" style={{ fontSize: 16, padding: "16px 40px" }} onClick={() => window.location.href = "/register"}>
-              <span>Daftar Sekarang — Gratis</span>
+            <button className="btn-primary" style={{ fontSize: 16, padding: "16px 40px" }} onClick={() => window.location.href = getCF('cta', 'button_link', '/register')}>
+              <span>{getCF('cta', 'button_text', 'Daftar Sekarang — Gratis')}</span>
             </button>
             <button
               className="btn-outline"
@@ -1127,14 +1253,14 @@ export default function LandingPage() {
           </div>
 
           <div className="footer-links" style={{ display: "flex", gap: 28 }}>
-            {["Tentang", "Program", "Blog", "Kontak", "Privasi"].map(item => (
-              <a key={item} className="nav-link" style={{ fontSize: 13, color: D.text2 }}>{item}</a>
+            {(getCF('footer', 'links', [{label: "Tentang"},{label: "Program"},{label: "Blog"},{label: "Kontak"},{label: "Privasi"}])).map(item => (
+              <a key={item.label} className="nav-link" style={{ fontSize: 13, color: D.text2 }} href={item.href || '#'}>{item.label}</a>
             ))}
           </div>
 
           <div style={{ textAlign: "right" }}>
             <div style={{ fontSize: 12, color: D.text3, marginBottom: 2 }}>
-              © 2026 Kuarta. All rights reserved.
+              {getF('footer', 'subtitle', '© 2026 Kuarta. All rights reserved.')}
             </div>
             <div style={{
               fontSize: 11, color: D.text4,
@@ -1268,5 +1394,6 @@ export default function LandingPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

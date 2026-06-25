@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
+import SEO from '@/components/SEO';
 
 export default function NotFoundPage() {
   return (
-    <div style={{
-      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      minHeight: '100vh', background: '#0A0A0F', color: '#E8E8F0',
+    <>
+      <SEO title="Halaman Tidak Ditemukan" url="*" noindex />
+      <div style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        minHeight: '100vh', background: '#0A0A0F', color: '#E8E8F0',
       fontFamily: "'Plus Jakarta Sans', sans-serif", padding: 40, textAlign: 'center',
     }}>
       <div style={{ fontSize: 80, marginBottom: 16, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, background: 'linear-gradient(135deg, #FF6B00, #FF8C00)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
@@ -26,5 +29,6 @@ export default function NotFoundPage() {
         Kembali ke Beranda
       </Link>
     </div>
+    </>
   );
 }

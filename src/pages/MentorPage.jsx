@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { Calendar, Clock, Video, MapPin, Users, Star, ChevronRight, ArrowLeft, BookOpen, CheckCircle, XCircle, AlertCircle, Filter } from 'lucide-react';
 import useResponsive from '@/hooks/useResponsive';
 import { useTheme } from '@/hooks/useTheme';
@@ -272,7 +272,7 @@ export default function MentorPage() {
 
   return (
     <div style={{ width: '100%' }}>
-      <Helmet><title>Mentoring — Kuarta Bimbel</title></Helmet>
+      <SEO title="Mentoring" description="Jadwal dan booking sesi mentoring dengan mentor profesional" url="/live" noindex />
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: resp.isMobile ? 20 : 24, fontWeight: 800, color: T.text, marginBottom: 4 }}>
           Mentoring

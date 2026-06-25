@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /dashboard
+Disallow: /profil
+Disallow: /belajar
+Disallow: /live
+Disallow: /pembayaran
+Disallow: /api/
+
+Sitemap: https://kuartabimbel.com/sitemap.xml

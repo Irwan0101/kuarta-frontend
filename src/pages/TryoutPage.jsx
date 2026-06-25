@@ -1,6 +1,7 @@
 // src/pages/TryoutPage.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import { FileText, Clock, Users, Trophy, Play, ChevronRight, Filter } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
 import { Card } from '@/components/ui/Card';
@@ -33,9 +34,11 @@ export default function TryoutPage() {
   );
 
   return (
-    <div style={{ width: '100%' }}>
+    <>
+      <SEO title="Tryout" description="Tryout CPNS, UTBK, OSN dan berbagai ujian lainnya. Simulasi mirip asli dengan skor dan pembahasan." url="/tryout" noindex />
+      <div style={{ width: '100%' }}>
 
-      {/* Stats row */}
+        {/* Stats row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
         {[
           { icon: '📝', label: 'Total Dikerjakan', val: '6', color: C.orange },
@@ -157,5 +160,6 @@ export default function TryoutPage() {
         })}
       </div>
     </div>
+    </>
   );
 }

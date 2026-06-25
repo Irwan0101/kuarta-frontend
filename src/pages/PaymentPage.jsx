@@ -1,6 +1,7 @@
 // src/pages/PaymentPage.jsx
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import {
   CreditCard, Wallet, DollarSign, Calendar,
   ChevronRight, Shield, TrendingUp, AlertCircle,
@@ -301,16 +302,18 @@ export default function PaymentPage() {
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', color: T.text }}>
         <span style={{ display: 'inline-block', animation: 'spin 1s linear infinite', fontSize: 28, marginRight: 10 }}>⚙️</span>
         <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700 }}>Menghubungkan ke Database...</span>
-        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+        <style>{'@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }'}</style>
       </div>
     );
   }
 
   return (
-    <div style={{ width: '100%' }}>
-      {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{
+    <>
+      <SEO title="Pembayaran" description="Selesaikan pembayaran program pilihanmu dengan berbagai metode" url="/pembayaran" noindex />
+      <div style={{ width: '100%' }}>
+        {/* Header */}
+        <div style={{ marginBottom: 28 }}>
+          <h1 style={{
           fontFamily: 'Syne, sans-serif',
           fontSize: 24,
           fontWeight: 800,
@@ -714,5 +717,6 @@ export default function PaymentPage() {
         }
       `}</style>
     </div>
+    </>
   );
 }

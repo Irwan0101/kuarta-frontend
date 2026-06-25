@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { CheckCircle, XCircle, MinusCircle, Clock, Trophy, ArrowLeft, BarChart3 } from 'lucide-react';
 import useResponsive from '@/hooks/useResponsive';
@@ -51,7 +51,7 @@ export default function TryoutResultPage() {
 
   return (
     <div style={{ width:'100%', maxWidth:760, margin:'0 auto' }}>
-      <Helmet><title>Hasil Tryout — Kuarta Bimbel</title></Helmet>
+      <SEO title="Hasil Tryout" url="/tryout-result" noindex />
       {/* Back */}
       <button onClick={() => navigate('/tryout')} style={{
         background:'none', border:'none', cursor:'pointer', display:'flex', alignItems:'center', gap:6,

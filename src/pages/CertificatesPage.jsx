@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { Award, Download, Calendar, CheckCircle, Lock, ArrowLeft, Share2 } from 'lucide-react';
 import useResponsive from '@/hooks/useResponsive';
 import { useTheme } from '@/hooks/useTheme';
@@ -89,7 +89,7 @@ export default function CertificatesPage() {
 
   return (
     <div style={{ width: '100%' }}>
-      <Helmet><title>Sertifikat — Kuarta Bimbel</title></Helmet>
+      <SEO title="Sertifikat" description="Sertifikat kelulusan tryout dan program belajar" url="/sertifikat" noindex />
       <div style={{ marginBottom: 28 }}>
         <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: resp.isMobile ? 20 : 24, fontWeight: 800, color: T.text, marginBottom: 4 }}>
           Sertifikat Saya

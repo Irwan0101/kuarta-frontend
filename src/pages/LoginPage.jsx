@@ -1,6 +1,7 @@
 // src/pages/LoginPage.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowRight, Shield } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '@/store/authStore';
@@ -136,11 +137,13 @@ export default function LoginPage({ mode: initMode = 'login' }) {
   const switchMode = (m) => { setMode(m); setErrors({}); setForm({ name: '', email: '', phone: '', password: '', confirm: '' }); };
 
   return (
-    <div style={{
-      minHeight: '100vh', background: T.bg,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 24, position: 'relative', overflow: 'hidden',
-    }}>
+    <>
+      <SEO title="Masuk / Daftar" url="/login" />
+      <div style={{
+        minHeight: '100vh', background: T.bg,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 24, position: 'relative', overflow: 'hidden',
+      }}>
       {/* BG glows */}
       <div style={{ position: 'absolute', top: -220, right: -220, width: 600, height: 600, background: C.orange + '0C', borderRadius: '50%', filter: 'blur(110px)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: -180, left: -180, width: 500, height: 500, background: C.orange + '07', borderRadius: '50%', filter: 'blur(90px)', pointerEvents: 'none' }} />
@@ -292,5 +295,6 @@ export default function LoginPage({ mode: initMode = 'login' }) {
         </p>
       </div>
     </div>
+    </>
   );
 }

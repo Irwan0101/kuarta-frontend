@@ -1,6 +1,7 @@
 // src/pages/DashboardPage.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import {
   Trophy, Target, BookOpen, Clock,
   Play, ArrowRight, TrendingUp, Flame,
@@ -84,9 +85,11 @@ export default function DashboardPage() {
   const streak  = 7;
 
   return (
-    <div style={{ width: '100%' }}>
-     <div style={{
-        background: `linear-gradient(135deg, ${C.orange}22 0%, ${C.orange}08 60%, transparent 100%)`,
+    <>
+      <SEO title="Dashboard" url="/dashboard" noindex />
+      <div style={{ width: '100%' }}>
+       <div style={{
+          background: `linear-gradient(135deg, ${C.orange}22 0%, ${C.orange}08 60%, transparent 100%)`,
         border: `1px solid ${C.orange}30`,
         borderRadius: 20, padding: '20px 24px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -300,6 +303,7 @@ export default function DashboardPage() {
         </Card>
       </div>
     </div>
+    </>
   );
-
+ 
 }

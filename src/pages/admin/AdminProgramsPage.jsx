@@ -1,14 +1,15 @@
 // src/pages/admin/AdminProgramsPage.jsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { Plus, Edit2, Trash2, BookOpen } from 'lucide-react';
+import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { useTheme } from '@/hooks/useTheme';
+import ImageUpload from '@/components/ui/ImageUpload';
 import {
-  PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
+  PageHeader, Card, CardHead, Btn, Spinner, ErrorBox,
   Modal, FormGroup, FormRow, TableHead, EmptyRow, ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
-const EMPTY = { name: '', description: '', price: '', icon: '📚', color: ORG };
+const EMPTY = { name: '', description: '', price: '', icon: '📚', color: ORG, thumbnail_url: '' };
 
 export default function AdminProgramsPage() {
   const { T } = useTheme();
@@ -29,7 +30,7 @@ export default function AdminProgramsPage() {
   useEffect(() => { load(); }, [load]);
 
   const openCreate = () => { setForm(EMPTY); setModal('create'); };
-  const openEdit   = (p)  => { setForm({ name: p.name, description: p.description ?? '', price: p.price ?? '', icon: p.icon ?? '📚', color: p.color ?? ORG }); setModal(p); };
+  const openEdit   = (p)  => { setForm({ name: p.name, description: p.description ?? '', price: p.price ?? '', icon: p.icon ?? '📚', color: p.color ?? ORG, thumbnail_url: p.thumbnail_url ?? '' }); setModal(p); };
 
   const handleSave = async () => {
     setSaving(true);
@@ -122,6 +123,9 @@ export default function AdminProgramsPage() {
           </FormRow>
           <FormGroup label="Deskripsi">
             <textarea style={{ ...inp, resize: 'vertical' }} rows={3} value={form.description} onChange={set('description')} placeholder="Deskripsi singkat program..." />
+          </FormGroup>
+          <FormGroup label="Thumbnail">
+            <ImageUpload value={form.thumbnail_url} onChange={v => setForm(f => ({ ...f, thumbnail_url: v }))} />
           </FormGroup>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
             <Btn variant="outline" color={T.text4} onClick={() => setModal(null)}>Batal</Btn>

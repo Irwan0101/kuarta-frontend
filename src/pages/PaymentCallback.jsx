@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams, useLocation } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import { CheckCircle, XCircle, Clock, ArrowRight } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
@@ -31,10 +32,12 @@ export default function PaymentCallback() {
   }, [orderId]);
 
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      minHeight: '100vh', background: T.bg, padding: 20,
-    }}>
+    <>
+      <SEO title="Status Pembayaran" url="/payment-callback" noindex />
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        minHeight: '100vh', background: T.bg, padding: 20,
+      }}>
       <div style={{
         background: T.bg2, border: `1px solid ${T.border}`,
         borderRadius: 20, padding: resp.isMobile ? 32 : 48,
@@ -81,5 +84,6 @@ export default function PaymentCallback() {
         </div>
       </div>
     </div>
+    </>
   );
 }

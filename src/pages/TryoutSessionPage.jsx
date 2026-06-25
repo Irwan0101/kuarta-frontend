@@ -1,6 +1,7 @@
 // src/pages/TryoutSessionPage.jsx
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import { Flag, ChevronLeft, ChevronRight, Clock, AlertTriangle, Grid } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useTryoutStore } from '@/store/tryoutStore';
@@ -80,7 +81,9 @@ export default function TryoutSessionPage() {
   const timerColor = timeLeft < 300 ? C.red : timeLeft < 600 ? C.yellow : C.green;
 
   return (
-    <div style={{ display: 'flex', height: '100vh', background: T.bg1, overflow: 'hidden' }}>
+    <>
+      <SEO title="Mengerjakan Tryout" url="/tryout-session" noindex />
+      <div style={{ display: 'flex', height: '100vh', background: T.bg1, overflow: 'hidden' }}>
 
       {/* Left: Question panel */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -341,5 +344,6 @@ export default function TryoutSessionPage() {
         </div>
       </Modal>
     </div>
+    </>
   );
 }

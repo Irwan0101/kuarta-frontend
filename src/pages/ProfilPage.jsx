@@ -1,6 +1,7 @@
 // src/pages/ProfilPage.jsx
 import { useState, useEffect, useRef } from 'react';
-import { Camera, Save, Lock, Crown, LogOut, Shield, Bell, CreditCard, Eye, EyeOff, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import SEO from '@/components/SEO';
+import { Camera, Save, Lock, Crown, LogOut, Shield, Bell, CreditCard, Eye, EyeOff, CheckCircle, AlertCircle, Loader, Loader2 } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 import { authApi, paymentApi } from '@/lib/api';
@@ -334,6 +335,9 @@ export default function ProfilPage() {
   const [transactions, setTransactions]     = useState([]);
   const [loadingTx, setLoadingTx]           = useState(false);
   const [profileError, setProfileError]     = useState('');
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarProgress, setAvatarProgress] = useState(0);
+  const avatarInputRef = useRef(null);
 
   // Fetch profile on mount
   useEffect(() => {
@@ -366,6 +370,36 @@ export default function ProfilPage() {
   };
 
   const initials = getInitials(profile?.name || user?.name || '');
+  const avatarUrl = profile?.avatar_url || user?.avatar_url || '';
+
+  const handleAvatarUpload = (file) => {
+    if (!file) return;
+    const form = new FormData();
+    form.append('file', file);
+    setAvatarUploading(true);
+    setAvatarProgress(0);
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/upload');
+    xhr.setRequestHeader('Authorization', 'Bearer ' + (useAuthStore.getState().token || ''));
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) setAvatarProgress(Math.round((e.loaded / e.total) * 100)); };
+    xhr.onload = () => {
+      setAvatarUploading(false);
+      if (xhr.status < 200 || xhr.status >= 300) return alert('Gagal upload avatar');
+      const data = JSON.parse(xhr.responseText);
+      authApi.updateProfile({ avatar_url: data.url }).then((updated) => {
+        setProfile(updated);
+        setUser?.(updated);
+      }).catch(() => alert('Gagal menyimpan avatar'));
+    };
+    xhr.onerror = () => { setAvatarUploading(false); alert('Gagal upload avatar'); };
+    xhr.send(form);
+  };
+
+  const handleAvatarFile = (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleAvatarUpload(file);
+    e.target.value = '';
+  };
 
   // Stats derived from profile / store
   const stats = [
@@ -390,9 +424,12 @@ export default function ProfilPage() {
   );
 
   return (
-    <div style={{ width: '100%' }}>
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: T.text, marginBottom: 4 }}>Profil Saya</h2>
+    <>
+      <SEO title="Profil Saya" url="/profil" noindex />
+      <div style={{ width: '100%' }}>
+        <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
+        <div style={{ marginBottom: 24 }}>
+          <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: T.text, marginBottom: 4 }}>Profil Saya</h2>
         <p style={{ fontSize: 13, color: T.text3 }}>Kelola informasi akun dan preferensi belajar</p>
       </div>
 
@@ -402,21 +439,35 @@ export default function ProfilPage() {
           {/* Profile card */}
           <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, padding: '24px 20px', textAlign: 'center' }}>
             <div style={{ position: 'relative', width: 80, height: 80, margin: '0 auto 12px' }}>
-              <div style={{
-                width: 80, height: 80, borderRadius: '50%',
-                background: C.orange + '25', border: `3px solid ${C.orange}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 24, color: C.orange,
-              }}>{initials}</div>
-              <button style={{
-                position: 'absolute', bottom: 0, right: 0,
-                width: 26, height: 26, borderRadius: '50%',
-                background: C.orange, border: '2px solid ' + T.bg2,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
-              }}>
-                <Camera size={12} color="#fff" />
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="" style={{ width: 80, height: 80, borderRadius: '50%', objectFit: 'cover', border: `3px solid ${C.orange}` }} />
+              ) : (
+                <div style={{
+                  width: 80, height: 80, borderRadius: '50%',
+                  background: C.orange + '25', border: `3px solid ${C.orange}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 24, color: C.orange,
+                }}>{initials}</div>
+              )}
+              <button
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={avatarUploading}
+                style={{
+                  position: 'absolute', bottom: 0, right: 0,
+                  width: 26, height: 26, borderRadius: '50%',
+                  background: C.orange, border: '2px solid ' + T.bg2,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                }}
+              >
+                {avatarUploading ? <Loader2 size={10} color="#fff" style={{ animation: 'spin 1s linear infinite' }} /> : <Camera size={12} color="#fff" />}
               </button>
+              {avatarUploading && (
+                <div style={{ position: 'absolute', bottom: -16, left: '50%', transform: 'translateX(-50%)', width: 60, height: 3, borderRadius: 2, background: T.bg4, overflow: 'hidden' }}>
+                  <div style={{ width: `${avatarProgress}%`, height: '100%', borderRadius: 2, background: C.orange, transition: 'width 0.3s' }} />
+                </div>
+              )}
             </div>
+            <input ref={avatarInputRef} type="file" accept="image/*" onChange={handleAvatarFile} style={{ display: 'none' }} />
             <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 16, color: T.text, marginBottom: 2 }}>
               {profile?.name || user?.name || '—'}
             </div>
@@ -487,5 +538,6 @@ export default function ProfilPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

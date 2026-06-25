@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import { MessageSquare, Plus, Send, ArrowLeft, ThumbsUp, Eye, Clock, Search, MessageCircle, Pin, ChevronRight } from 'lucide-react';
 import useResponsive from '@/hooks/useResponsive';
 import { useTheme } from '@/hooks/useTheme';
@@ -235,7 +235,7 @@ export default function ForumPage() {
 
   return (
     <div style={{ width: '100%' }}>
-      <Helmet><title>Forum Diskusi — Kuarta Bimbel</title></Helmet>
+      <SEO title="Forum Diskusi" description="Forum diskusi untuk bertanya dan berdiskusi dengan sesama siswa" url="/forum" noindex />
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
         <div>
           <h1 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: resp.isMobile ? 20 : 24, fontWeight: 800, color: T.text, marginBottom: 4 }}>

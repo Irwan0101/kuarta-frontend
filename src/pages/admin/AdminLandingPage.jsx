@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, Save, EyeOff, Eye, MoveUp, MoveDown, Flag, Star, MessageCircle, Rocket, Link2, Trophy, Tag, Palette, Image, Settings as SettingsIcon, Hash } from 'lucide-react';
+import { Plus, Trash2, Save, EyeOff, Eye, MoveUp, MoveDown, Flag, Star, MessageCircle, Rocket, Link2, Trophy, Tag, Palette, Image, BookOpen, Settings as SettingsIcon, Hash } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
 import { adminApi } from '@/lib/api';
@@ -23,6 +23,7 @@ export default function AdminLandingPage() {
     { key: 'cta', label: 'CTA', icon: Rocket, count: 0 },
     { key: 'footer', label: 'Footer', icon: Link2, count: 0 },
     { key: 'ticker', label: 'Ticker', icon: Hash, count: 0 },
+    { key: 'programs', label: 'Program', icon: BookOpen, count: 0 },
     { key: 'banners', label: 'Banners', icon: Trophy, count: 0 },
     { key: 'promotions', label: 'Promosi', icon: Tag, count: 0 },
     { key: 'settings', label: 'Pengaturan', icon: SettingsIcon, count: 0 },
@@ -80,6 +81,7 @@ export default function AdminLandingPage() {
         else if (t.key === 'ticker') count = sec?.content?.items?.length || 0;
         else if (t.key === 'cta') count = sec ? 1 : 0;
         else if (t.key === 'footer') count = sec?.content?.links?.length || 0;
+        else if (t.key === 'programs') count = sec ? 1 : 0;
         else if (t.key === 'settings') count = Object.keys(settings).length;
         return { ...t, count };
       }));
@@ -172,6 +174,9 @@ export default function AdminLandingPage() {
             <Field label="Title" value={form.hero?.title || ''} onChange={v => updateField('hero', 'title', v)} T={T} inpStyle={inpStyle} />
             <Field label="Subtitle" value={form.hero?.subtitle || ''} onChange={v => updateField('hero', 'subtitle', v)} T={T} inpStyle={inpStyle} />
           </Row>
+          <div style={{ marginTop: 8, marginBottom: 12 }}>
+            <Field label="Badge Text" value={getContent('hero').badge_text || ''} onChange={v => updateContent('hero', 'badge_text', v)} T={T} inpStyle={inpStyle} placeholder="Platform Belajar #1 di Indonesia" />
+          </div>
           <Row mobile={resp.isMobile}>
             <Field label="Button Text" value={getContent('hero').button_text || ''} onChange={v => updateContent('hero', 'button_text', v)} T={T} inpStyle={inpStyle} placeholder="Mulai Belajar Gratis" />
             <Field label="Button Link" value={getContent('hero').button_link || ''} onChange={v => updateContent('hero', 'button_link', v)} T={T} inpStyle={inpStyle} placeholder="/register" />
@@ -244,6 +249,9 @@ export default function AdminLandingPage() {
             <Field label="Title" value={form.features?.title || ''} onChange={v => updateField('features', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Semua yang Kamu Butuhkan" />
             <Field label="Subtitle" value={form.features?.subtitle || ''} onChange={v => updateField('features', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Ada di Sini" />
           </Row>
+          <div style={{ marginTop: 8, marginBottom: 12 }}>
+            <Field label="Badge Text" value={getContent('features').badge_text || ''} onChange={v => updateContent('features', 'badge_text', v)} T={T} inpStyle={inpStyle} placeholder="MENGAPA KUARTA" />
+          </div>
           <div style={{ marginTop: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <label style={{ ...lbl, margin: 0 }}>Daftar Fitur</label>
@@ -298,6 +306,9 @@ export default function AdminLandingPage() {
             <Field label="Title" value={form.testimonials?.title || ''} onChange={v => updateField('testimonials', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Mereka Sudah Membuktikannya" />
             <Field label="Subtitle" value={form.testimonials?.subtitle || ''} onChange={v => updateField('testimonials', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Testimoni dari siswa yang berhasil" />
           </Row>
+          <div style={{ marginTop: 8, marginBottom: 12 }}>
+            <Field label="Badge Text" value={getContent('testimonials').badge_text || ''} onChange={v => updateContent('testimonials', 'badge_text', v)} T={T} inpStyle={inpStyle} placeholder="TESTIMONI" />
+          </div>
           <div style={{ marginTop: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
               <label style={{ ...lbl, margin: 0 }}>Daftar Testimoni</label>
@@ -356,6 +367,16 @@ export default function AdminLandingPage() {
             <Field label="Button Text" value={getContent('cta').button_text || ''} onChange={v => updateContent('cta', 'button_text', v)} T={T} inpStyle={inpStyle} placeholder="Daftar Sekarang — Gratis" />
             <Field label="Button Link" value={getContent('cta').button_link || ''} onChange={v => updateContent('cta', 'button_link', v)} T={T} inpStyle={inpStyle} placeholder="/register" />
           </Row>
+          <div style={{ marginTop: 12 }}>
+            <label style={lbl}>Description (paragraf di bawah headline)</label>
+            <textarea
+              value={getContent('cta').description || ''}
+              onChange={e => updateContent('cta', 'description', e.target.value)}
+              rows={2}
+              style={{ width: '100%', ...inpStyle(), resize: 'vertical' }}
+              placeholder="Bergabung dengan 120.000+ siswa yang sudah membuktikan..."
+            />
+          </div>
           <div style={{ marginTop: 12 }}>
             <label style={lbl}>Guarantees / Badges (ketik + Enter)</label>
             <TagInput values={getContent('cta').guarantees || []} onChange={v => updateContent('cta', 'guarantees', v)} T={T} inpStyle={inpStyle} placeholder="Tanpa kartu kredit" />
@@ -467,6 +488,19 @@ export default function AdminLandingPage() {
             </p>
           </div>
         </div>
+      )}
+
+      {/* ──────── PROGRAMS ──────── */}
+      {activeTab === 'programs' && (
+        <SectionCard title="Program Section" onSubmit={() => saveSection('programs')} T={T} mobile={resp.isMobile}>
+          <Row mobile={resp.isMobile}>
+            <Field label="Title" value={form.programs?.title || ''} onChange={v => updateField('programs', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Pilih Program" />
+            <Field label="Subtitle" value={form.programs?.subtitle || ''} onChange={v => updateField('programs', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Sesuai Tujuanmu" />
+          </Row>
+          <div style={{ marginTop: 8 }}>
+            <Field label="Badge Text" value={getContent('programs').badge_text || ''} onChange={v => updateContent('programs', 'badge_text', v)} T={T} inpStyle={inpStyle} placeholder="PROGRAM UNGGULAN" />
+          </div>
+        </SectionCard>
       )}
 
       {/* ──────── BANNERS ──────── */}
@@ -660,7 +694,7 @@ function PromotionsTab({ promotions, onRefresh, T, inpStyle, cardStyle, isMobile
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button onClick={() => { setEditPromo({}); setEditPromoData({ title: '', description: '', discount_text: '', coupon_code: '', bg_color: '#FF6B00', ends_at: '' }); }}
+        <button onClick={() => { setEditPromo({}); setEditPromoData({ title: '', description: '', discount_text: '', coupon_code: '', bg_color: '#FF6B00', ends_at: '', image_url: '' }); }}
           style={{ background: ORG, color: '#fff', border: 'none', borderRadius: 8, padding: '8px 16px', fontSize: 13, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
           <Plus size={14} /> Tambah Promosi
         </button>
@@ -681,6 +715,10 @@ function PromotionsTab({ promotions, onRefresh, T, inpStyle, cardStyle, isMobile
             </div>
             <div><label style={lbl}>Description</label><input value={editPromoData.description} onChange={e => setEditPromoData(d => ({ ...d, description: e.target.value }))} style={inpStyle()} /></div>
             <div><label style={lbl}>Berakhir</label><input type="datetime-local" value={editPromoData.ends_at} onChange={e => setEditPromoData(d => ({ ...d, ends_at: e.target.value }))} style={inpStyle()} /></div>
+          </div>
+          <div style={{ marginTop: 10 }}>
+            <label style={lbl}>Gambar (opsional)</label>
+            <ImageUpload value={editPromoData.image_url} onChange={v => setEditPromoData(d => ({ ...d, image_url: v }))} />
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 12, justifyContent: 'flex-end' }}>
             <button onClick={() => setEditPromo(null)} style={{ background: T.bg4, color: T.text3, border: `1px solid ${T.border}`, borderRadius: 8, padding: '7px 14px', fontSize: 12, cursor: 'pointer' }}>Batal</button>
@@ -708,7 +746,7 @@ function PromotionsTab({ promotions, onRefresh, T, inpStyle, cardStyle, isMobile
             </div>
           </div>
           <div style={{ display: 'flex', gap: 4 }}>
-            <button onClick={() => { setEditPromo(p); setEditPromoData({ title: p.title || '', description: p.description || '', discount_text: p.discount_text || '', coupon_code: p.coupon_code || '', bg_color: p.bg_color || '#FF6B00', ends_at: p.ends_at ? p.ends_at.slice(0, 16) : '' }); }} style={btnSm(T)}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+            <button onClick={() => { setEditPromo(p); setEditPromoData({ title: p.title || '', description: p.description || '', discount_text: p.discount_text || '', coupon_code: p.coupon_code || '', bg_color: p.bg_color || '#FF6B00', ends_at: p.ends_at ? p.ends_at.slice(0, 16) : '', image_url: p.image_url || '' }); }} style={btnSm(T)}><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
             <button onClick={() => togglePromo(p.id, p.is_active)} style={btnSm(T)}>{p.is_active ? <EyeOff size={13} /> : <Eye size={13} />}</button>
             <button onClick={() => deletePromo(p.id)} style={{ ...btnSm(T), color: '#EF4444' }}><Trash2 size={13} /></button>
           </div>

@@ -1,5 +1,6 @@
 // src/pages/LeaderboardPage.jsx
 import { useState } from 'react';
+import SEO from '@/components/SEO';
 import { TrendingUp, TrendingDown, Minus, Trophy, Target, Zap } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
@@ -43,10 +44,12 @@ export default function LeaderboardPage() {
   const me = MOCK_LEADERBOARD.find(e => e.isMe);
 
   return (
-    <div style={{ width: '100%' }}>
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: T.text, marginBottom: 4 }}>
+    <>
+      <SEO title="Leaderboard" description="Peringkat nasional siswa Kuarta. Bersaing dengan ribuan siswa dari seluruh Indonesia." url="/leaderboard" noindex />
+      <div style={{ width: '100%' }}>
+        {/* Header */}
+        <div style={{ marginBottom: 24 }}>
+          <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: T.text, marginBottom: 4 }}>
           🏆 Leaderboard Nasional
         </h2>
         <p style={{ fontSize: 13, color: T.text3 }}>Peringkat berdasarkan skor tryout tertinggi bulan ini</p>
@@ -187,5 +190,6 @@ export default function LeaderboardPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

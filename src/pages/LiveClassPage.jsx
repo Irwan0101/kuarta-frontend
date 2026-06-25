@@ -1,5 +1,6 @@
 // src/pages/LiveClassPage.jsx
 import { useState } from 'react';
+import SEO from '@/components/SEO';
 import { Play, Bell, FileText, Calendar, Clock, Users, ChevronRight, Video, Mic } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { Avatar } from '@/components/ui/Avatar';
@@ -153,9 +154,11 @@ export default function LiveClassPage() {
   const [tab, setTab] = useState('jadwal');
 
   return (
-    <div style={{ width: '100%' }}>
-      <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-        <div>
+    <>
+      <SEO title="Live Class" description="Sesi belajar langsung bersama mentor setiap minggu. Tanya jawab real-time." url="/live" noindex />
+      <div style={{ width: '100%' }}>
+        <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+          <div>
           <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: T.text, marginBottom: 4 }}>
             🎥 Kelas Live Kuarta
           </h2>
@@ -217,5 +220,6 @@ export default function LiveClassPage() {
         </div>
       )}
     </div>
+    </>
   );
 }

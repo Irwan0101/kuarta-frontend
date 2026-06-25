@@ -1,6 +1,7 @@
 // src/pages/ForgotPasswordPage.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import { Mail, ArrowLeft, ArrowRight, CheckCircle, RefreshCw, Lock, Eye, EyeOff } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { authApi } from '@/lib/api';
@@ -293,14 +294,16 @@ export default function ForgotPasswordPage() {
   const strengthColor = ['', '#EF4444', '#F59E0B', '#22C55E', '#10B981'];
 
   return (
-    <div style={{
-      minHeight: '100vh', background: T.bg,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: 24, position: 'relative', overflow: 'hidden',
-    }}>
-      <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeUp {
+    <>
+      <SEO title="Lupa Password" url="/forgot-password" noindex />
+      <div style={{
+        minHeight: '100vh', background: T.bg,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 24, position: 'relative', overflow: 'hidden',
+      }}>
+        <style>{`
+          @keyframes spin { to { transform: rotate(360deg); } }
+          @keyframes fadeUp {
           from { opacity: 0; transform: translateY(16px); }
           to   { opacity: 1; transform: translateY(0); }
         }
@@ -513,6 +516,7 @@ export default function ForgotPasswordPage() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

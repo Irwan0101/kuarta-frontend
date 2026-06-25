@@ -1,20 +1,25 @@
 // src/components/layout/Topbar.jsx
 import { useState } from 'react';
-import { Bell, Search, Sun, Moon, Menu, X } from 'lucide-react';
+import { Bell, Search, Sun, Moon, Menu, X, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks/useTheme';
 import { useUIStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
+import { useCartStore } from '@/store/cartStore';
 import { Avatar } from '@/components/ui/Avatar';
 import NotifPanel from './NotifPanel';
+import CartDrawer from '@/components/features/CartDrawer';
 
 export default function Topbar({ title, breadcrumb }) {
     const { T, C, dark, toggleTheme } = useTheme();
     const { toggleNotif, notifOpen, setMobileSidebar } = useUIStore();
     const { user } = useAuthStore();
+    const { getCount } = useCartStore();
     const navigate = useNavigate();
     const [search, setSearch] = useState('');
     const [searchOpen, setSearchOpen] = useState(false);
+    const [cartOpen, setCartOpen] = useState(false);
+    const cartCount = getCount();
 
     return (
         <header style={{
@@ -91,6 +96,30 @@ export default function Topbar({ title, breadcrumb }) {
                 )}
             </div>
 
+            {/* Cart */}
+            <div style={{ position: 'relative' }}>
+                <button
+                    onClick={() => setCartOpen(o => !o)}
+                    style={{
+                        width: 34, height: 34, background: cartOpen ? C.orange + '18' : T.bg4,
+                        border: `1px solid ${cartOpen ? C.orange + '40' : T.border}`,
+                        borderRadius: 8, cursor: 'pointer', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center',
+                        color: cartOpen ? C.orange : T.text3, flexShrink: 0,
+                    }}
+                >
+                    <ShoppingCart size={16} />
+                    {cartCount > 0 && <span style={{
+                        position: 'absolute', top: -4, right: -4,
+                        minWidth: 16, height: 16, borderRadius: 8,
+                        background: C.orange, color: '#fff', fontSize: 9,
+                        fontWeight: 700, display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', padding: '0 4px',
+                        border: `1.5px solid ${T.bg2}`,
+                    }}>{cartCount}</span>}
+                </button>
+            </div>
+
             {/* Theme toggle */}
             <button
                 onClick={toggleTheme}
@@ -133,6 +162,9 @@ export default function Topbar({ title, breadcrumb }) {
 
             {/* Avatar */}
             <Avatar name={user?.name} size={34} ring />
+
+            {/* Cart Drawer */}
+            <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
         </header>
     );
 }

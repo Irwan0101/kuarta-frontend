@@ -1,5 +1,6 @@
 // src/pages/BimbelkuPage.jsx
 import { useState } from 'react';
+import SEO from '@/components/SEO';
 import {
   BookOpen, Play, CheckCircle, Circle, Clock, ChevronRight,
   Award, TrendingUp, Target, Star, Lock, Flame, BarChart2,
@@ -225,9 +226,11 @@ export default function BimbelkuPage() {
   const totalModules = MOCK_ENROLLED_PROGRAMS.reduce((a, p) => a + p.totalModules, 0);
 
   return (
-    <div style={{ width: '100%' }}>
+    <>
+      <SEO title="Bimbelku" description="Akses video belajar, materi, dan tryout sesuai program yang kamu ikuti" url="/belajar" noindex />
+      <div style={{ width: '100%' }}>
 
-      {/* ── Header ── */}
+        {/* ── Header ── */}
       <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
         <div>
           <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: T.text, marginBottom: 4 }}>
@@ -432,5 +435,6 @@ export default function BimbelkuPage() {
       </div>
 
     </div>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 // src/pages/ProgramPage.jsx
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SEO from '@/components/SEO';
 import {
   PlayCircle, FileText, Clock, Star, Users,
   Mic, Medal, ClipboardCheck, ChevronRight,
@@ -566,21 +567,23 @@ export default function ProgramPage() {
         <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700 }}>
           Memuat Program...
         </span>
-        <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
+        <style>{'@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }'}</style>
       </div>
     );
   }
 
   return (
-    <div style={{ width: '100%' }}>
-      {/* Page Header */}
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{
-          fontFamily: 'Syne, sans-serif',
-          fontSize: 24,
-          fontWeight: 800,
-          color: T.text,
-          marginBottom: 6,
+    <>
+      <SEO title="Program Belajar" description="Pilih program belajar sesuai kebutuhanmu: CPNS, UTBK SNBT, OSN, Bimbel SD/SMP/SMA" url="/program" noindex />
+      <div style={{ width: '100%' }}>
+        {/* Page Header */}
+        <div style={{ marginBottom: 28 }}>
+          <h1 style={{
+            fontFamily: 'Syne, sans-serif',
+            fontSize: 24,
+            fontWeight: 800,
+            color: T.text,
+            marginBottom: 6,
         }}>
           Program Bimbel Unggulan
         </h1>
@@ -750,5 +753,6 @@ export default function ProgramPage() {
         }
       `}</style>
     </div>
+    </>
   );
 }
