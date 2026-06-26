@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit2, Trash2, Video, Clock, Users } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
@@ -88,14 +89,14 @@ export default function AdminLivePage() {
       if (modal === 'create') await adminApi.createLiveClass(payload);
       else await adminApi.updateLiveClass(modal.id, payload);
       setModal(null); load();
-    } catch (e) { alert(e?.message || 'Gagal menyimpan.'); }
+    } catch (e) { toast.error(e?.message || 'Gagal menyimpan.'); }
     finally { setSaving(false); }
   };
 
   const handleDelete = async (id) => {
     if (!confirm('Hapus sesi live ini?')) return;
     try { await adminApi.deleteLiveClass(id); load(); }
-    catch (e) { alert(e?.message || 'Gagal menghapus.'); }
+    catch (e) { toast.error(e?.message || 'Gagal menghapus.'); }
   };
 
   const setF = k => e => setForm(f => ({ ...f, [k]: e.target.value }));

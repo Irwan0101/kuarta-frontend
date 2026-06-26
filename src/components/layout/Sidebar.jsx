@@ -5,7 +5,7 @@ import {
   ClipboardCheck, Video, Trophy,
   Wallet, UserCircle, LogOut, ChevronLeft,
   ShieldCheck, BarChart2, Users, BookMarked,
-  FileText, CreditCard, Zap,
+  FileText, CreditCard, Zap, Calendar, MessageCircle, Settings,
 } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useUIStore } from '@/store/uiStore';
@@ -54,6 +54,19 @@ const ADMIN_MENU = [
   },
 ];
 
+const MENTOR_MENU = [
+  {
+    section: 'Mentor',
+    items: [
+      { to: '/mentor/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/mentor/schedule',  icon: Calendar,       label: 'Jadwal Saya' },
+      { to: '/mentor/sessions',  icon: MessageCircle,   label: 'Sesi Mentoring' },
+      { to: '/mentor/students',  icon: Users,           label: 'Siswa Saya' },
+      { to: '/mentor/profile',   icon: Settings,        label: 'Profil Mentor' },
+    ],
+  },
+];
+
 /* ── Badge color helper ───────────────────────────────────────────── */
 function getBadgeStyle(color, C) {
   if (color === 'green') return { background: '#22d3a5', color: '#070709' };
@@ -68,7 +81,8 @@ export default function Sidebar() {
   const { sidebarOpen, toggleSidebar, mobileSidebarOpen, setMobileSidebar } = useUIStore();
   const location      = useLocation();
   const isAdmin       = user?.role === 'admin';
-  const menuGroups    = isAdmin ? ADMIN_MENU : USER_MENU;
+  const isMentor      = user?.role === 'mentor';
+  const menuGroups    = isAdmin ? ADMIN_MENU : isMentor ? MENTOR_MENU : USER_MENU;
   const collapsed     = !sidebarOpen;
 
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;

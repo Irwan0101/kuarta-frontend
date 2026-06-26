@@ -4,15 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import {
   PlayCircle, FileText, Clock, Star, Users,
-  Mic, Medal, ClipboardCheck, ChevronRight,
-  Search, SlidersHorizontal, BookOpen, Zap,
+  Mic, ClipboardCheck, ChevronRight,
+  Search, BookOpen, Zap, ShoppingCart,
 } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
+import { useCartStore } from '@/store/cartStore';
 import { programsApi } from '@/lib/api';
 import { formatIDR } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
 /* ── Category Filter Config ─────────────────────────────────────── */
 const CATEGORIES = [
@@ -58,66 +60,6 @@ const getProgramGradient = (slug = '') => {
   if (slug.includes('osn'))      return 'linear-gradient(135deg, #2a1a3a, #1a0f2a)';
   return 'linear-gradient(135deg, #1a1a2e, #0f0f1a)';
 };
-
-/* ── Mock fallback programs (shown when API fails / dev) ─────────── */
-const MOCK_PROGRAMS = [
-  {
-    id: 'mock-1', name: 'Bimbel SD', slug: 'bimbel-sd', price: 350000,
-    rating: 4.8, review_count: 1200, duration_months: 3,
-    video_count: 80, pdf_count: 40, badge: 'Populer', badge_type: 'popular',
-    description: 'Program belajar dasar untuk siswa SD dengan materi lengkap dan metode modern berbasis kurikulum Merdeka.',
-    category_label: 'Sekolah Dasar',
-  },
-  {
-    id: 'mock-2', name: 'Bimbel SMP', slug: 'bimbel-smp', price: 450000,
-    rating: 4.9, review_count: 876, duration_months: 4,
-    video_count: 120, pdf_count: 60, badge: 'Baru', badge_type: 'new',
-    description: 'Persiapan ujian dan pembelajaran SMP dengan kelas interaktif dan bank soal terlengkap.',
-    category_label: 'Sekolah Menengah Pertama',
-  },
-  {
-    id: 'mock-3', name: 'Bimbel SMA', slug: 'bimbel-sma', price: 550000,
-    rating: 4.9, review_count: 2100, duration_months: 6,
-    video_count: 200, pdf_count: 90, badge: null,
-    description: 'Materi SMA lengkap untuk semua jurusan dengan fokus nilai dan persiapan SBMPTN.',
-    category_label: 'Sekolah Menengah Atas',
-  },
-  {
-    id: 'mock-4', name: 'UTBK — SNBT', slug: 'utbk-snbt', price: 850000,
-    rating: 5.0, review_count: 3400, duration_months: 6,
-    video_count: 180, tryout_count: 50, badge: 'Hot', badge_type: 'hot',
-    description: 'Program intensif UTBK dengan tryout CAT dan strategi masuk PTN terbaik. Garansi nilai meningkat.',
-    category_label: 'Masuk Perguruan Tinggi',
-  },
-  {
-    id: 'mock-5', name: 'SKD CPNS — Kedinasan', slug: 'skd-cpns-kedinasan', price: 900000,
-    rating: 5.0, review_count: 5200, duration_months: 3,
-    video_count: 150, tryout_count: 30, badge: 'Terlaris', badge_type: 'popular',
-    description: 'Persiapan SKD CPNS dan kedinasan dengan materi terbaru, latihan soal resmi, dan simulasi CAT BKN.',
-    category_label: 'CPNS / ASN', is_enrolled: true,
-  },
-  {
-    id: 'mock-6', name: 'Persiapan Karier', slug: 'persiapan-karier', price: 300000,
-    rating: 4.6, review_count: 654, duration_months: 2,
-    video_count: 90, has_mentoring: true, badge: null,
-    description: 'Program karier untuk melatih soft skill, personal branding, dan persiapan interview kerja profesional.',
-    category_label: 'Pengembangan Karier',
-  },
-  {
-    id: 'mock-7', name: 'English Master', slug: 'english-master', price: 500000,
-    rating: 4.7, review_count: 890, duration_months: 4,
-    video_count: 110, has_speaking: true, badge: 'Baru', badge_type: 'new',
-    description: 'Kursus bahasa Inggris intensif untuk kemampuan speaking, writing, dan listening. Persiapan TOEFL/IELTS.',
-    category_label: 'Bahasa', is_enrolled: true,
-  },
-  {
-    id: 'mock-8', name: 'Persiapan OSN', slug: 'persiapan-osn', price: 600000,
-    rating: 5.0, review_count: 432, duration_months: 6,
-    video_count: 160, badge: 'Prestisius', badge_type: 'hot',
-    description: 'Bimbel OSN untuk siswa berprestasi, lengkap dengan materi tingkat kompetisi nasional dan internasional.',
-    category_label: 'Olimpiade',
-  },
-];
 
 /* ── Badge Component ─────────────────────────────────────────────── */
 function ProgramBadge({ badge, type, C }) {
@@ -167,7 +109,7 @@ function Stars({ rating, C }) {
 }
 
 /* ── Program Card ────────────────────────────────────────────────── */
-function ProgramCard({ prog, T, C, onSelect }) {
+function ProgramCard({ prog, T, C, onSelect, onAddToCart }) {
   const [hovered, setHovered] = useState(false);
   const icon     = prog.icon || getProgramIcon(prog.slug);
   const gradient = prog.gradient || getProgramGradient(prog.slug);
@@ -381,25 +323,47 @@ function ProgramCard({ prog, T, C, onSelect }) {
               ✓ Dimiliki
             </div>
           ) : (
-            <button
-              onClick={e => { e.stopPropagation(); onSelect(prog); }}
-              style={{
-                background: hovered ? C.orange : 'transparent',
-                color: hovered ? T.bg : C.orange,
-                border: `1.5px solid ${C.orange}`,
-                borderRadius: 8,
-                padding: '7px 16px',
-                fontSize: 12,
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 5,
-              }}
-            >
-              Pilih <ChevronRight size={13} />
-            </button>
+            <div style={{ display: 'flex', gap: 6 }}>
+              <button
+                onClick={e => { e.stopPropagation(); onAddToCart(prog); }}
+                style={{
+                  background: T.bg3,
+                  color: hovered ? C.orange : T.text3,
+                  border: `1.5px solid ${hovered ? C.orange + '60' : T.border}`,
+                  borderRadius: 8,
+                  padding: '7px 10px',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 4,
+                }}
+                title="Tambah ke Keranjang"
+              >
+                <ShoppingCart size={13} />
+              </button>
+              <button
+                onClick={e => { e.stopPropagation(); onSelect(prog); }}
+                style={{
+                  background: hovered ? C.orange : 'transparent',
+                  color: hovered ? T.bg : C.orange,
+                  border: `1.5px solid ${C.orange}`,
+                  borderRadius: 8,
+                  padding: '7px 16px',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 5,
+                }}
+              >
+                Pilih <ChevronRight size={13} />
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -472,6 +436,7 @@ function StatsBar({ programs, T, C }) {
 export default function ProgramPage() {
   const { T, C } = useTheme();
   const { user } = useAuthStore();
+  const addItem = useCartStore(s => s.addItem);
   const navigate  = useNavigate();
 
   const [programs,     setPrograms]     = useState([]);
@@ -481,23 +446,19 @@ export default function ProgramPage() {
   const [loading,      setLoading]      = useState(true);
   const [enrolled,     setEnrolled]     = useState([]);
 
-  /* Fetch programs from API */
+/* ── Fetch programs from API ── */
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const allPrograms = await programsApi.getAll().catch(() => null);
-
-        // getEnrolled may 404 if endpoint not yet implemented — fail silently
+        const allPrograms = await programsApi.getAll();
         const enrolledPrograms = await programsApi.getEnrolled().catch(() => []);
-
-        let progs = allPrograms?.length ? allPrograms : MOCK_PROGRAMS;
 
         const enrolledIds = Array.isArray(enrolledPrograms)
           ? enrolledPrograms.map(p => p.id)
           : [];
 
-        progs = progs.map(p => ({
+        const progs = (allPrograms || []).map(p => ({
           ...p,
           price:        Number(p.price),
           icon:         p.icon         || getProgramIcon(p.slug),
@@ -510,15 +471,7 @@ export default function ProgramPage() {
         setFiltered(progs);
         setEnrolled(enrolledIds);
       } catch (err) {
-        console.error('Gagal memuat program:', err);
-        const fallback = MOCK_PROGRAMS.map(p => ({
-          ...p,
-          icon:         getProgramIcon(p.slug),
-          gradient:     getProgramGradient(p.slug),
-          category_slug: getProgramCategory(p.slug),
-        }));
-        setPrograms(fallback);
-        setFiltered(fallback);
+        toast.error('Gagal memuat program');
       } finally {
         setLoading(false);
       }
@@ -544,6 +497,11 @@ export default function ProgramPage() {
 
   const handleSelectProgram = (prog) => {
     navigate('/payment', { state: { selectedProgramId: prog.id } });
+  };
+
+  const handleAddToCart = (prog) => {
+    addItem({ id: prog.id, name: prog.name, price: prog.price, icon: prog.icon });
+    toast.success(`${prog.name} ditambahkan ke keranjang`);
   };
 
   /* Loading state */
@@ -711,6 +669,7 @@ export default function ProgramPage() {
               T={T}
               C={C}
               onSelect={handleSelectProgram}
+              onAddToCart={handleAddToCart}
             />
           ))}
         </div>

@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { X, FileText, Video, Trash2, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import toast from 'react-hot-toast';
 
 const ORG = '#FF6B00';
 
@@ -32,9 +33,9 @@ export default function ImageUpload({ value, onChange, accept = 'image/*', label
       if (xhr.status < 200 || xhr.status >= 300) {
         try {
           const err = JSON.parse(xhr.responseText);
-          alert('Gagal upload: ' + (err.error || 'Coba lagi'));
+          toast.error('Gagal upload: ' + (err.error || 'Coba lagi'));
         } catch {
-          alert('Gagal upload: Server error');
+          toast.error('Gagal upload: Server error');
         }
         return;
       }
@@ -43,7 +44,7 @@ export default function ImageUpload({ value, onChange, accept = 'image/*', label
       if (onChange) onChange(data.url);
     };
 
-    xhr.onerror = () => { setUploading(false); alert('Gagal upload: Network error'); };
+    xhr.onerror = () => { setUploading(false); toast.error('Gagal upload: Network error'); };
     xhr.send(form);
   };
 
@@ -80,12 +81,12 @@ export default function ImageUpload({ value, onChange, accept = 'image/*', label
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({}));
-        alert('Gagal hapus: ' + (err.error || 'Coba lagi'));
+        toast.error('Gagal hapus: ' + (err.error || 'Coba lagi'));
         return;
       }
       clear();
     } catch (e) {
-      alert('Gagal hapus: ' + (e.message || 'Network error'));
+      toast.error('Gagal hapus: ' + (e.message || 'Network error'));
     }
     setDeleting(false);
   };

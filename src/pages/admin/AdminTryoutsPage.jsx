@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit2, Trash2, ChevronRight, ChevronDown, HelpCircle } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
@@ -73,7 +74,7 @@ export default function AdminTryoutsPage() {
       if (toModal === 'create') await adminApi.createTryout(toForm);
       else await adminApi.updateTryout(toModal.id, toForm);
       setToModal(null); loadTryouts();
-    } catch (e) { alert(e?.message || 'Gagal.'); }
+    } catch (e) { toast.error(e?.message || 'Gagal.'); }
     finally { setSaving(false); }
   };
 
@@ -93,7 +94,7 @@ export default function AdminTryoutsPage() {
       const data = await adminApi.getQuestions(qModal.tryoutId);
       setQuestions(q => ({ ...q, [qModal.tryoutId]: data }));
       setQModal(null);
-    } catch (e) { alert(e?.message || 'Gagal.'); }
+    } catch (e) { toast.error(e?.message || 'Gagal.'); }
     finally { setSaving(false); }
   };
 
@@ -102,7 +103,7 @@ export default function AdminTryoutsPage() {
     try {
       await adminApi.deleteQuestion(qId);
       setQuestions(q => ({ ...q, [tryoutId]: q[tryoutId].filter(x => x.id !== qId) }));
-    } catch (e) { alert(e?.message || 'Gagal hapus soal.'); }
+    } catch (e) { toast.error(e?.message || 'Gagal hapus soal.'); }
   };
 
   const setF  = k => e => setToForm(f => ({ ...f, [k]: e.target.value }));

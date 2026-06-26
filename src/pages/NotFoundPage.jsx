@@ -8,12 +8,12 @@ export default function NotFoundPage() {
       <div style={{
         display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
         minHeight: '100vh', background: '#0A0A0F', color: '#E8E8F0',
-      fontFamily: "'Plus Jakarta Sans', sans-serif", padding: 40, textAlign: 'center',
+      fontFamily: "'Syne', sans-serif", padding: 40, textAlign: 'center',
     }}>
-      <div style={{ fontSize: 80, marginBottom: 16, fontFamily: "'Plus Jakarta Sans', sans-serif", fontWeight: 800, background: 'linear-gradient(135deg, #FF6B00, #FF8C00)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+      <div style={{ fontSize: 80, marginBottom: 16, fontFamily: "'Syne', sans-serif", fontWeight: 800, background: 'linear-gradient(135deg, #FF6B00, #FF8C00)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
         404
       </div>
-      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, fontFamily: "'Syne', sans-serif" }}>
         Halaman Tidak Ditemukan
       </h1>
       <p style={{ fontSize: 14, color: '#9999B3', maxWidth: 400, marginBottom: 24 }}>

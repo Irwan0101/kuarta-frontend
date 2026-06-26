@@ -1,63 +1,18 @@
 // src/pages/PaymentPage.jsx
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import {
-  CreditCard, Wallet, DollarSign, Calendar,
-  ChevronRight, Shield, TrendingUp, AlertCircle,
-} from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Badge } from '@/components/ui/Badge';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
-import { useUIStore } from '@/store/uiStore';
-import PaymentModal from '@/components/features/payment/PaymentModal';
-import SuccessModal from '@/components/features/payment/SuccessModal';
-import { paymentApi, programsApi } from '@/lib/api'; // 🌟 Ditambahkan programsApi
+import { useCartStore } from '@/store/cartStore';
+import { paymentApi, programsApi } from '@/lib/api';
 import { formatIDR, formatDate } from '@/lib/utils';
+import toast from 'react-hot-toast';
 
-/* ── Mock Payment History ────────────────────────────────────── */
-const MOCK_TRANSACTIONS = [
-  {
-    id: 'TRX-001',
-    program: 'SKD CPNS — Kedinasan',
-    amount: 900000,
-    status: 'success',
-    date: new Date(Date.now() - 86400000),
-    paymentMethod: 'QRIS',
-    icon: '🏛️',
-  },
-  {
-    id: 'TRX-002',
-    program: 'English Master',
-    amount: 500000,
-    status: 'success',
-    date: new Date(Date.now() - 86400000 * 16),
-    paymentMethod: 'Bank Transfer',
-    icon: '🌐',
-  },
-  {
-    id: 'TRX-003',
-    program: 'UTBK — SNBT (Perpanjangan)',
-    amount: 850000,
-    status: 'success',
-    date: new Date(Date.now() - 86400000 * 27),
-    paymentMethod: 'GoPay',
-    icon: '🎯',
-  },
-  {
-    id: 'TRX-004',
-    program: 'Bimbel SD (Adik)',
-    amount: 350000,
-    status: 'pending',
-    date: new Date(Date.now() - 86400000 * 43),
-    paymentMethod: 'OVO',
-    icon: '📗',
-  },
-];
-
-// Helper fallback icon jika database tidak menyediakan icon/emoji
+/* ── Helper fallback icon jika database tidak menyediakan icon/emoji ── */
 const getProgramIcon = (slug) => {
   if (slug?.includes('sd')) return '📗';
   if (slug?.includes('smp')) return '📘';
@@ -176,20 +131,16 @@ function TransactionItem({ tx, T, C }) {
 /* ── Main Component ────────────────────────────────────────── */
 export default function PaymentPage() {
   const { T, C } = useTheme();
-  const { user } = useAuthStore();
-  const { setModal } = useUIStore();
+  const clearCart = useCartStore(s => s.clearCart);
   const navigate = useNavigate();
 
   // 🌟 State Baru untuk menampung data program asli dari Database
   const [dbPrograms, setDbPrograms] = useState([]);
-  const [transactions, setTransactions] = useState(MOCK_TRANSACTIONS);
+  const [transactions, setTransactions] = useState([]);
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('bank');
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true); // Spinner loader halaman awal
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [lastOrderId, setLastOrderId] = useState(null);
 
   const serviceFee = 5000;
   // Ambil total secara dinamis jika program sudah berhasil di-load
@@ -197,37 +148,49 @@ export default function PaymentPage() {
 
   // 🌟 Ambil data program real-time dari Database via API
   useEffect(() => {
-    const fetchProgramsData = async () => {
+    const fetchData = async () => {
       try {
         setPageLoading(true);
-        const data = await programsApi.getAll();
-        
-        if (data && data.length > 0) {
-          // Format data agar seragam dan selipkan field icon pendukung visual
-          const formatted = data.map(prog => ({
+        const [programs, history] = await Promise.all([
+          programsApi.getAll().catch(() => []),
+          paymentApi.getHistory().catch(() => null),
+        ]);
+
+        if (programs && programs.length > 0) {
+          const formatted = programs.map(prog => ({
             ...prog,
             price: Number(prog.price),
-            icon: getProgramIcon(prog.slug)
+            icon: getProgramIcon(prog.slug),
           }));
-          
           setDbPrograms(formatted);
-          setSelectedProgram(formatted[0]); // Default pilih program urutan pertama di DB
+          setSelectedProgram(formatted[0]);
         }
-      } catch (err) {
-        console.error("Gagal menarik data program dari DB:", err);
-      } finally {
+
+        if (history?.transactions) {
+          const mapped = history.transactions.map(tx => ({
+            id: tx.order_id || tx.id,
+            program: tx.program_name || 'Program',
+            amount: tx.gross_amount || 0,
+            status: tx.status === 'settlement' ? 'success' : tx.status === 'deny' || tx.status === 'expire' ? 'failed' : tx.status || 'pending',
+            date: new Date(tx.created_at || tx.transaction_time),
+            paymentMethod: tx.payment_type || '-',
+            icon: tx.program_icon || getProgramIcon(tx.program_category) || '💳',
+          }));
+          setTransactions(mapped);
+        }
+    } catch (err) {
+      console.error("Gagal menarik data:", err);
+      toast.error('Gagal memuat data pembayaran');
+    } finally {
         setPageLoading(false);
       }
     };
 
-    fetchProgramsData();
-    
-    // In production: await paymentApi.getHistory()
-    // setTransactions(data);
+    fetchData();
   }, []);
 
   const handlePayment = async () => {
-    if (!selectedProgram) return alert("Silakan pilih program terlebih dahulu.");
+    if (!selectedProgram) return toast.error("Silakan pilih program terlebih dahulu.");
     
     setLoading(true);
     try {
@@ -261,14 +224,14 @@ export default function PaymentPage() {
     } catch (err) {
       console.error('Payment error:', err);
       const errorMsg = err.error || err.message || 'Gagal membuat transaksi. Silakan coba lagi.';
-      alert(errorMsg);
+      toast.error(errorMsg);
       setLoading(false);
     }
   };
 
   const handlePaymentSuccess = async (result, orderId) => {
-    setLastOrderId(orderId);
-    setShowSuccessModal(true);
+    clearCart();
+    toast.success('Pembayaran berhasil! Selamat belajar.');
     setLoading(false);
 
     // Reload payment history
@@ -287,12 +250,12 @@ export default function PaymentPage() {
   };
 
   const handlePaymentPending = (result) => {
-    alert('Pembayaran Anda sedang diproses. Silakan periksa status transaksi Anda.');
+    toast.success('Pembayaran sedang diproses. Cek status transaksi secara berkala.');
     setLoading(false);
   };
 
   const handlePaymentError = (result) => {
-    alert('Pembayaran gagal. Silakan coba lagi dengan metode pembayaran lain.');
+    toast.error('Pembayaran gagal. Silakan coba lagi dengan metode pembayaran lain.');
     setLoading(false);
   };
 
@@ -684,30 +647,6 @@ export default function PaymentPage() {
           </div>
         </div>
       </div>
-
-      {/* Modals */}
-      {selectedProgram && (
-        <PaymentModal
-          isOpen={showPaymentModal}
-          onClose={() => setShowPaymentModal(false)}
-          program={selectedProgram}
-          total={total}
-          onPayment={handlePayment}
-          T={T}
-          C={C}
-        />
-      )}
-
-      {selectedProgram && (
-        <SuccessModal
-          isOpen={showSuccessModal}
-          onClose={() => setShowSuccessModal(false)}
-          orderId={lastOrderId}
-          program={selectedProgram}
-          T={T}
-          C={C}
-        />
-      )}
 
       {/* Spinner Animation */}
       <style>{`

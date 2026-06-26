@@ -20,10 +20,10 @@ export default class ErrorBoundary extends Component {
         <div style={{
           display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
           minHeight: '100vh', background: '#0A0A0F', color: '#E8E8F0',
-          fontFamily: "'Plus Jakarta Sans', sans-serif", padding: 40, textAlign: 'center',
+          fontFamily: "'Syne', sans-serif", padding: 40, textAlign: 'center',
         }}>
           <div style={{ fontSize: 64, marginBottom: 16 }}>⚠️</div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+          <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, fontFamily: "'Syne', sans-serif" }}>
             Terjadi Kesalahan
           </h1>
           <p style={{ fontSize: 14, color: '#9999B3', maxWidth: 400, marginBottom: 24 }}>

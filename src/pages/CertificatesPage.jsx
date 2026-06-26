@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import SEO from '@/components/SEO';
-import { Award, Download, Calendar, CheckCircle, Lock, ArrowLeft, Share2 } from 'lucide-react';
+import { Award, Download, Calendar, CheckCircle, Lock, Share2 } from 'lucide-react';
 import useResponsive from '@/hooks/useResponsive';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';

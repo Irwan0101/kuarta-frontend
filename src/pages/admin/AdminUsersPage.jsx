@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Search, UserX, Edit2, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
 import {
     PageHeader, Card, CardHead, Btn, Badge, Input, Spinner, ErrorBox,
@@ -39,7 +40,7 @@ export default function AdminUsersPage() {
     const handleBan = async (id) => {
         if (!confirm('Yakin ban user ini?')) return;
         try { await adminApi.banUser(id); load(); }
-        catch (e) { alert(e?.message || 'Gagal ban user.'); }
+        catch (e) { toast.error(e?.message || 'Gagal ban user.'); }
     };
 
     const handleSaveEdit = async () => {
@@ -47,13 +48,13 @@ export default function AdminUsersPage() {
         try {
             await adminApi.updateUser(editUser.id, { name: editUser.name, role: editUser.role });
             setEditUser(null); load();
-        } catch (e) { alert(e?.message || 'Gagal update user.'); }
+        } catch (e) { toast.error(e?.message || 'Gagal update user.'); }
         finally { setSaving(false); }
     };
 
     const handleCreate = async () => {
         if (!createForm.name || !createForm.email || !createForm.password) {
-            alert('Nama, email, dan password wajib diisi');
+            toast.error('Nama, email, dan password wajib diisi');
             return;
         }
         setSaving(true);
@@ -62,7 +63,7 @@ export default function AdminUsersPage() {
             setCreateOpen(false);
             setCreateForm({ name: '', email: '', password: '', role: 'user', plan: 'free' });
             load();
-        } catch (e) { alert(e?.message || 'Gagal membuat user.'); }
+        } catch (e) { toast.error(e?.message || 'Gagal membuat user.'); }
         finally { setSaving(false); }
     };
 

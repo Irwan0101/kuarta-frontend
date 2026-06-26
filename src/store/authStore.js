@@ -15,6 +15,7 @@ export const useAuthStore = create(
             error: null,
             isLoggedIn: () => !!get().token,
             isAdmin: () => get().user?.role === 'admin' || get().user?.isAdmin === true,
+            isMentor: () => get().user?.role === 'mentor',
 
             /* ── Actions ─────────────────────────────────────────────────── */
 

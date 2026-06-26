@@ -12,11 +12,18 @@ import LoginPage        from './pages/LoginPage';
 import Dashboard        from './pages/DashboardPage';
 import Program          from './pages/ProgramPage';
 import Tryout           from './pages/TryoutPage';
+import TryoutSession    from './pages/TryoutSessionPage';
+import TryoutResult     from './pages/TryoutResultPage';
 import Payment          from './pages/PaymentPage';
+import PaymentCallback  from './pages/PaymentCallback';
 import BimbelkuPage     from './pages/BimbelkuPage';
+import LessonDetailPage from './pages/LessonDetailPage';
 import LiveClassPage    from './pages/LiveClassPage';
 import LeaderboardPage  from './pages/LeaderboardPage';
 import ProfilPage       from './pages/ProfilPage';
+import MentorPage       from './pages/MentorPage';
+import ForumPage        from './pages/ForumPage';
+import CertificatesPage from './pages/CertificatesPage';
 
 // Pages — admin
 import AdminLayout        from './pages/admin/AdminLayout';
@@ -34,6 +41,7 @@ import AdminNotificationsPage from './pages/admin/AdminNotificationsPage';
 import AdminMateriPage    from './pages/admin/AdminMateriPage';
 import LandingPage        from './pages/LandingPage';
 import ForgotPassword     from './pages/ForgotPassword';
+import MentorDashboard    from './pages/MentorDashboard';
 // ─── GUARDS ───────────────────────────────────────────────────────
 
 // Redirect user yang sudah login dari halaman publik
@@ -63,6 +71,17 @@ function Protected({ children, adminOnly = false }) {
 
   if (!isLoggedIn)           return <Navigate to="/login" replace />;
   if (adminOnly && !isAdmin) return <Navigate to="/dashboard" replace />;
+  return children;
+}
+
+// Hanya untuk mentor
+function MentorOnly({ children }) {
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn());
+  const isMentor   = useAuthStore((s) => s.isMentor());
+  const isAdmin    = useAuthStore((s) => s.isAdmin());
+
+  if (!isLoggedIn)             return <Navigate to="/login" replace />;
+  if (!isMentor && !isAdmin)   return <Navigate to="/dashboard" replace />;
   return children;
 }
 
@@ -102,13 +121,27 @@ export default function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* ── User routes (non-admin only) ── */}
         <Route path="/dashboard"   element={<UserOnly><AppLayout><Dashboard /></AppLayout></UserOnly>} />
-        <Route path="/tryout"      element={<UserOnly><AppLayout><Tryout /></AppLayout></UserOnly>} />
-        <Route path="/pembayaran"  element={<UserOnly><AppLayout><Payment /></AppLayout></UserOnly>} />
+        <Route path="/tryout"              element={<UserOnly><AppLayout><Tryout /></AppLayout></UserOnly>} />
+        <Route path="/tryout/:id/start"   element={<UserOnly><AppLayout><TryoutSession /></AppLayout></UserOnly>} />
+        <Route path="/tryout/:id/result"  element={<UserOnly><AppLayout><TryoutResult /></AppLayout></UserOnly>} />
+        <Route path="/pembayaran"         element={<UserOnly><AppLayout><Payment /></AppLayout></UserOnly>} />
+        <Route path="/pembayaran/callback/:orderId" element={<UserOnly><AppLayout><PaymentCallback /></AppLayout></UserOnly>} />
         <Route path="/program"     element={<UserOnly><AppLayout><Program /></AppLayout></UserOnly>} />
         <Route path="/belajar"     element={<UserOnly><AppLayout><BimbelkuPage /></AppLayout></UserOnly>} />
+        <Route path="/belajar/:id" element={<UserOnly><AppLayout><LessonDetailPage /></AppLayout></UserOnly>} />
         <Route path="/live"        element={<UserOnly><AppLayout><LiveClassPage /></AppLayout></UserOnly>} />
         <Route path="/leaderboard" element={<UserOnly><AppLayout><LeaderboardPage /></AppLayout></UserOnly>} />
         <Route path="/profil"      element={<UserOnly><AppLayout><ProfilPage /></AppLayout></UserOnly>} />
+        <Route path="/forum"       element={<UserOnly><AppLayout><ForumPage /></AppLayout></UserOnly>} />
+        <Route path="/sertifikat"  element={<UserOnly><AppLayout><CertificatesPage /></AppLayout></UserOnly>} />
+        <Route path="/mentor"      element={<UserOnly><AppLayout><MentorPage /></AppLayout></UserOnly>} />
+
+        {/* ── Mentor routes (mentor only) ── */}
+        <Route path="/mentor/dashboard" element={<MentorOnly><AppLayout><MentorDashboard /></AppLayout></MentorOnly>} />
+        <Route path="/mentor/schedule"  element={<MentorOnly><AppLayout><MentorDashboard tab="schedule" /></AppLayout></MentorOnly>} />
+        <Route path="/mentor/sessions"  element={<MentorOnly><AppLayout><MentorDashboard tab="sessions" /></AppLayout></MentorOnly>} />
+        <Route path="/mentor/students"  element={<MentorOnly><AppLayout><MentorDashboard tab="students" /></AppLayout></MentorOnly>} />
+        <Route path="/mentor/profile"   element={<MentorOnly><AppLayout><MentorDashboard tab="profile" /></AppLayout></MentorOnly>} />
 
         {/* ── Admin routes (admin only, own shell) ── */}
         <Route

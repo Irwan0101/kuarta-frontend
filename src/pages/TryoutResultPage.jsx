@@ -8,7 +8,6 @@ import { tryoutApi } from '@/lib/api';
 import { formatDuration } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Spinner } from '@/components/ui/Badge';
 import PageSkeleton from '@/components/PageSkeleton';
 
 const SUBJECT_COLORS = { TWK: '#FF6B00', TIU: '#3B82F6', TKP: '#22C55E' };
@@ -70,7 +69,7 @@ export default function TryoutResultPage() {
           }}>
             {passed ? '🎉' : '😔'}
           </div>
-          <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:22, color: T.text, marginBottom:4 }}>
+          <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color: T.text, marginBottom:4 }}>
             {result.tryout_title || 'Hasil Tryout'}
           </div>
           <div style={{ fontSize:13, color: T.text4, marginBottom:16 }}>
@@ -88,7 +87,7 @@ export default function TryoutResultPage() {
               width:100, height:100, borderRadius:'50%', background: T.bg2,
               display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
             }}>
-              <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:28, color: T.text }}>
+              <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:28, color: T.text }}>
                 {result.total_score}
               </span>
               {result.passing_score && (
@@ -122,7 +121,7 @@ export default function TryoutResultPage() {
             <div style={{ fontSize:11, color: T.text4, marginBottom:6, display:'flex', alignItems:'center', justifyContent:'center', gap:4 }}>
               {s.icon} {s.label}
             </div>
-            <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:800, fontSize:22, color: s.color }}>{s.value}</div>
+            <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color: s.color }}>{s.value}</div>
           </div>
         ))}
       </div>
@@ -131,7 +130,7 @@ export default function TryoutResultPage() {
       <Card style={{ marginBottom:20 }}>
         <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
           <BarChart3 size={16} />
-          <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:14, color: T.text }}>Skor per Kategori</span>
+          <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:14, color: T.text }}>Skor per Kategori</span>
         </div>
         {[
           { key:'TWK', label:'TWK (Tes Wawasan Kebangsaan)', score:result.twk_score, color:SUBJECT_COLORS.TWK },
@@ -144,7 +143,7 @@ export default function TryoutResultPage() {
             <div key={s.key} style={{ marginBottom:10 }}>
               <div style={{ display:'flex', justifyContent:'space-between', fontSize:12, marginBottom:4 }}>
                 <span style={{ color: T.text3 }}>{s.label}</span>
-                <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, color: s.color }}>{s.score}</span>
+                <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, color: s.color }}>{s.score}</span>
               </div>
               <div style={{ height:6, background: T.bg3, borderRadius:99, overflow:'hidden' }}>
                 <div style={{ width:`${pct}%`, height:'100%', background: s.color, borderRadius:99, transition:'width .8s ease' }} />
@@ -161,7 +160,7 @@ export default function TryoutResultPage() {
             <Clock size={18} color={C.blue} />
             <div>
               <div style={{ fontSize:11, color: T.text4 }}>Waktu Pengerjaan</div>
-              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:16, color: T.text }}>
+              <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:16, color: T.text }}>
                 {formatDuration(timeSpent || 0)}
               </div>
             </div>
@@ -172,7 +171,7 @@ export default function TryoutResultPage() {
             <Trophy size={18} color={C.yellow} />
             <div>
               <div style={{ fontSize:11, color: T.text4 }}>Poin Hadiah</div>
-              <div style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:16, color: T.text }}>
+              <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:16, color: T.text }}>
                 +{passed ? 100 : 30} poin
               </div>
             </div>
@@ -185,7 +184,7 @@ export default function TryoutResultPage() {
         <Card>
           <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:14 }}>
             <CheckCircle size={16} />
-            <span style={{ fontFamily:"'Plus Jakarta Sans',sans-serif", fontWeight:700, fontSize:14, color: T.text }}>
+            <span style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:14, color: T.text }}>
               Pembahasan Soal
             </span>
           </div>

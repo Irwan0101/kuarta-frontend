@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
+import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
 import ImageUpload from '@/components/ui/ImageUpload';
 import {
@@ -38,14 +39,14 @@ export default function AdminProgramsPage() {
       if (modal === 'create') await adminApi.createProgram(form);
       else await adminApi.updateProgram(modal.id, form);
       setModal(null); load();
-    } catch (e) { alert(e?.message || 'Gagal menyimpan.'); }
+    } catch (e) { toast.error(e?.message || 'Gagal menyimpan.'); }
     finally { setSaving(false); }
   };
 
   const handleDelete = async (id) => {
     if (!confirm('Hapus program ini?')) return;
     try { await adminApi.deleteProgram(id); load(); }
-    catch (e) { alert(e?.message || 'Gagal hapus.'); }
+    catch (e) { toast.error(e?.message || 'Gagal hapus.'); }
   };
 
   const set = k => e => setForm(f => ({ ...f, [k]: e.target.value }));

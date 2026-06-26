@@ -47,7 +47,7 @@ export default function MentorPage() {
         setMentors(Array.isArray(m) ? m : []);
         setMySessions(Array.isArray(s) ? s : []);
         setPrograms(Array.isArray(p) ? p : []);
-      } catch (e) { console.error(e); }
+      } catch (e) { console.error(e); toast.error('Gagal memuat data mentor'); }
       setLoading(false);
     })();
   }, []);

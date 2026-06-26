@@ -42,7 +42,7 @@ export default function ForumPage() {
         ]);
         setPrograms(Array.isArray(allPrograms) ? allPrograms : []);
         setMyThreads(Array.isArray(my) ? my : []);
-      } catch (e) { console.error(e); }
+      } catch (e) { console.error(e); toast.error('Gagal memuat data forum'); }
       setLoading(false);
     };
     load();

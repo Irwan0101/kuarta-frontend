@@ -5,6 +5,7 @@ import { Camera, Save, Lock, Crown, LogOut, Shield, Bell, CreditCard, Eye, EyeOf
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 import { authApi, paymentApi } from '@/lib/api';
+import toast from 'react-hot-toast';
 
 /* ─── Constants ──────────────────────────────────────────────────── */
 const TARGETS = [
@@ -384,14 +385,14 @@ export default function ProfilPage() {
     xhr.upload.onprogress = (e) => { if (e.lengthComputable) setAvatarProgress(Math.round((e.loaded / e.total) * 100)); };
     xhr.onload = () => {
       setAvatarUploading(false);
-      if (xhr.status < 200 || xhr.status >= 300) return alert('Gagal upload avatar');
+      if (xhr.status < 200 || xhr.status >= 300) return toast.error('Gagal upload avatar');
       const data = JSON.parse(xhr.responseText);
       authApi.updateProfile({ avatar_url: data.url }).then((updated) => {
         setProfile(updated);
         setUser?.(updated);
-      }).catch(() => alert('Gagal menyimpan avatar'));
+      }).catch(() => toast.error('Gagal menyimpan avatar'));
     };
-    xhr.onerror = () => { setAvatarUploading(false); alert('Gagal upload avatar'); };
+    xhr.onerror = () => { setAvatarUploading(false); toast.error('Gagal upload avatar'); };
     xhr.send(form);
   };
 
