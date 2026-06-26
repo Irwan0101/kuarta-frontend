@@ -2,68 +2,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowRight, Shield } from 'lucide-react';
-import { GoogleLogin } from '@react-oauth/google';
-import { useAuthStore } from '@/store/authStore';
-import { useTheme }     from '@/hooks/useTheme';
-import { Button }       from '@/components/ui/Button';
-import toast            from 'react-hot-toast';
-
-/* ─── Inline InputField (tidak bergantung pada import yang salah) ── */
-function InputField({ label, hint, error, icon, type = 'text', value, onChange, placeholder, required }) {
-  const { T, C } = useTheme();
-  const [show, setShow] = useState(false);
-  const isPassword      = type === 'password';
-  const inputType       = isPassword ? (show ? 'text' : 'password') : type;
-
-  return (
-    <div>
-      {label && (
-        <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: T.text3, marginBottom: 6, letterSpacing: '0.02em' }}>
-          {label}{required && <span style={{ color: C.orange, marginLeft: 2 }}>*</span>}
-        </label>
-      )}
-      <div style={{ position: 'relative' }}>
-        {/* Left icon */}
-        {icon && (
-          <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: error ? '#EF4444' : T.text4, display: 'flex', pointerEvents: 'none' }}>
-            {icon}
-          </span>
-        )}
-        <input
-          type={inputType}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          required={required}
-          style={{
-            width: '100%', boxSizing: 'border-box',
-            padding: `10px ${isPassword ? '40px' : '14px'} 10px ${icon ? '38px' : '14px'}`,
-            fontSize: 13, borderRadius: 10,
-            background: T.bg3,
-            border: `1px solid ${error ? '#EF4444' : T.border}`,
-            color: T.text, outline: 'none',
-            transition: 'border-color .15s',
-          }}
-          onFocus={e  => { e.target.style.borderColor = error ? '#EF4444' : C.orange; }}
-          onBlur={e   => { e.target.style.borderColor = error ? '#EF4444' : T.border; }}
-        />
-        {/* Right: show/hide toggle */}
-        {isPassword && (
-          <button
-            type="button"
-            onClick={() => setShow(s => !s)}
-            style={{ position: 'absolute', right: 13, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: T.text4, display: 'flex', padding: 0 }}
-          >
-            {show ? <EyeOff size={15} /> : <Eye size={15} />}
-          </button>
-        )}
-      </div>
-      {error && <p style={{ margin: '5px 0 0', fontSize: 11, color: '#EF4444' }}>{error}</p>}
-      {hint && !error && <p style={{ margin: '5px 0 0', fontSize: 11, color: T.text4 }}>{hint}</p>}
-    </div>
-  );
-}
 
 /* ─── Demo credentials helper ─────────────────────────────────── */
 function DemoChip({ label, email, password, onFill, C, T }) {
