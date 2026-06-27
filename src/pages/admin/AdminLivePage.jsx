@@ -4,6 +4,7 @@ import { Plus, Edit2, Trash2, Video, Clock, Users } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
+import { useConfirm } from '@/hooks/useConfirm';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
   Modal, FormGroup, FormRow, TableHead, EmptyRow,
@@ -37,6 +38,7 @@ const STATUS_COLOR = { live: RED, mendatang: GREEN, selesai: '#6b7280', draft: '
 
 export default function AdminLivePage() {
   const { T } = useTheme();
+  const { confirm, modal: confirmModal } = useConfirm();
   const [classes,  setClasses]  = useState([]);
   const [mentors,  setMentors]  = useState([]);
   const [loading,  setLoading]  = useState(true);
@@ -94,7 +96,7 @@ export default function AdminLivePage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Hapus sesi live ini?')) return;
+    if (!(await confirm('Hapus sesi live ini?'))) return;
     try { await adminApi.deleteLiveClass(id); load(); }
     catch (e) { toast.error(e?.message || 'Gagal menghapus.'); }
   };
@@ -233,6 +235,7 @@ export default function AdminLivePage() {
           </div>
         </Modal>
       )}
+      {confirmModal}
     </div>
   );
 }

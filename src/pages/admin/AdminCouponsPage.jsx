@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
+import { useConfirm } from '@/hooks/useConfirm';
 import { adminApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { Plus, Trash2, Tag } from 'lucide-react';
@@ -117,10 +118,12 @@ export default function AdminCouponsPage() {
     setLoading(false);
   };
 
+  const { confirm, modal: confirmModal } = useConfirm();
+
   useEffect(() => { load(); }, []);
 
   const deleteCoupon = async (id) => {
-    if (!confirm('Hapus kupon ini?')) return;
+    if (!(await confirm('Hapus kupon ini?'))) return;
     try {
       await adminApi.deleteCoupon(id);
       toast.success('Kupon dihapus');
@@ -195,6 +198,7 @@ export default function AdminCouponsPage() {
           ))}
         </div>
       )}
+      {confirmModal}
     </div>
   );
 }

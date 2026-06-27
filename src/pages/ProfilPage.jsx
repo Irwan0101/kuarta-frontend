@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import SEO from '@/components/SEO';
 import { Camera, Save, Lock, Crown, LogOut, Shield, Bell, CreditCard, Eye, EyeOff, CheckCircle, AlertCircle, Loader, Loader2 } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { useConfirm } from '@/hooks/useConfirm';
 import { useAuthStore } from '@/store/authStore';
 import { authApi, paymentApi } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -329,6 +330,7 @@ function LanggananTab({ transactions, loadingTx, T, C }) {
 export default function ProfilPage() {
   const { T, C }          = useTheme();
   const { user, setUser, logout } = useAuthStore();
+  const { confirm, modal: confirmModal } = useConfirm();
 
   const [activeNav, setActiveNav]   = useState('info');
   const [profile, setProfile]       = useState(null);
@@ -519,7 +521,7 @@ export default function ProfilPage() {
                 </button>
               );
             })}
-            <button onClick={() => { if (window.confirm('Yakin ingin keluar?')) logout(); }} style={{
+            <button onClick={async () => { if (await confirm('Yakin ingin keluar?')) logout(); }} style={{
               width: '100%', display: 'flex', alignItems: 'center', gap: 10,
               padding: '12px 18px', background: 'transparent',
               border: 'none', borderTop: `1px solid ${T.border}`,
@@ -538,7 +540,8 @@ export default function ProfilPage() {
           {activeNav === 'langganan' && <LanggananTab  transactions={transactions} loadingTx={loadingTx} T={T} C={C} />}
         </div>
       </div>
-    </div>
+      </div>
+      {confirmModal}
     </>
   );
 }

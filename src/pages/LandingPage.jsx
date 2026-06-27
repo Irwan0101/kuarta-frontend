@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import SEO from '@/components/SEO';
-import { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, FileText, Star, Play, Calendar, ArrowRight } from 'lucide-react';
+import { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, FileText, Star, Play, Calendar, ArrowRight, ClipboardCheck, BarChart3, Smartphone, MessageCircle, GraduationCap, Moon, Sun, HelpCircle, DollarSign } from 'lucide-react';
 
 const PROGRAMS = [
   { icon: Landmark, cat: "CPNS", name: "SKD CPNS – Kedinasan", price: "900.000", videos: 150, tryouts: 30, months: 3, color: "#FF6B00", rating: 4.8 },
@@ -20,12 +20,12 @@ const DEFAULT_STATS = [
 ];
 
 const DEFAULT_FEATURES = [
-  { icon: "📹", title: "Video HD Interaktif", desc: "Ratusan video berkualitas tinggi dari pengajar berpengalaman, bisa ditonton kapan saja." },
-  { icon: "📝", title: "Tryout Mirip Asli", desc: "Simulasi tryout dengan soal yang diperbarui setiap bulan, sesuai kisi-kisi terbaru." },
-  { icon: "🎥", title: "Live Class Rutin", desc: "Sesi belajar langsung bersama mentor setiap minggu, bisa tanya jawab real-time." },
-  { icon: "📊", title: "Analitik Performa", desc: "Pantau perkembangan nilai dan identifikasi kelemahan dengan grafik yang detail." },
-  { icon: "🏆", title: "Leaderboard Nasional", desc: "Bersaing dengan ribuan siswa dari seluruh Indonesia, motivasi diri setiap hari." },
-  { icon: "📱", title: "Akses Multi-Device", desc: "Belajar dari HP, tablet, atau laptop — sinkronisasi otomatis di semua perangkat." },
+  { icon: <Video size={22} />, title: "Video HD Interaktif", desc: "Ratusan video berkualitas tinggi dari pengajar berpengalaman, bisa ditonton kapan saja." },
+  { icon: <ClipboardCheck size={22} />, title: "Tryout Mirip Asli", desc: "Simulasi tryout dengan soal yang diperbarui setiap bulan, sesuai kisi-kisi terbaru." },
+  { icon: <Video size={22} />, title: "Live Class Rutin", desc: "Sesi belajar langsung bersama mentor setiap minggu, bisa tanya jawab real-time." },
+  { icon: <BarChart3 size={22} />, title: "Analitik Performa", desc: "Pantau perkembangan nilai dan identifikasi kelemahan dengan grafik yang detail." },
+  { icon: <Trophy size={22} />, title: "Leaderboard Nasional", desc: "Bersaing dengan ribuan siswa dari seluruh Indonesia, motivasi diri setiap hari." },
+  { icon: <Smartphone size={22} />, title: "Akses Multi-Device", desc: "Belajar dari HP, tablet, atau laptop — sinkronisasi otomatis di semua perangkat." },
 ];
 
 const DEFAULT_TESTIMONIALS = [
@@ -46,32 +46,32 @@ const WA_NUMBER = "6281234567890"; // Ganti dengan nomor WA aktif
 
 const WA_TEMPLATES = [
   {
-    icon: "🏛️",
+    icon: <Landmark size={20} />,
     label: "Info Program CPNS",
     message: "Halo Kuarta! 👋\n\nSaya ingin mengetahui lebih lanjut tentang *Program SKD CPNS / Kedinasan*.\n\nBisa tolong jelaskan:\n- Jadwal live class\n- Jumlah tryout yang tersedia\n- Cara daftar dan pembayaran\n\nTerima kasih! 🙏",
   },
   {
-    icon: "🎯",
+    icon: <Crosshair size={20} />,
     label: "Info Program UTBK",
     message: "Halo Kuarta! 👋\n\nSaya tertarik dengan *Program UTBK – SNBT*.\n\nBisa info:\n- Materi apa saja yang dicover\n- Berapa tryout per bulan\n- Apakah ada garansi lulus\n\nTerima kasih! 🙏",
   },
   {
-    icon: "📗",
+    icon: <BookOpen size={20} />,
     label: "Info Bimbel SD/SMA",
     message: "Halo Kuarta! 👋\n\nSaya ingin tanya tentang *Program Bimbel SD / SMA*.\n\nAnak saya kelas berapa cocoknya?\nApa saja keunggulan program ini dibanding bimbel lain?\n\nTerima kasih! 🙏",
   },
   {
-    icon: "🏆",
+    icon: <Trophy size={20} />,
     label: "Info Program OSN",
     message: "Halo Kuarta! 👋\n\nSaya ingin bergabung di *Program Persiapan OSN (Olimpiade)*.\n\nBisa dijelaskan:\n- Mata pelajaran apa yang tersedia\n- Level persiapan (kab/kota, provinsi, nasional)\n- Harga dan cara daftar\n\nTerima kasih! 🙏",
   },
   {
-    icon: "💰",
+    icon: <DollarSign size={20} />,
     label: "Tanya Harga & Promo",
     message: "Halo Kuarta! 👋\n\nSaya ingin tanya soal *harga dan promo* yang sedang tersedia.\n\nApakah ada:\n- Diskon untuk pendaftaran baru?\n- Paket bundling beberapa program?\n- Cicilan atau beasiswa?\n\nTerima kasih! 🙏",
   },
   {
-    icon: "❓",
+    icon: <HelpCircle size={20} />,
     label: "Pertanyaan Lainnya",
     message: "Halo Kuarta! 👋\n\nSaya ingin bertanya tentang platform Kuarta.\n\n",
   },
@@ -765,7 +765,7 @@ export default function LandingPage() {
             onClick={() => setDarkMode(d => !d)}
           >
             <div className="toggle-knob" style={{ left: darkMode ? 3 : 25 }}>
-              {darkMode ? "🌙" : "☀️"}
+              {darkMode ? <Moon size={14} /> : <Sun size={14} />}
             </div>
           </button>
           <button className="btn-outline" style={{ padding: "9px 20px", fontSize: 13 }} onClick={() => window.location.href = "/login"}>Masuk</button>
@@ -1230,7 +1230,7 @@ export default function LandingPage() {
               style={{ fontSize: 15, padding: "15px 28px", borderColor: "#25D366", color: "#25D366" }}
               onClick={() => setWaOpen(true)}
             >
-              💬 Tanya via WhatsApp
+          <MessageCircle size={16} /> Tanya via WhatsApp
             </button>
           </div>
           <div style={{ display: "flex", gap: 24, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
@@ -1286,7 +1286,7 @@ export default function LandingPage() {
           <div className="wa-panel">
             {/* Header */}
             <div className="wa-panel-header">
-              <div className="wa-avatar">🎓</div>
+                <div className="wa-avatar"><GraduationCap size={20} /></div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 700, fontSize: 15, color: "white", fontFamily: "Inter, sans-serif" }}>
                   Kuarta Support
@@ -1369,7 +1369,7 @@ export default function LandingPage() {
         {/* Label tooltip */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div className={`wa-label-bubble ${waHovered && !waOpen ? "show" : ""}`}>
-            💬 Tanya via WhatsApp
+            <MessageCircle size={16} /> Tanya via WhatsApp
           </div>
 
           {/* FAB Button */}

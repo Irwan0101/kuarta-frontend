@@ -4,6 +4,7 @@ import { Search, UserX, Edit2, ChevronLeft, ChevronRight, Plus } from 'lucide-re
 import { adminApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
+import { useConfirm } from '@/hooks/useConfirm';
 import {
     PageHeader, Card, CardHead, Btn, Badge, Input, Spinner, ErrorBox,
     Modal, FormGroup, FormRow, TableHead, EmptyRow, ORG, RED, GREEN, BLUE,
@@ -13,6 +14,7 @@ const ROLE_COLORS = { admin: RED, mentor: '#8B5CF6', premium: '#F59E0B', user: '
 
 export default function AdminUsersPage() {
     const { T } = useTheme();
+    const { confirm, modal: confirmModal } = useConfirm();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -38,7 +40,7 @@ export default function AdminUsersPage() {
     useEffect(() => { load(); }, [load]);
 
     const handleBan = async (id) => {
-        if (!confirm('Yakin ban user ini?')) return;
+        if (!(await confirm('Yakin ban user ini?'))) return;
         try { await adminApi.banUser(id); load(); }
         catch (e) { toast.error(e?.message || 'Gagal ban user.'); }
     };
@@ -222,6 +224,7 @@ export default function AdminUsersPage() {
                     </div>
                 </Modal>
             )}
+            {confirmModal}
         </div>
     );
 }

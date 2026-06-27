@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Plus, Trash2, Save, EyeOff, Eye, MoveUp, MoveDown, Flag, Star, MessageCircle, Rocket, Link2, Trophy, Tag, Palette, Image, BookOpen, Settings as SettingsIcon, Hash } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
+import { useConfirm } from '@/hooks/useConfirm';
 import { adminApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import ImageUpload from '@/components/ui/ImageUpload';
@@ -608,6 +609,7 @@ function TagInput({ values, onChange, T, inpStyle: is, placeholder }) {
 function BannersTab({ banners, onRefresh, T, inpStyle, cardStyle, isMobile }) {
   const [editBanner, setEditBanner] = useState(null);
   const [editBannerData, setEditBannerData] = useState(null);
+  const { confirm, modal: confirmModal } = useConfirm();
 
   const saveBanner = async () => {
     const d = editBannerData;
@@ -620,7 +622,7 @@ function BannersTab({ banners, onRefresh, T, inpStyle, cardStyle, isMobile }) {
   };
 
   const toggleBanner = async (id, active) => { await adminApi.updateBanner(id, { is_active: !active }); onRefresh(); };
-  const deleteBanner = async (id) => { if (!confirm('Hapus banner?')) return; await adminApi.deleteBanner(id); onRefresh(); };
+  const deleteBanner = async (id) => { if (!(await confirm('Hapus banner?'))) return; await adminApi.deleteBanner(id); onRefresh(); };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -685,6 +687,7 @@ function BannersTab({ banners, onRefresh, T, inpStyle, cardStyle, isMobile }) {
           </div>
         </div>
       ))}
+      {confirmModal}
     </div>
   );
 }
@@ -693,6 +696,7 @@ function BannersTab({ banners, onRefresh, T, inpStyle, cardStyle, isMobile }) {
 function PromotionsTab({ promotions, onRefresh, T, inpStyle, cardStyle, isMobile }) {
   const [editPromo, setEditPromo] = useState(null);
   const [editPromoData, setEditPromoData] = useState(null);
+  const { confirm, modal: confirmModal } = useConfirm();
 
   const savePromo = async () => {
     const d = editPromoData;
@@ -705,7 +709,7 @@ function PromotionsTab({ promotions, onRefresh, T, inpStyle, cardStyle, isMobile
   };
 
   const togglePromo = async (id, active) => { await adminApi.updatePromotion(id, { is_active: !active }); onRefresh(); };
-  const deletePromo = async (id) => { if (!confirm('Hapus promosi?')) return; await adminApi.deletePromotion(id); onRefresh(); };
+  const deletePromo = async (id) => { if (!(await confirm('Hapus promosi?'))) return; await adminApi.deletePromotion(id); onRefresh(); };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -768,6 +772,7 @@ function PromotionsTab({ promotions, onRefresh, T, inpStyle, cardStyle, isMobile
           </div>
         </div>
       ))}
+      {confirmModal}
     </div>
   );
 }

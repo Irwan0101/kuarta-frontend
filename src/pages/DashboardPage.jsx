@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import { Play, ArrowRight, Flame } from 'lucide-react';
+import { Play, ArrowRight, Flame, ClipboardCheck, Target, Clock, BookOpen } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { StatCard, Card } from '@/components/ui/Card';
 import { ProgressBar } from '@/components/ui/Badge';
@@ -122,10 +122,10 @@ export default function DashboardPage() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
-          <StatCard icon="📝" label="Total Tryout" value={doneTryouts.length} trend={doneTryouts.length > 0 ? 5 : 0} color={C.orange} delay={0} />
-          <StatCard icon="🎯" label="Rata-rata Nilai" value={avgScore} trend={avgScore > 0 ? 4 : 0} color={C.blue} delay={80} sub="Dari semua sesi tryout" />
-          <StatCard icon="⏱️" label="Jam Belajar" value={totalStudyHours} trend={12} color={C.green} delay={160} sub="Bulan ini" />
-          <StatCard icon="🏆" label="Program Aktif" value={programList.length} trend={0} color={C.yellow} delay={240} />
+          <StatCard icon={<ClipboardCheck size={20} />} label="Total Tryout" value={doneTryouts.length} trend={doneTryouts.length > 0 ? 5 : 0} color={C.orange} delay={0} />
+          <StatCard icon={<Target size={20} />} label="Rata-rata Nilai" value={avgScore} trend={avgScore > 0 ? 4 : 0} color={C.blue} delay={80} sub="Dari semua sesi tryout" />
+          <StatCard icon={<Clock size={20} />} label="Jam Belajar" value={totalStudyHours} trend={12} color={C.green} delay={160} sub="Bulan ini" />
+          <StatCard icon={<BookOpen size={20} />} label="Program Aktif" value={programList.length} trend={0} color={C.yellow} delay={240} />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, marginBottom: 24 }}>

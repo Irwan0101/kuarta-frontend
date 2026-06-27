@@ -8,6 +8,7 @@ import {
   FileText, CreditCard, Zap, Calendar, MessageCircle, Settings,
 } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { useConfirm } from '@/hooks/useConfirm';
 import { useUIStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
 import { Avatar } from '@/components/ui/Avatar';
@@ -79,6 +80,7 @@ export default function Sidebar() {
   const { T, C }      = useTheme();
   const { user, logout } = useAuthStore();
   const { sidebarOpen, toggleSidebar, mobileSidebarOpen, setMobileSidebar } = useUIStore();
+  const { confirm, modal: confirmModal } = useConfirm();
   const location      = useLocation();
   const isAdmin       = user?.role === 'admin';
   const isMentor      = user?.role === 'mentor';
@@ -393,7 +395,7 @@ export default function Sidebar() {
             )}
             {!collapsed && (
               <button
-                onClick={() => { if (window.confirm('Yakin ingin keluar?')) logout(); }}
+                onClick={async () => { if (await confirm('Yakin ingin keluar?')) logout(); }}
                 title="Keluar"
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',
@@ -408,6 +410,7 @@ export default function Sidebar() {
           </div>
         </div>
       </aside>
+      {confirmModal}
     </>
   );
 }

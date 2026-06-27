@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { adminApi } from '@/lib/api';
 import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
+import { useConfirm } from '@/hooks/useConfirm';
 import ImageUpload from '@/components/ui/ImageUpload';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
@@ -16,6 +17,7 @@ const EMPTY_LESSON = { title: '', description: '', video_url: '', pdf_url: '', d
 export default function AdminMateriPage() {
   const { T } = useTheme();
   const resp = useResponsive();
+  const { confirm, modal: confirmModal } = useConfirm();
   const [programs, setPrograms] = useState([]);
   const [selected, setSelected] = useState('');
   const [topics, setTopics] = useState([]);
@@ -73,7 +75,7 @@ export default function AdminMateriPage() {
     finally { setSaving(false); }
   };
   const handleTopicDelete = async (id) => {
-    if (!window.confirm('Hapus topik ini? Semua pelajaran di dalamnya akan ikut terhapus.')) return;
+    if (!(await confirm('Hapus topik ini? Semua pelajaran di dalamnya akan ikut terhapus.'))) return;
     try { await adminApi.deleteTopic(id); toast.success('Topik dihapus'); loadTopics(selected); }
     catch (e) { toast.error(e?.message || 'Gagal hapus.'); }
   };
@@ -99,7 +101,7 @@ export default function AdminMateriPage() {
     finally { setSaving(false); }
   };
   const handleLessonDelete = async (id, topicId) => {
-    if (!window.confirm('Hapus pelajaran ini?')) return;
+    if (!(await confirm('Hapus pelajaran ini?'))) return;
     try { await adminApi.deleteVideo(id); toast.success('Pelajaran dihapus'); loadLessons(topicId); }
     catch (e) { toast.error(e?.message || 'Gagal hapus.'); }
   };
@@ -273,6 +275,7 @@ export default function AdminMateriPage() {
           </div>
         </Modal>
       )}
+      {confirmModal}
     </div>
   );
 }

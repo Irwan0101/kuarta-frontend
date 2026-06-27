@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { adminApi } from '@/lib/api';
 import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
+import { useConfirm } from '@/hooks/useConfirm';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
   Modal, TableHead, EmptyRow, ORG, RED, GREEN, BLUE,
@@ -15,6 +16,7 @@ const STATUS_LABELS = { paid: 'Lunas', pending: 'Pending', failed: 'Gagal', refu
 export default function AdminTransactionsPage() {
   const { T } = useTheme();
   const resp = useResponsive();
+  const { confirm, modal: confirmModal } = useConfirm();
   const [txs, setTxs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -39,7 +41,7 @@ export default function AdminTransactionsPage() {
   useEffect(() => { load(); }, [load]);
 
   const handleRefund = async (id) => {
-    if (!window.confirm('Yakin refund transaksi ini?')) return;
+    if (!(await confirm('Yakin refund transaksi ini?'))) return;
     try {
       await adminApi.refundTransaction(id);
       toast.success('Refund berhasil');
@@ -136,6 +138,7 @@ export default function AdminTransactionsPage() {
           </div>
         </Modal>
       )}
+      {confirmModal}
     </div>
   );
 }

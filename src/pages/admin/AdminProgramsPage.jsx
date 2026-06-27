@@ -1,9 +1,10 @@
 // src/pages/admin/AdminProgramsPage.jsx
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Plus, Edit2, Trash2 } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
+import { useConfirm } from '@/hooks/useConfirm';
 import ImageUpload from '@/components/ui/ImageUpload';
 import {
   PageHeader, Card, CardHead, Btn, Spinner, ErrorBox,
@@ -14,6 +15,7 @@ const EMPTY = { name: '', description: '', price: '', icon: '📚', color: ORG, 
 
 export default function AdminProgramsPage() {
   const { T } = useTheme();
+  const { confirm, modal: confirmModal } = useConfirm();
   const [programs, setPrograms] = useState([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState('');
@@ -44,7 +46,7 @@ export default function AdminProgramsPage() {
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Hapus program ini?')) return;
+    if (!(await confirm('Hapus program ini?'))) return;
     try { await adminApi.deleteProgram(id); load(); }
     catch (e) { toast.error(e?.message || 'Gagal hapus.'); }
   };
@@ -134,6 +136,7 @@ export default function AdminProgramsPage() {
           </div>
         </Modal>
       )}
+      {confirmModal}
     </div>
   );
 }

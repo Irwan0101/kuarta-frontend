@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { X, FileText, Video, Trash2, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
+import { useConfirm } from '@/hooks/useConfirm';
 import toast from 'react-hot-toast';
 
 const ORG = '#FF6B00';
@@ -11,6 +12,7 @@ export default function ImageUpload({ value, onChange, accept = 'image/*', label
   const [preview, setPreview] = useState(value || '');
   const [dragOver, setDragOver] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const { confirm, modal: confirmModal } = useConfirm();
   const inputRef = useRef(null);
 
   const uploadFile = (file) => {
@@ -68,7 +70,7 @@ export default function ImageUpload({ value, onChange, accept = 'image/*', label
 
   const handleDelete = async (e) => {
     e.stopPropagation();
-    if (!preview || !confirm('Hapus file ini dari server?')) return;
+    if (!preview || !(await confirm('Hapus file ini dari server?'))) return;
     setDeleting(true);
     try {
       const res = await fetch('/api/upload', {
@@ -157,6 +159,7 @@ export default function ImageUpload({ value, onChange, accept = 'image/*', label
         </div>
       )}
       <input ref={inputRef} type="file" accept={accept} onChange={handleFile} style={{ display: 'none' }} />
+      {confirmModal}
     </div>
   );
 }

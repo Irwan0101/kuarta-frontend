@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { adminApi } from '@/lib/api';
 import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
+import { useConfirm } from '@/hooks/useConfirm';
 import ImageUpload from '@/components/ui/ImageUpload';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
@@ -13,6 +14,7 @@ import {
 export default function AdminMentorsPage() {
   const { T } = useTheme();
   const resp = useResponsive();
+  const { confirm, modal: confirmModal } = useConfirm();
   const [mentors, setMentors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -103,7 +105,7 @@ export default function AdminMentorsPage() {
                       <Btn size="sm" variant="outline" color={BLUE} onClick={() => setEditMentor({ ...m })}>
                         <Edit2 size={12} /> Edit
                       </Btn>
-                      <Btn size="sm" variant="outline" color={m.is_active !== false ? RED : GREEN} onClick={() => { if (window.confirm(`Yakin ${m.is_active !== false ? 'menonaktifkan' : 'mengaktifkan'} mentor ${m.name}?`)) handleToggle(m.id, m.is_active); }}>
+                      <Btn size="sm" variant="outline" color={m.is_active !== false ? RED : GREEN} onClick={async () => { if (await confirm(`Yakin ${m.is_active !== false ? 'menonaktifkan' : 'mengaktifkan'} mentor ${m.name}?`)) handleToggle(m.id, m.is_active); }}>
                         {m.is_active !== false ? <UserX size={12} /> : <CheckCircle size={12} />} {m.is_active !== false ? 'Nonaktifkan' : 'Aktifkan'}
                       </Btn>
                     </div>
@@ -209,6 +211,7 @@ export default function AdminMentorsPage() {
           </div>
         </Modal>
       )}
+      {confirmModal}
     </div>
   );
 }

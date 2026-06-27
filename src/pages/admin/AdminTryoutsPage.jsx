@@ -4,6 +4,7 @@ import { Plus, Edit2, Trash2, ChevronRight, ChevronDown, HelpCircle } from 'luci
 import { adminApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
+import { useConfirm } from '@/hooks/useConfirm';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
   Modal, FormGroup, FormRow, TableHead, EmptyRow, Select,
@@ -17,6 +18,7 @@ const OPTS     = ['a', 'b', 'c', 'd', 'e'];
 
 export default function AdminTryoutsPage() {
   const { T } = useTheme();
+  const { confirm, modal: confirmModal } = useConfirm();
   const [programs,  setPrograms]  = useState([]);
   const [selProg,   setSelProg]   = useState('');
   const [tryouts,   setTryouts]   = useState([]);
@@ -99,7 +101,7 @@ export default function AdminTryoutsPage() {
   };
 
   const deleteQuestion = async (tryoutId, qId) => {
-    if (!confirm('Hapus soal ini?')) return;
+    if (!(await confirm('Hapus soal ini?'))) return;
     try {
       await adminApi.deleteQuestion(qId);
       setQuestions(q => ({ ...q, [tryoutId]: q[tryoutId].filter(x => x.id !== qId) }));
@@ -237,6 +239,7 @@ export default function AdminTryoutsPage() {
           </div>
         </Modal>
       )}
+      {confirmModal}
     </div>
   );
 }
