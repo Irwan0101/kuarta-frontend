@@ -25,6 +25,7 @@ const NAV = [
   { to: '/admin/landing',       icon: Layout,            label: 'Landing Page'   },
   { to: '/admin/notifications', icon: Bell,              label: 'Notifikasi'     },
   { to: '/admin/audit-logs',    icon: ScrollText,        label: 'Audit Log'      },
+  { to: '/admin/security',      icon: Shield,            label: 'Security'       },
 ];
 
 const ORG = '#FF6B00';
