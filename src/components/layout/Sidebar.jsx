@@ -393,7 +393,7 @@ export default function Sidebar() {
             )}
             {!collapsed && (
               <button
-                onClick={logout}
+                onClick={() => { if (window.confirm('Yakin ingin keluar?')) logout(); }}
                 title="Keluar"
                 style={{
                   background: 'none', border: 'none', cursor: 'pointer',

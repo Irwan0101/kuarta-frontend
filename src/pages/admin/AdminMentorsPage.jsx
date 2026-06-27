@@ -103,7 +103,7 @@ export default function AdminMentorsPage() {
                       <Btn size="sm" variant="outline" color={BLUE} onClick={() => setEditMentor({ ...m })}>
                         <Edit2 size={12} /> Edit
                       </Btn>
-                      <Btn size="sm" variant="outline" color={m.is_active !== false ? RED : GREEN} onClick={() => handleToggle(m.id, m.is_active)}>
+                      <Btn size="sm" variant="outline" color={m.is_active !== false ? RED : GREEN} onClick={() => { if (window.confirm(`Yakin ${m.is_active !== false ? 'menonaktifkan' : 'mengaktifkan'} mentor ${m.name}?`)) handleToggle(m.id, m.is_active); }}>
                         {m.is_active !== false ? <UserX size={12} /> : <CheckCircle size={12} />} {m.is_active !== false ? 'Nonaktifkan' : 'Aktifkan'}
                       </Btn>
                     </div>

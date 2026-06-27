@@ -90,7 +90,7 @@ function AppLayout({ children }) {
   const { T } = useTheme();
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: T.bg }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: T.bg1 }}>
       <Sidebar />
       <main style={{
         flex: 1, minHeight: '100vh',

@@ -519,7 +519,7 @@ export default function ProfilPage() {
                 </button>
               );
             })}
-            <button onClick={logout} style={{
+            <button onClick={() => { if (window.confirm('Yakin ingin keluar?')) logout(); }} style={{
               width: '100%', display: 'flex', alignItems: 'center', gap: 10,
               padding: '12px 18px', background: 'transparent',
               border: 'none', borderTop: `1px solid ${T.border}`,
