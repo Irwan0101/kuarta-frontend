@@ -185,5 +185,12 @@ export const adminApi = {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     }).then(r => r.data);
   },
+  downloadDocxTemplate:() => {
+    const token = useAuthStore.getState().token;
+    return axios.get(`${BASE}/admin/questions/template/docx`, {
+      responseType: 'blob',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }).then(r => r.data);
+  },
 };
 export default http;

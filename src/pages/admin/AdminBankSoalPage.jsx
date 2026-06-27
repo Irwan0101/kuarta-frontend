@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Plus, Edit2, Trash2, Search, ChevronLeft, ChevronRight, HelpCircle, Upload, Link2, FileText, X, Loader2 } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, ChevronLeft, ChevronRight, HelpCircle, Upload, Link2, FileText, X, Loader2, Download } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
@@ -331,6 +331,19 @@ export default function AdminBankSoalPage() {
               <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>Upload .docx</div>
               <div style={{ fontSize: 11, color: T.text4, marginTop: 4 }}>Format: Soal 1: / A. / B. / C. / D. / Jawaban: / Kategori:</div>
             </div>
+            <a style={{ fontSize: 11, color: ORG, cursor: 'pointer', textDecoration: 'none', display: 'block', marginTop: 4 }}
+              onClick={async () => {
+                try {
+                  const blob = await adminApi.downloadDocxTemplate();
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a'); a.href = url;
+                  a.download = 'template_bank_soal_kuarta.docx';
+                  document.body.appendChild(a); a.click(); a.remove();
+                  URL.revokeObjectURL(url);
+                } catch { toast.error('Gagal download template'); }
+              }}>
+              <Download size={12} style={{ verticalAlign: 'middle', marginRight: 3 }} /> Download Template
+            </a>
             <div style={{ color: T.text4, fontSize: 12 }}>atau</div>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 8 }}>Paste JSON</div>
