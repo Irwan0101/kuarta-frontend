@@ -135,6 +135,13 @@ export const adminApi = {
   updateQuestion:(id, payload)   => http.put(`/admin/questions/${id}`, payload),
   deleteQuestion:(id)            => http.delete(`/admin/questions/${id}`),
   getAllQuestions:(params)       => http.get('/admin/questions', { params }),
+  importQuestions:(questions)    => http.post('/admin/questions/import', { questions }),
+  importDocx:(file)              => { const fd = new FormData(); fd.append('file', file); return http.post('/admin/questions/import/docx', fd); },
+  getTryoutQuestionLinks:(id)    => http.get(`/admin/tryouts/${id}/question-links`),
+  linkQuestionsToTryout:(id, question_ids) =>
+    http.post(`/admin/tryouts/${id}/questions/link`, { question_ids }),
+  unlinkQuestionsFromTryout:(id, question_ids) =>
+    http.delete(`/admin/tryouts/${id}/questions/link`, { data: { question_ids } }),
   getLiveClasses:()              => http.get('/admin/live-classes'),
   createLiveClass:(payload)      => http.post('/admin/live-classes', payload),
   updateLiveClass:(id, payload)  => http.put(`/admin/live-classes/${id}`, payload),
