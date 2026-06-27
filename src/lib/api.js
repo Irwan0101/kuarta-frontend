@@ -66,6 +66,12 @@ export const liveApi = {
   getRecordings:  ()  => http.get('/live/recordings'),
 };
 
+export const notifApi = {
+  getAll:   ()            => http.get('/notifications'),
+  markRead: (id)          => http.put(`/notifications/${id}/read`),
+  markAll:  ()            => http.put('/notifications/read-all/bulk'),
+};
+
 export const paymentApi = {
   createOrder:    (programId, method) => http.post('/payment/create', { program_id: programId }),
   getStatus:      (orderId) => http.get(`/payment/status/${orderId}`),

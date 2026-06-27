@@ -30,8 +30,10 @@ export const useUIStore = create(
 
       /* Notifications panel */
       notifOpen: false,
+      unreadCount: 0,
       toggleNotif: () => set(s => ({ notifOpen: !s.notifOpen })),
       closeNotif: () => set({ notifOpen: false }),
+      setUnreadCount: (v) => set({ unreadCount: v }),
 
       /* Global loading overlay */
       globalLoading: false,

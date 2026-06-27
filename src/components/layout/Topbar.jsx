@@ -1,18 +1,19 @@
 // src/components/layout/Topbar.jsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Bell, Search, Sun, Moon, Menu, X, ShoppingCart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks/useTheme';
 import { useUIStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
+import { notifApi } from '@/lib/api';
 import { Avatar } from '@/components/ui/Avatar';
 import NotifPanel from './NotifPanel';
 import CartDrawer from '@/components/features/CartDrawer';
 
 export default function Topbar({ title, breadcrumb }) {
     const { T, C, dark, toggleTheme } = useTheme();
-    const { toggleNotif, notifOpen, setMobileSidebar } = useUIStore();
+    const { toggleNotif, notifOpen, unreadCount, setMobileSidebar } = useUIStore();
     const { user } = useAuthStore();
     const { getCount } = useCartStore();
     const navigate = useNavigate();
@@ -20,6 +21,13 @@ export default function Topbar({ title, breadcrumb }) {
     const [searchOpen, setSearchOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
     const cartCount = getCount();
+
+    useEffect(() => {
+        notifApi.getAll().then(res => {
+            const list = Array.isArray(res) ? res : res?.notifications || [];
+            setUnreadCount(list.filter(n => !n.is_read).length);
+        }).catch(() => {});
+    }, []);
 
     return (
         <header style={{
@@ -151,11 +159,14 @@ export default function Topbar({ title, breadcrumb }) {
                     }}
                 >
                     <Bell size={16} />
-                    <span style={{
-                        position: 'absolute', top: 5, right: 5,
-                        width: 7, height: 7, background: '#EF4444',
-                        borderRadius: '50%', border: `1.5px solid ${T.bg2}`,
-                    }} />
+                    {unreadCount > 0 && <span style={{
+                        position: 'absolute', top: -2, right: -2,
+                        minWidth: 16, height: 16, borderRadius: 8,
+                        background: '#EF4444', color: '#fff', fontSize: 9,
+                        fontWeight: 700, display: 'flex', alignItems: 'center',
+                        justifyContent: 'center', padding: '0 4px',
+                        border: `1.5px solid ${T.bg2}`,
+                    }}>{unreadCount > 99 ? '99+' : unreadCount}</span>}
                 </button>
                 {notifOpen && <NotifPanel />}
             </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Bell, CheckCheck, X } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useUIStore } from '@/store/uiStore';
-import http from '@/lib/api';
+import { notifApi } from '@/lib/api';
 import { timeAgo } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Badge';
 
@@ -10,15 +10,16 @@ const ICONS = { tryout: '📝', payment: '💳', live: '🎥', info: 'ℹ️' };
 
 export default function NotifPanel() {
   const { T, C } = useTheme();
-  const { closeNotif } = useUIStore();
+  const { closeNotif, setUnreadCount } = useUIStore();
   const [notifs, setNotifs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    http.get('/notifications')
+    notifApi.getAll()
       .then(res => {
         const list = Array.isArray(res) ? res : res?.notifications || [];
         setNotifs(list);
+        setUnreadCount(list.filter(n => !n.is_read).length);
       })
       .catch(() => setNotifs([]))
       .finally(() => setLoading(false));
@@ -27,13 +28,15 @@ export default function NotifPanel() {
   const unread = notifs.filter(n => !n.is_read).length;
 
   const markAll = async () => {
-    await http.put('/notifications/read-all/bulk').catch(() => {});
+    await notifApi.markAll().catch(() => {});
     setNotifs(n => n.map(x => ({ ...x, is_read: true })));
+    setUnreadCount(0);
   };
 
   const dismiss = async (id) => {
-    await http.put(`/notifications/${id}/read`).catch(() => {});
+    await notifApi.markRead(id).catch(() => {});
     setNotifs(n => n.filter(x => x.id !== id));
+    setUnreadCount(Math.max(0, unread - 1));
   };
 
   useEffect(() => {
