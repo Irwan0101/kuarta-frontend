@@ -100,13 +100,13 @@ export default function LandingPage() {
   const [sections, setSections] = useState({});
   const [banners, setBanners] = useState([]);
   const [activeBanner, setActiveBanner] = useState(0);
-  const [waNumber, setWaNumber] = useState('6281234567890');
+  const [waNumber, setWaNumber] = useState('6285222473457');
   useEffect(() => {
     const BASE = import.meta.env.VITE_API_URL || '/api';
     Promise.all([
       axios.get(`${BASE}/landing/sections`).then(r => r.data || {}).catch(() => ({})),
       axios.get(`${BASE}/landing/banners`).then(r => Array.isArray(r.data) ? r.data : []).catch(() => []),
-      axios.get(`${BASE}/landing/settings/wa_number`).then(r => r.data?.number || '6281234567890').catch(() => '6281234567890'),
+      axios.get(`${BASE}/landing/settings/wa_number`).then(r => r.data?.number || '6285222473457').catch(() => '6285222473457'),
     ])      .then(([secs, bnr, wa]) => {
       setSections(secs);
       setBanners(bnr);
