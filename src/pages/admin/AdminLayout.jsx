@@ -88,9 +88,9 @@ export default function AdminLayout() {
         </nav>
 
         {/* User + logout */}
-        <div style={{ padding: '12px 8px', borderTop: `1px solid ${T.border}` }}>
+          <div style={{ padding: '12px 8px', borderTop: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: 4 }}>
           {!collapsed && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', marginBottom: 4 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px' }}>
               <div style={{ width: 28, height: 28, borderRadius: '50%', background: ORG + '25', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: ORG, flexShrink: 0 }}>
                 {(user?.name || 'AD').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
               </div>
@@ -100,31 +100,35 @@ export default function AdminLayout() {
               </div>
             </div>
           )}
-          <div style={{ display: 'flex', gap: 4 }}>
             <button
               onClick={toggleTheme}
               title={dark ? 'Mode Terang' : 'Mode Gelap'}
               style={{
-                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                padding: '9px 12px', borderRadius: 9, background: 'none',
-                border: 'none', cursor: 'pointer', color: T.text3, fontSize: 13,
+                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                padding: '9px 12px', borderRadius: 9,
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                color: T.text3, fontSize: 13, transition: 'background .15s',
               }}
+              onMouseEnter={e => e.currentTarget.style.background = T.bg3}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              {dark ? <Sun size={16} /> : <Moon size={16} />}
-              {!collapsed && (dark ? 'Terang' : 'Gelap')}
+              {dark ? <Sun size={15} /> : <Moon size={15} />}
+              {!collapsed && (dark ? ' Mode Terang' : ' Mode Gelap')}
             </button>
             <button
               onClick={async () => { if (await confirm('Yakin ingin keluar?')) { logout(); navigate('/login'); } }}
               style={{
-                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                padding: '9px 12px', borderRadius: 9, background: 'none',
-                border: 'none', cursor: 'pointer', color: '#EF4444', fontSize: 13,
+                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                padding: '9px 12px', borderRadius: 9,
+                background: 'transparent', border: 'none', cursor: 'pointer',
+                color: '#EF4444', fontSize: 13, transition: 'background .15s',
               }}
+              onMouseEnter={e => e.currentTarget.style.background = T.bg3}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              <LogOut size={16} />
-              {!collapsed && 'Keluar'}
+              <LogOut size={15} />
+              {!collapsed && ' Keluar'}
             </button>
-          </div>
           {confirmModal}
         </div>
       </aside>

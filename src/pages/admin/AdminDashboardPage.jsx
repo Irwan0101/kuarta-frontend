@@ -110,10 +110,10 @@ function StatCard({ cfg, stats, loading, T }) {
       }}>
         {cfg.icon}
       </div>
-      <div style={{ minWidth: 0 }}>
+      <div style={{ minWidth: 0, overflow: 'hidden' }}>
         {loading
           ? <div style={{ height: 22, width: 72, background: T.bg4, borderRadius: 6, marginBottom: 4 }} />
-          : <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 21, color: T.text, lineHeight: 1.1 }}>
+          : <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 21, color: T.text, lineHeight: 1.1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {value}
             </div>
         }
