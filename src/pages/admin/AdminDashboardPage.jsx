@@ -4,7 +4,7 @@ import {
   AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts';
-import { RefreshCw, Users, BookOpen, FileText, DollarSign, Zap } from 'lucide-react';
+import { RefreshCw, Users, BookOpen, FileText, DollarSign, Zap, Database } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { useTheme } from '@/hooks/useTheme';
 import {
@@ -235,6 +235,22 @@ export default function AdminDashboardPage() {
     finally   { setUsLoading(false); }
   }, []);
 
+  const handleBackup = async () => {
+    try {
+      const blob = await adminApi.backupDatabase();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `kuarta_backup_${new Date().toISOString().slice(0, 10)}.sql`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      alert('Gagal backup: ' + (e?.error || e?.message || 'Unknown error'));
+    }
+  };
+
   useEffect(() => { fetchStats(); fetchUsers(); }, [fetchStats, fetchUsers]);
   useEffect(() => { fetchRevenue(); }, [fetchRevenue]);
 
@@ -261,6 +277,7 @@ export default function AdminDashboardPage() {
         title="📊 Dashboard Admin"
         subtitle="Ringkasan performa platform hari ini"
         action={
+          <div style={{ display: 'flex', gap: 6 }}>
           <button
             onClick={() => { fetchStats(); fetchRevenue(); fetchUsers(); }}
             style={{
@@ -272,6 +289,19 @@ export default function AdminDashboardPage() {
           >
             <RefreshCw size={13} /> Refresh
           </button>
+          <button
+            onClick={handleBackup}
+            title="Backup Database"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '8px 14px', background: T.bg3,
+              border: `1px solid ${T.border}`, borderRadius: 9,
+              fontSize: 12, color: T.text3, cursor: 'pointer',
+            }}
+          >
+            <Database size={13} /> Backup DB
+          </button>
+          </div>
         }
       />
 
