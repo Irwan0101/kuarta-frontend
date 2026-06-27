@@ -4,7 +4,7 @@ import {
   AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from 'recharts';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, Users, BookOpen, FileText, DollarSign, Zap } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { useTheme } from '@/hooks/useTheme';
 import {
@@ -54,32 +54,32 @@ const PERIOD_OPTS = [
 const STATS_CFG = [
   {
     snake: 'total_users',
-    icon: '👥', label: 'Total Users', color: BLUE,
+    icon: <Users size={20} />, label: 'Total Users', color: BLUE,
     fmt: v => Number(v).toLocaleString('id-ID'),
     subSnake: 'new_users_today',
     subFmt: v => `+${v} hari ini`,
   },
   {
     snake: 'total_programs',
-    icon: '📚', label: 'Total Programs', color: ORG,
+    icon: <BookOpen size={20} />, label: 'Total Programs', color: ORG,
     fmt: v => String(v),
     subSnake: 'active_programs',
     subFmt: v => `${v} aktif`,
   },
   {
     snake: 'total_tryouts',
-    icon: '📝', label: 'Total Tryouts', color: '#A855F7',
+    icon: <FileText size={20} />, label: 'Total Tryouts', color: '#A855F7',
     fmt: v => String(v),
   },
   {
     snake: 'active_sessions',
-    icon: '⚡', label: 'Sesi Aktif', color: '#F59E0B',
+    icon: <Zap size={20} />, label: 'Sesi Aktif', color: '#F59E0B',
     fmt: v => String(v),
     subFmt: () => 'sedang berlangsung',
   },
   {
     snake: 'total_revenue',
-    icon: '💰', label: 'Total Revenue', color: GREEN,
+    icon: <DollarSign size={20} />, label: 'Total Revenue', color: GREEN,
     fmt: v => `Rp${Number(v).toLocaleString('id-ID')}`,
     subSnake: 'monthly_revenue',
     subFmt: v => `Rp${Number(v).toLocaleString('id-ID')} bulan ini`,

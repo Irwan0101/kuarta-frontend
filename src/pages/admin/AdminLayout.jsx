@@ -3,10 +3,12 @@ import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
+import { useConfirm } from '@/hooks/useConfirm';
 import {
   LayoutDashboard, Users, BookOpen, FileText, Video,
   LogOut, Menu, X, ChevronRight, Shield,
   GraduationCap, Layout, Tag, CreditCard, Bell, ScrollText, Library,
+  Moon, Sun,
 } from 'lucide-react';
 
 const NAV = [
@@ -27,8 +29,9 @@ const NAV = [
 const ORG = '#FF6B00';
 
 export default function AdminLayout() {
-  const { T, C }       = useTheme();
+  const { T, C, dark, toggleTheme } = useTheme();
   const { user, logout } = useAuthStore();
+  const { confirm, modal: confirmModal } = useConfirm();
   const navigate         = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -97,17 +100,32 @@ export default function AdminLayout() {
               </div>
             </div>
           )}
-          <button
-            onClick={() => { logout(); navigate('/login'); }}
-            style={{
-              width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-              padding: '9px 12px', borderRadius: 9, background: 'none',
-              border: 'none', cursor: 'pointer', color: '#EF4444', fontSize: 13,
-            }}
-          >
-            <LogOut size={16} style={{ flexShrink: 0 }} />
-            {!collapsed && 'Keluar'}
-          </button>
+          <div style={{ display: 'flex', gap: 4 }}>
+            <button
+              onClick={toggleTheme}
+              title={dark ? 'Mode Terang' : 'Mode Gelap'}
+              style={{
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                padding: '9px 12px', borderRadius: 9, background: 'none',
+                border: 'none', cursor: 'pointer', color: T.text3, fontSize: 13,
+              }}
+            >
+              {dark ? <Sun size={16} /> : <Moon size={16} />}
+              {!collapsed && (dark ? 'Terang' : 'Gelap')}
+            </button>
+            <button
+              onClick={async () => { if (await confirm('Yakin ingin keluar?')) { logout(); navigate('/login'); } }}
+              style={{
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                padding: '9px 12px', borderRadius: 9, background: 'none',
+                border: 'none', cursor: 'pointer', color: '#EF4444', fontSize: 13,
+              }}
+            >
+              <LogOut size={16} />
+              {!collapsed && 'Keluar'}
+            </button>
+          </div>
+          {confirmModal}
         </div>
       </aside>
 
