@@ -86,57 +86,58 @@ export default function AdminLayout() {
             </NavLink>
           ))}
         </nav>
+      </aside>
 
-        {/* User + logout */}
-          <div style={{ padding: '12px 8px', borderTop: `1px solid ${T.border}`, display: 'flex', flexDirection: 'column', gap: 4 }}>
-          {!collapsed && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px' }}>
-              <div style={{ width: 28, height: 28, borderRadius: '50%', background: ORG + '25', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: ORG, flexShrink: 0 }}>
-                {(user?.name || 'AD').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
-              </div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: T.text, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.name || 'Admin'}</div>
-                <div style={{ fontSize: 10, color: T.text4 }}>Administrator</div>
-              </div>
+      {/* Main */}
+      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+        {/* Topbar */}
+        <header style={{
+          height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '0 24px', background: T.bg2, borderBottom: `1px solid ${T.border}`,
+          flexShrink: 0,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 30, height: 30, borderRadius: '50%', background: ORG + '20', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 11, fontWeight: 700, color: ORG }}>
+              {(user?.name || 'AD').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()}
             </div>
-          )}
+            <div style={{ fontSize: 13, fontWeight: 600, color: T.text }}>{user?.name || 'Admin'}</div>
+            <div style={{ fontSize: 11, color: T.text4 }}>Administrator</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <button
               onClick={toggleTheme}
               title={dark ? 'Mode Terang' : 'Mode Gelap'}
               style={{
-                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                padding: '9px 12px', borderRadius: 9,
-                background: 'transparent', border: 'none', cursor: 'pointer',
-                color: T.text3, fontSize: 13, transition: 'background .15s',
+                width: 36, height: 36, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'transparent', border: 'none', cursor: 'pointer', color: T.text3, transition: 'background .15s',
               }}
               onMouseEnter={e => e.currentTarget.style.background = T.bg3}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              {dark ? <Sun size={15} /> : <Moon size={15} />}
-              {!collapsed && (dark ? ' Mode Terang' : ' Mode Gelap')}
+              {dark ? <Sun size={17} /> : <Moon size={17} />}
             </button>
             <button
               onClick={async () => { if (await confirm('Yakin ingin keluar?')) { logout(); navigate('/login'); } }}
               style={{
-                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
-                padding: '9px 12px', borderRadius: 9,
+                height: 36, display: 'flex', alignItems: 'center', gap: 5,
+                padding: '0 14px', borderRadius: 9,
                 background: 'transparent', border: 'none', cursor: 'pointer',
-                color: '#EF4444', fontSize: 13, transition: 'background .15s',
+                color: '#EF4444', fontSize: 13, fontWeight: 600, transition: 'background .15s',
               }}
               onMouseEnter={e => e.currentTarget.style.background = T.bg3}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
-              <LogOut size={15} />
-              {!collapsed && ' Keluar'}
+              <LogOut size={15} /> Keluar
             </button>
-          {confirmModal}
-        </div>
-      </aside>
+          </div>
+        </header>
 
-      {/* Main */}
-      <main style={{ flex: 1, minWidth: 0, padding: '28px 32px', overflowY: 'auto' }}>
-        <Outlet />
-      </main>
+        {/* Page content */}
+        <main style={{ flex: 1, padding: '28px 32px', overflowY: 'auto' }}>
+          <Outlet />
+        </main>
+      </div>
+      {confirmModal}
     </div>
   );
 }
