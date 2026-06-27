@@ -8,13 +8,14 @@ import {
   LayoutDashboard, Users, BookOpen, FileText, Video,
   LogOut, Menu, X, ChevronRight, Shield,
   GraduationCap, Layout, Tag, CreditCard, Bell, ScrollText, Library,
-  Moon, Sun,
+  Moon, Sun, HelpCircle,
 } from 'lucide-react';
 
 const NAV = [
   { to: '/admin/dashboard',     icon: LayoutDashboard,   label: 'Dashboard'      },
   { to: '/admin/users',         icon: Users,             label: 'Users'          },
   { to: '/admin/programs',      icon: BookOpen,          label: 'Programs'       },
+  { to: '/admin/bank-soal',     icon: HelpCircle,        label: 'Bank Soal'      },
   { to: '/admin/tryouts',       icon: FileText,          label: 'Tryouts'        },
   { to: '/admin/live',          icon: Video,             label: 'Live Class'     },
   { to: '/admin/materi',        icon: Library,           label: 'Materi'         },

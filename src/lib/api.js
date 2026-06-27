@@ -134,6 +134,7 @@ export const adminApi = {
     http.post(`/admin/tryouts/${tryoutId}/questions`, payload),
   updateQuestion:(id, payload)   => http.put(`/admin/questions/${id}`, payload),
   deleteQuestion:(id)            => http.delete(`/admin/questions/${id}`),
+  getAllQuestions:(params)       => http.get('/admin/questions', { params }),
   getLiveClasses:()              => http.get('/admin/live-classes'),
   createLiveClass:(payload)      => http.post('/admin/live-classes', payload),
   updateLiveClass:(id, payload)  => http.put(`/admin/live-classes/${id}`, payload),

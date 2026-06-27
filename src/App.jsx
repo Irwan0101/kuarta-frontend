@@ -31,6 +31,7 @@ import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminUsersPage     from './pages/admin/AdminUsersPage';
 import AdminProgramsPage  from './pages/admin/AdminProgramsPage';
 import AdminTryoutsPage   from './pages/admin/AdminTryoutsPage';
+import AdminBankSoalPage  from './pages/admin/AdminBankSoalPage';
 import AdminLivePage      from './pages/admin/AdminLivePage';
 import AdminMentorsPage   from './pages/admin/AdminMentorsPage';
 import AdminLandingPage   from './pages/admin/AdminLandingPage';
@@ -151,8 +152,9 @@ export default function App() {
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="users"     element={<AdminUsersPage />}     />
-          <Route path="programs"  element={<AdminProgramsPage />}  />
-          <Route path="tryouts"   element={<AdminTryoutsPage />}   />
+          <Route path="programs"      element={<AdminProgramsPage />}     />
+          <Route path="bank-soal"     element={<AdminBankSoalPage />}     />
+          <Route path="tryouts"       element={<AdminTryoutsPage />}   />
           <Route path="live"      element={<AdminLivePage />}      />
           <Route path="mentors"   element={<AdminMentorsPage />}   />
           <Route path="landing"   element={<AdminLandingPage />}   />
