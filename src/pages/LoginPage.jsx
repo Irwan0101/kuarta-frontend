@@ -1,22 +1,65 @@
 // src/pages/LoginPage.jsx
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
+import { Mail, Lock, User, Phone, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuthStore } from '@/store/authStore';
+import { useTheme }     from '@/hooks/useTheme';
+import { Button }       from '@/components/ui/Button';
+import toast            from 'react-hot-toast';
 
-/* ─── Demo credentials helper ─────────────────────────────────── */
-function DemoChip({ label, email, password, onFill, C, T }) {
+/* ─── Inline InputField ── */
+function InputField({ label, hint, error, icon, type = 'text', value, onChange, placeholder, required }) {
+  const { T, C } = useTheme();
+  const [show, setShow] = useState(false);
+  const isPassword      = type === 'password';
+  const inputType       = isPassword ? (show ? 'text' : 'password') : type;
+
   return (
-    <button
-      type="button"
-      onClick={() => onFill(email, password)}
-      style={{
-        padding: '5px 10px', borderRadius: 7, fontSize: 11, fontWeight: 600,
-        cursor: 'pointer', background: C.orange + '15', color: C.orange,
-        border: `1px solid ${C.orange}30`, transition: 'background .15s',
-      }}
-    >
-      {label}
-    </button>
+    <div>
+      {label && (
+        <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: T.text3, marginBottom: 6, letterSpacing: '0.02em' }}>
+          {label}{required && <span style={{ color: C.orange, marginLeft: 2 }}>*</span>}
+        </label>
+      )}
+      <div style={{ position: 'relative' }}>
+        {icon && (
+          <span style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: error ? '#EF4444' : T.text4, display: 'flex', pointerEvents: 'none' }}>
+            {icon}
+          </span>
+        )}
+        <input
+          type={inputType}
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          required={required}
+          style={{
+            width: '100%', boxSizing: 'border-box',
+            padding: `10px ${isPassword ? '40px' : '14px'} 10px ${icon ? '38px' : '14px'}`,
+            fontSize: 13, borderRadius: 10,
+            background: T.bg3,
+            border: `1px solid ${error ? '#EF4444' : T.border}`,
+            color: T.text, outline: 'none',
+            transition: 'border-color .15s',
+          }}
+          onFocus={e  => { e.target.style.borderColor = error ? '#EF4444' : C.orange; }}
+          onBlur={e   => { e.target.style.borderColor = error ? '#EF4444' : T.border; }}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShow(s => !s)}
+            style={{ position: 'absolute', right: 13, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: T.text4, display: 'flex', padding: 0 }}
+          >
+            {show ? <EyeOff size={15} /> : <Eye size={15} />}
+          </button>
+        )}
+      </div>
+      {error && <p style={{ margin: '5px 0 0', fontSize: 11, color: '#EF4444' }}>{error}</p>}
+      {hint && !error && <p style={{ margin: '5px 0 0', fontSize: 11, color: T.text4 }}>{hint}</p>}
+    </div>
   );
 }
 
@@ -32,11 +75,6 @@ export default function LoginPage({ mode: initMode = 'login' }) {
   const [errors, setErrors] = useState({});
 
   const set = (k) => (e) => setForm(f => ({ ...f, [k]: e.target.value }));
-
-  const fillDemo = (email, password) => {
-    setForm(f => ({ ...f, email, password }));
-    setErrors({});
-  };
 
   // ── Validation ────────────────────────────────────────────────
   const validate = () => {
@@ -64,7 +102,6 @@ export default function LoginPage({ mode: initMode = 'login' }) {
 
     if (res?.ok) {
       toast.success(mode === 'login' ? 'Selamat datang kembali! 👋' : 'Akun berhasil dibuat! 🎉');
-      // Role-aware redirect: admin → panel, user → dashboard
       const dest = res.user?.role === 'admin' ? '/admin/dashboard' : '/dashboard';
       navigate(dest, { replace: true });
     } else {
@@ -85,6 +122,19 @@ export default function LoginPage({ mode: initMode = 'login' }) {
       {/* BG glows */}
       <div style={{ position: 'absolute', top: -220, right: -220, width: 600, height: 600, background: C.orange + '0C', borderRadius: '50%', filter: 'blur(110px)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: -180, left: -180, width: 500, height: 500, background: C.orange + '07', borderRadius: '50%', filter: 'blur(90px)', pointerEvents: 'none' }} />
+
+      {/* Back to Landing */}
+      <Link to="/" style={{
+        position: 'absolute', top: 24, left: 24,
+        display: 'flex', alignItems: 'center', gap: 6,
+        color: T.text3, fontSize: 13, fontWeight: 600,
+        textDecoration: 'none', padding: '8px 14px',
+        borderRadius: 10, background: T.bg2,
+        border: `1px solid ${T.border}`,
+        transition: 'all .2s',
+      }}>
+        <ArrowLeft size={14} /> Kembali ke Beranda
+      </Link>
 
       <div style={{ width: '100%', maxWidth: 420, position: 'relative', zIndex: 1 }}>
 
@@ -209,18 +259,6 @@ export default function LoginPage({ mode: initMode = 'login' }) {
                 onError={() => toast.error('Gagal login dengan Google')}
               />
             </div>
-          </div>
-
-          {/* Demo credentials */}
-          <div style={{ marginTop: 18, padding: '12px 14px', background: T.bg3, borderRadius: 10 }}>
-            <div style={{ fontSize: 11, color: T.text4, marginBottom: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
-              <Shield size={11} /> <span style={{ fontWeight: 700, color: T.text3 }}>Akun Demo</span>
-            </div>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              <DemoChip label="👑 Admin"       email="admin@kuarta.id" password="admin123" onFill={fillDemo} C={C} T={T} />
-              <DemoChip label="👤 User Biasa"  email="user@kuarta.id"  password="user123"  onFill={fillDemo} C={C} T={T} />
-            </div>
-            <p style={{ marginTop: 6, fontSize: 10, color: T.text4 }}>Klik chip di atas untuk mengisi form otomatis</p>
           </div>
         </div>
 
