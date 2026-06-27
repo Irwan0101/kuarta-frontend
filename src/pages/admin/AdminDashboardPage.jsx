@@ -247,7 +247,13 @@ export default function AdminDashboardPage() {
       a.remove();
       URL.revokeObjectURL(url);
     } catch (e) {
-      alert('Gagal backup: ' + (e?.error || e?.message || 'Unknown error'));
+      let msg = 'Gagal backup';
+      if (e instanceof Blob) {
+        try { const t = await e.text(); const j = JSON.parse(t); msg = j.error || msg; } catch {}
+      } else {
+        msg = e?.response?.data?.error || e?.error || e?.message || msg;
+      }
+      alert(msg);
     }
   };
 

@@ -178,6 +178,12 @@ export const adminApi = {
   createCoupon:  (payload)       => http.post('/admin/coupons', payload),
   deleteCoupon:  (id)            => http.delete(`/admin/coupons/${id}`),
   getAuditLogs:  (params)        => http.get('/admin/audit-logs', { params }),
-  backupDatabase:()               => http.get('/admin/backup', { responseType: 'blob' }),
+  backupDatabase:() => {
+    const token = useAuthStore.getState().token;
+    return axios.get(`${BASE}/admin/backup`, {
+      responseType: 'blob',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    }).then(r => r.data);
+  },
 };
 export default http;
