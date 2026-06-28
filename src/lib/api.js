@@ -179,6 +179,7 @@ export const adminApi = {
   deleteCoupon:  (id)            => http.delete(`/admin/coupons/${id}`),
   getAuditLogs:  (params)        => http.get('/admin/audit-logs', { params }),
   getSecurityOverview:()          => http.get('/admin/overview'),
+  getAnalyticsOverview:(period)   => http.get('/analytics/overview', { params: { period } }),
   backupDatabase:() => {
     const token = useAuthStore.getState().token;
     return axios.get(`${BASE}/admin/backup`, {

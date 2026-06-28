@@ -8,7 +8,7 @@ import {
   LayoutDashboard, Users, BookOpen, FileText, Video,
   LogOut, Menu, X, ChevronRight, Shield,
   GraduationCap, Layout, Tag, CreditCard, Bell, ScrollText, Library,
-  Moon, Sun, HelpCircle,
+  Moon, Sun, HelpCircle, TrendingUp,
 } from 'lucide-react';
 
 const NAV = [
@@ -26,6 +26,7 @@ const NAV = [
   { to: '/admin/notifications', icon: Bell,              label: 'Notifikasi'     },
   { to: '/admin/audit-logs',    icon: ScrollText,        label: 'Audit Log'      },
   { to: '/admin/security',      icon: Shield,            label: 'Security'       },
+  { to: '/admin/analytics',     icon: TrendingUp,        label: 'Analytics'      },
 ];
 
 const ORG = '#FF6B00';

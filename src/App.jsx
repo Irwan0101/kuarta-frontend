@@ -1,7 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore }   from '@/store/uiStore';
-import { useTheme }     from '@/hooks/useTheme';
+import { useTheme } from '@/hooks/useTheme';
+import { usePageTracker } from '@/hooks/usePageTracker';
 import Sidebar          from '@/components/layout/Sidebar';
 import Topbar           from '@/components/layout/Topbar';
 import PaymentModal     from '@/components/features/payment/PaymentModal';
@@ -38,6 +39,7 @@ import AdminLandingPage   from './pages/admin/AdminLandingPage';
 import AdminCouponsPage   from './pages/admin/AdminCouponsPage';
 import AdminAuditLogsPage from './pages/admin/AdminAuditLogsPage';
 import AdminSecurityPage from './pages/admin/AdminSecurityPage';
+import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
 import AdminTransactionsPage from './pages/admin/AdminTransactionsPage';
 import AdminNotificationsPage from './pages/admin/AdminNotificationsPage';
 import AdminMateriPage    from './pages/admin/AdminMateriPage';
@@ -111,6 +113,7 @@ function AppLayout({ children }) {
 // ─── APP ──────────────────────────────────────────────────────────
 export default function App() {
   const { T } = useTheme();
+  usePageTracker();
 
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.text2 }}>
@@ -162,6 +165,7 @@ export default function App() {
           <Route path="coupons"   element={<AdminCouponsPage />}   />
           <Route path="audit-logs" element={<AdminAuditLogsPage />} />
           <Route path="security"  element={<AdminSecurityPage />} />
+          <Route path="analytics" element={<AdminAnalyticsPage />} />
           <Route path="transactions" element={<AdminTransactionsPage />} />
           <Route path="notifications" element={<AdminNotificationsPage />} />
           <Route path="materi"    element={<AdminMateriPage />}     />
