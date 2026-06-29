@@ -507,158 +507,11 @@ export default function AdminLandingPage() {
 
       {/* ──────── PROGRAMS ──────── */}
       {activeTab === 'programs' && (
-        <SectionCard title="Program Section" onSubmit={() => saveSection('programs')} T={T} mobile={resp.isMobile} isActive={form.programs?.is_active !== false} onToggleActive={() => updateField('programs', 'is_active', !form.programs?.is_active)}>
-          <Row mobile={resp.isMobile}>
-            <Field label="Title" value={form.programs?.title || ''} onChange={v => updateField('programs', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Pilih Program" />
-            <Field label="Subtitle" value={form.programs?.subtitle || ''} onChange={v => updateField('programs', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Sesuai Tujuanmu" />
-          </Row>
-          <div style={{ marginTop: 8 }}>
-            <Field label="Badge Text" value={getContent('programs').badge_text || ''} onChange={v => updateContent('programs', 'badge_text', v)} T={T} inpStyle={inpStyle} placeholder="PROGRAM UNGGULAN" />
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 12 }}>
-            <label style={{ ...lbl, margin: 0, cursor: 'pointer' }}>Tampilkan Harga</label>
-            <div onClick={() => updateContent('programs', 'show_price', getContent('programs').show_price === false ? true : false)}
-              style={{
-                width: 40, height: 22, borderRadius: 11,
-                background: getContent('programs').show_price === false ? '#555' : '#FF6B00',
-                position: 'relative', cursor: 'pointer', transition: 'background 0.2s',
-              }}>
-              <div style={{
-                width: 18, height: 18, borderRadius: '50%', background: '#fff',
-                position: 'absolute', top: 2,
-                left: getContent('programs').show_price === false ? 2 : 20,
-                transition: 'left 0.2s',
-              }} />
-            </div>
-          </div>
-
-          {/* Program items CRUD */}
-          <div style={{ marginTop: 20 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-              <label style={{ ...lbl, margin: 0, fontSize: 13, color: T.text, fontWeight: 700 }}>Daftar Program ({getContent('programs').items?.length || 0})</label>
-              <button onClick={() => {
-                const items = [...(getContent('programs').items || []), { icon: 'BookOpen', cat: '', name: '', price: '', videos: 0, tryouts: 0, months: 0, color: '#FF6B00', rating: 5.0 }];
-                updateContent('programs', 'items', items);
-              }} style={btnAdd(T)}><Plus size={13} /> Tambah Program</button>
-            </div>
-            {(getContent('programs').items || []).length === 0 && (
-              <div style={{ textAlign: 'center', padding: 24, color: T.text4, fontSize: 12, border: `1px dashed ${T.border}`, borderRadius: 8 }}>
-                Belum ada program. Klik "Tambah Program" untuk mulai.
-              </div>
-            )}
-            {(getContent('programs').items || []).map((item, i) => (
-              <div key={i} style={{
-                ...cardStyle, padding: 14, marginBottom: 8,
-                borderColor: T.border2, position: 'relative',
-              }}>
-                <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
-                  <div style={{ flex: 1 }}>
-                    <Row mobile={resp.isMobile}>
-                      <div>
-                        <label style={lbl}>Nama Program *</label>
-                        <input value={item.name} onChange={e => {
-                          const items = [...(getContent('programs').items || [])];
-                          items[i] = { ...items[i], name: e.target.value };
-                          updateContent('programs', 'items', items);
-                        }} style={inpStyle()} placeholder="SKD CPNS – Kedinasan" />
-                      </div>
-                      <div>
-                        <label style={lbl}>Kategori</label>
-                        <input value={item.cat} onChange={e => {
-                          const items = [...(getContent('programs').items || [])];
-                          items[i] = { ...items[i], cat: e.target.value };
-                          updateContent('programs', 'items', items);
-                        }} style={inpStyle()} placeholder="CPNS" />
-                      </div>
-                    </Row>
-                    <Row mobile={resp.isMobile}>
-                      <div>
-                        <label style={lbl}>Price</label>
-                        <input value={item.price} onChange={e => {
-                          const items = [...(getContent('programs').items || [])];
-                          items[i] = { ...items[i], price: e.target.value };
-                          updateContent('programs', 'items', items);
-                        }} style={inpStyle()} placeholder="900.000" />
-                      </div>
-                      <div>
-                        <label style={lbl}>Color</label>
-                        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                          <input type="color" value={item.color} onChange={e => {
-                            const items = [...(getContent('programs').items || [])];
-                            items[i] = { ...items[i], color: e.target.value };
-                            updateContent('programs', 'items', items);
-                          }} style={{ width: 36, height: 36, border: 'none', borderRadius: 6, cursor: 'pointer', background: 'none' }} />
-                          <input value={item.color} onChange={e => {
-                            const items = [...(getContent('programs').items || [])];
-                            items[i] = { ...items[i], color: e.target.value };
-                            updateContent('programs', 'items', items);
-                          }} style={{ flex: 1, ...inpStyle() }} placeholder="#FF6B00" />
-                        </div>
-                      </div>
-                    </Row>
-                    <Row mobile={resp.isMobile}>
-                      <div>
-                        <label style={lbl}>Icon</label>
-                        <select value={item.icon} onChange={e => {
-                          const items = [...(getContent('programs').items || [])];
-                          items[i] = { ...items[i], icon: e.target.value };
-                          updateContent('programs', 'items', items);
-                        }} style={inpStyle()}>
-                          <option value="Landmark">Landmark</option>
-                          <option value="Crosshair">Crosshair</option>
-                          <option value="BookOpen">BookOpen</option>
-                          <option value="Trophy">Trophy</option>
-                          <option value="Briefcase">Briefcase</option>
-                          <option value="Video">Video</option>
-                          <option value="Star">Star</option>
-                          <option value="GraduationCap">GraduationCap</option>
-                        </select>
-                      </div>
-                      <div>
-                        <label style={lbl}>Rating</label>
-                        <input type="number" step="0.1" min="0" max="5" value={item.rating} onChange={e => {
-                          const items = [...(getContent('programs').items || [])];
-                          items[i] = { ...items[i], rating: parseFloat(e.target.value) || 0 };
-                          updateContent('programs', 'items', items);
-                        }} style={inpStyle()} placeholder="4.8" />
-                      </div>
-                    </Row>
-                    <Row mobile={resp.isMobile}>
-                      <div>
-                        <label style={lbl}>Videos</label>
-                        <input type="number" value={item.videos} onChange={e => {
-                          const items = [...(getContent('programs').items || [])];
-                          items[i] = { ...items[i], videos: parseInt(e.target.value) || 0 };
-                          updateContent('programs', 'items', items);
-                        }} style={inpStyle()} placeholder="150" />
-                      </div>
-                      <div>
-                        <label style={lbl}>Tryouts</label>
-                        <input type="number" value={item.tryouts} onChange={e => {
-                          const items = [...(getContent('programs').items || [])];
-                          items[i] = { ...items[i], tryouts: parseInt(e.target.value) || 0 };
-                          updateContent('programs', 'items', items);
-                        }} style={inpStyle()} placeholder="30" />
-                      </div>
-                      <div>
-                        <label style={lbl}>Months</label>
-                        <input type="number" value={item.months} onChange={e => {
-                          const items = [...(getContent('programs').items || [])];
-                          items[i] = { ...items[i], months: parseInt(e.target.value) || 0 };
-                          updateContent('programs', 'items', items);
-                        }} style={inpStyle()} placeholder="3" />
-                      </div>
-                    </Row>
-                  </div>
-                  <button onClick={() => {
-                    const items = (getContent('programs').items || []).filter((_, j) => j !== i);
-                    updateContent('programs', 'items', items);
-                  }} style={{ ...btnSm(T), color: '#EF4444', flexShrink: 0, marginTop: 18 }}><Trash2 size={13} /></button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </SectionCard>
+        <ProgramsSelectorTab
+          T={T} inpStyle={inpStyle} cardStyle={cardStyle} isMobile={resp.isMobile}
+          form={form} updateField={updateField} updateContent={updateContent}
+          getContent={getContent} saveSection={saveSection}
+        />
       )}
 
       {/* ──────── BANNERS ──────── */}
@@ -934,6 +787,95 @@ function PromotionsTab({ promotions, onRefresh, T, inpStyle, cardStyle, isMobile
       ))}
       {confirmModal}
     </div>
+  );
+}
+
+/* ── Programs Selector Tab ── */
+function ProgramsSelectorTab({ T, inpStyle, cardStyle, isMobile, form, updateField, updateContent, getContent, saveSection }) {
+  const [allPrograms, setAllPrograms] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const selectedIds = getContent('programs').selected_ids || [];
+
+  useEffect(() => {
+    setLoading(true);
+    adminApi.getPrograms().then(data => {
+      setAllPrograms(Array.isArray(data) ? data : []);
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  const toggleProgram = (id) => {
+    const ids = selectedIds.includes(id)
+      ? selectedIds.filter(x => x !== id)
+      : [...selectedIds, id];
+    updateContent('programs', 'selected_ids', ids);
+  };
+
+  const selectedCount = selectedIds.length;
+
+  return (
+    <SectionCard title="Program Section" onSubmit={() => saveSection('programs')} T={T} mobile={isMobile}
+      isActive={form.programs?.is_active !== false}
+      onToggleActive={() => updateField('programs', 'is_active', !form.programs?.is_active)}>
+      <Row mobile={isMobile}>
+        <Field label="Title" value={form.programs?.title || ''} onChange={v => updateField('programs', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Pilih Program" />
+        <Field label="Subtitle" value={form.programs?.subtitle || ''} onChange={v => updateField('programs', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Sesuai Tujuanmu" />
+      </Row>
+      <div style={{ marginTop: 8, marginBottom: 12 }}>
+        <Field label="Badge Text" value={getContent('programs').badge_text || ''} onChange={v => updateContent('programs', 'badge_text', v)} T={T} inpStyle={inpStyle} placeholder="PROGRAM UNGGULAN" />
+      </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+        <label style={{ ...lbl, margin: 0, cursor: 'pointer' }}>Tampilkan Harga</label>
+        <div onClick={() => updateContent('programs', 'show_price', getContent('programs').show_price === false ? true : false)}
+          style={{ width: 40, height: 22, borderRadius: 11, background: getContent('programs').show_price === false ? '#555' : '#FF6B00', position: 'relative', cursor: 'pointer', transition: 'background 0.2s' }}>
+          <div style={{ width: 18, height: 18, borderRadius: '50%', background: '#fff', position: 'absolute', top: 2, left: getContent('programs').show_price === false ? 2 : 20, transition: 'left 0.2s' }} />
+        </div>
+      </div>
+
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+          <label style={{ ...lbl, margin: 0, fontSize: 13, color: T.text, fontWeight: 700 }}>
+            Pilih Program untuk Ditampilkan ({selectedCount} terpilih)
+          </label>
+        </div>
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: 24, color: T.text4, fontSize: 12 }}>Memuat program...</div>
+        ) : allPrograms.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: 24, color: T.text4, fontSize: 12, border: `1px dashed ${T.border}`, borderRadius: 8 }}>
+            Belum ada program. Buat program dulu di menu Program.
+          </div>
+        ) : allPrograms.map(p => {
+          const isSelected = selectedIds.includes(p.id);
+          return (
+            <div key={p.id} onClick={() => toggleProgram(p.id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px',
+                background: isSelected ? ORG + '12' : T.bg3,
+                border: `1px solid ${isSelected ? ORG + '50' : T.border2}`,
+                borderRadius: 10, marginBottom: 6, cursor: 'pointer',
+                transition: 'all 0.2s',
+              }}>
+              <div style={{
+                width: 22, height: 22, borderRadius: 6,
+                background: isSelected ? ORG : 'transparent',
+                border: `2px solid ${isSelected ? ORG : T.border}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0, transition: 'all 0.2s',
+              }}>
+                {isSelected && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>}
+              </div>
+              <span style={{ fontSize: 20, flexShrink: 0 }}>{p.icon || '📚'}</span>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontWeight: 700, fontSize: 13, color: T.text }}>{p.name}</div>
+                <div style={{ fontSize: 11, color: T.text3 }}>{p.category} · Rp {Number(p.price).toLocaleString()}</div>
+              </div>
+              <span style={{ fontSize: 10, fontWeight: 700, color: ORG, background: ORG + '15', padding: '2px 8px', borderRadius: 99 }}>
+                {p.badge_label || p.category}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </SectionCard>
   );
 }
 

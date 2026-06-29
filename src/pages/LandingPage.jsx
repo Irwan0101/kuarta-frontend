@@ -6,6 +6,11 @@ import { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, FileText, Star
 
 const PROGRAM_ICONS = { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, Star, Play, Calendar, MessageCircle, GraduationCap };
 
+function progColor(gradient) {
+  const m = gradient?.match(/#[0-9a-fA-F]{6}/);
+  return m ? m[0] : '#FF6B00';
+}
+
 const NAV_ITEMS = [
   { label: "Program",   id: "programs"     },
   { label: "Fitur",     id: "features"     },
@@ -69,6 +74,7 @@ export default function LandingPage() {
   const [sections, setSections] = useState({});
   const [banners, setBanners] = useState([]);
   const [promotions, setPromotions] = useState([]);
+  const [programs, setPrograms] = useState([]);
   const [showPromo, setShowPromo] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
   const [waNumber, setWaNumber] = useState('6285222473457');
@@ -78,11 +84,13 @@ export default function LandingPage() {
       axios.get(`${BASE}/landing/sections`).then(r => r.data || {}).catch(() => ({})),
       axios.get(`${BASE}/landing/banners`).then(r => Array.isArray(r.data) ? r.data : []).catch(() => []),
       axios.get(`${BASE}/landing/promotions`).then(r => Array.isArray(r.data) ? r.data : []).catch(() => []),
+      axios.get(`${BASE}/landing/programs`).then(r => Array.isArray(r.data) ? r.data : []).catch(() => []),
       axios.get(`${BASE}/landing/settings/wa_number`).then(r => r.data?.number || '6285222473457').catch(() => '6285222473457'),
-    ])      .then(([secs, bnr, promo, wa]) => {
+    ])      .then(([secs, bnr, promo, progs, wa]) => {
       setSections(secs);
       setBanners(bnr);
       setPromotions(promo);
+      setPrograms(progs);
       if (promo.length > 0) setShowPromo(true);
       if (wa) setWaNumber(wa);
     });
@@ -115,13 +123,6 @@ export default function LandingPage() {
 
   const HERO_WORDS = getCF('hero', 'words', []);
   const FEATURES_ITEMS = getCF('features', 'items', []);
-  const rawPrograms = getCF('programs', 'items', []);
-  const PROGRAMS = rawPrograms.length > 0
-    ? rawPrograms.map(p => ({
-        ...p,
-        icon: PROGRAM_ICONS[p.icon] || BookOpen,
-      }))
-    : [];
   const TESTIMONIALS = getCF('testimonials', 'items', [])
     .map(t => ({ ...t, avatar: t.avatar || t.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }));
 
@@ -137,6 +138,7 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
+    if (TESTIMONIALS.length < 2) return;
     const interval = setInterval(() => {
       setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
     }, 4000);
@@ -988,7 +990,7 @@ export default function LandingPage() {
       )}
 
       {/* ── PROGRAMS ── */}
-      {PROGRAMS.length > 0 && (
+      {programs.length > 0 && (
       <section style={{ padding: "100px 5%", background: D.bg }} id="programs" data-animate>
         <div className={`section-enter ${isVisible("programs") ? "visible" : ""}`}
           style={{ textAlign: "center", marginBottom: 60 }}>
@@ -1010,41 +1012,43 @@ export default function LandingPage() {
           gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
           gap: 20,
         }}>
-          {PROGRAMS.map((p, i) => (
-            <div key={i}
+          {programs.map((p, i) => {
+            const pc = progColor(p.bg_gradient);
+            return (
+            <div key={p.id}
               className={`program-card section-enter ${isVisible("programs") ? "visible" : ""}`}
               style={{ transitionDelay: `${i * 0.08}s` }}
             >
               <div className="program-header" style={{
                 height: 110,
-                background: `linear-gradient(135deg, ${p.color}22, ${p.color}06)`,
-                borderBottom: `1px solid ${p.color}20`,
+                background: p.bg_gradient || `linear-gradient(135deg, ${pc}22, ${pc}06)`,
+                borderBottom: `1px solid ${pc}20`,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 fontSize: 42, position: "relative", overflow: "hidden",
               }}>
                 <div style={{
                   position: "absolute", width: 100, height: 100,
-                  background: `radial-gradient(circle, ${p.color}18, transparent)`,
+                  background: `radial-gradient(circle, ${pc}18, transparent)`,
                   borderRadius: "50%",
                 }} />
-                <span className="program-icon" style={{ position: "relative", zIndex: 1, animation: "float 3s ease-in-out infinite", animationDelay: `${i * 0.3}s`, display: "flex" }}>
-                  <p.icon size={28} strokeWidth={1.5} />
+                <span className="program-icon" style={{ position: "relative", zIndex: 1, animation: "float 3s ease-in-out infinite", animationDelay: `${i * 0.3}s`, display: "flex", fontSize: 40 }}>
+                  {p.icon || '📚'}
                 </span>
               </div>
               <div className="program-card-body" style={{ padding: "18px 20px 20px" }}>
-                <div style={{ fontSize: 10, fontWeight: 700, color: p.color, letterSpacing: "0.1em", marginBottom: 6 }}>{p.cat}</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: pc, letterSpacing: "0.1em", marginBottom: 6 }}>{p.category}</div>
                 <h3 className="hero-headline" style={{ fontSize: 16, color: D.text, marginBottom: 6, lineHeight: 1.2 }}>{p.name}</h3>
                 <div style={{ display: "flex", alignItems: "center", gap: 3, marginBottom: 14 }}>
                   {[1,2,3,4,5].map((s, si) => (
                     <Star key={si} size={11} fill="#F59E0B" color="#F59E0B" strokeWidth={0} />
                   ))}
-                  <span style={{ fontSize: 11, color: D.text3, marginLeft: 4 }}>{p.rating}</span>
+                  <span style={{ fontSize: 11, color: D.text3, marginLeft: 4 }}>{Number(p.rating).toFixed(1)}</span>
                 </div>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 16 }}>
                   {[
-                    { icon: Play, val: `${p.videos} Video` },
-                    { icon: FileText, val: p.tryouts ? `${p.tryouts} TO` : null },
-                    { icon: Calendar, val: `${p.months} Bulan` },
+                    { icon: Play, val: `${p.video_count} Video` },
+                    { icon: FileText, val: p.tryout_count ? `${p.tryout_count} TO` : null },
+                    { icon: Calendar, val: `${p.duration_months} Bulan` },
                   ].filter(m => m.val).map((m, mi) => (
                     <span key={mi} style={{
                       fontSize: 11, color: D.text2,
@@ -1058,7 +1062,7 @@ export default function LandingPage() {
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                   {getCF('programs', 'show_price', true) !== false && (
                     <div>
-                      <span className="hero-headline" style={{ fontSize: 20, color: "#FF6B00" }}>Rp {p.price}</span>
+                      <span className="hero-headline" style={{ fontSize: 20, color: "#FF6B00" }}>Rp {Number(p.price).toLocaleString()}</span>
                       <span style={{ fontSize: 11, color: D.text3 }}>/bulan</span>
                     </div>
                   )}
@@ -1068,7 +1072,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-          ))}
+          );})}
         </div>
       </section>)}
 
