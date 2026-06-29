@@ -814,7 +814,7 @@ export default function LandingPage() {
             animation: "pulse-ring 2s infinite",
           }} />
           <span style={{ fontSize: 13, color: "#FF6B00", fontWeight: 600 }}>
-            {getCF('hero', 'badge_text', 'Platform Belajar #1 di Indonesia')}
+            {getCF('hero', 'badge_text', '')}
           </span>
         </div>
 
@@ -914,7 +914,7 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </div>}
+      </div>)}
 
       {banners.length > 0 && (
         <section style={{ padding: "60px 5%", background: D.bgCard2 }} id="banners" data-animate>
@@ -996,7 +996,7 @@ export default function LandingPage() {
             display: "inline-block", fontSize: 11, fontWeight: 700,
             color: "#FF6B00", letterSpacing: "0.14em",
             background: D.tagBg, padding: "6px 16px", borderRadius: 99, marginBottom: 16,
-          }}>{getCF('programs', 'badge_text', 'PROGRAM UNGGULAN')}</div>
+          }}>{getCF('programs', 'badge_text', '')}</div>
           <h2 className="hero-headline" style={{
             fontSize: "clamp(30px, 5vw, 52px)", color: D.text,
           }}>
@@ -1080,7 +1080,7 @@ export default function LandingPage() {
           <div style={{
             fontSize: 11, fontWeight: 700, color: "#FF6B00", letterSpacing: "0.14em",
             background: D.tagBg, display: "inline-block", padding: "6px 16px", borderRadius: 99, marginBottom: 16,
-          }}>{getCF('features', 'badge_text', 'MENGAPA KUARTA')}</div>
+          }}>{getCF('features', 'badge_text', '')}</div>
           <h2 className="hero-headline" style={{ fontSize: "clamp(28px, 4vw, 48px)", color: D.text }}>
             {getF('features', 'title', 'Semua yang Kamu Butuhkan')}<br />
             <span className="glow-text">{getF('features', 'subtitle', 'Ada di Sini')}</span>
@@ -1112,7 +1112,7 @@ export default function LandingPage() {
           <div style={{
             fontSize: 11, fontWeight: 700, color: "#FF6B00", letterSpacing: "0.14em",
             background: D.tagBg, display: "inline-block", padding: "6px 16px", borderRadius: 99, marginBottom: 16,
-          }}>{getCF('testimonials', 'badge_text', 'TESTIMONI')}</div>
+          }}>{getCF('testimonials', 'badge_text', '')}</div>
           <h2 className="hero-headline" style={{ fontSize: "clamp(28px, 4vw, 48px)", color: D.text }}>
             {getF('testimonials', 'title', 'Mereka Sudah')} <span className="glow-text">{getF('testimonials', 'subtitle', 'Membuktikannya')}</span>
           </h2>
