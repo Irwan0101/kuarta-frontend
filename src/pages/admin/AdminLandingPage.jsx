@@ -63,12 +63,13 @@ export default function AdminLandingPage() {
         f[sec.section_key] = {
           title: sec.title || '',
           subtitle: sec.subtitle || '',
+          is_active: sec.is_active !== false,
           content: JSON.parse(JSON.stringify(content)),
         };
       }
       // Ensure all tabs have a form entry
       for (const t of tabs) {
-        if (!f[t.key]) f[t.key] = { title: '', subtitle: '', content: {} };
+        if (!f[t.key]) f[t.key] = { title: '', subtitle: '', is_active: true, content: {} };
       }
       setForm(f);
 
@@ -112,6 +113,7 @@ export default function AdminLandingPage() {
         title: data.title,
         subtitle: data.subtitle,
         content: data.content,
+        is_active: data.is_active,
       });
       toast.success(`${key} tersimpan`);
       loadAll();
@@ -170,7 +172,7 @@ export default function AdminLandingPage() {
 
       {/* ──────── HERO ──────── */}
       {activeTab === 'hero' && (
-        <SectionCard title="Hero Section" onSubmit={() => saveSection('hero')} T={T} mobile={resp.isMobile}>
+        <SectionCard title="Hero Section" onSubmit={() => saveSection('hero')} T={T} mobile={resp.isMobile} isActive={form.hero?.is_active !== false} onToggleActive={() => updateField('hero', 'is_active', !form.hero?.is_active)}>
           <Row mobile={resp.isMobile}>
             <Field label="Title" value={form.hero?.title || ''} onChange={v => updateField('hero', 'title', v)} T={T} inpStyle={inpStyle} />
             <Field label="Subtitle" value={form.hero?.subtitle || ''} onChange={v => updateField('hero', 'subtitle', v)} T={T} inpStyle={inpStyle} />
@@ -257,7 +259,7 @@ export default function AdminLandingPage() {
 
       {/* ──────── FEATURES ──────── */}
       {activeTab === 'features' && (
-<SectionCard title="Fitur Unggulan" onSubmit={() => saveSection('features')} T={T} mobile={resp.isMobile}>
+<SectionCard title="Fitur Unggulan" onSubmit={() => saveSection('features')} T={T} mobile={resp.isMobile} isActive={form.features?.is_active !== false} onToggleActive={() => updateField('features', 'is_active', !form.features?.is_active)}>
             <Row mobile={resp.isMobile}>
             <Field label="Title" value={form.features?.title || ''} onChange={v => updateField('features', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Semua yang Kamu Butuhkan" />
             <Field label="Subtitle" value={form.features?.subtitle || ''} onChange={v => updateField('features', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Ada di Sini" />
@@ -314,7 +316,7 @@ export default function AdminLandingPage() {
 
       {/* ──────── TESTIMONIALS ──────── */}
       {activeTab === 'testimonials' && (
-        <SectionCard title="Testimoni" onSubmit={() => saveSection('testimonials')} T={T} mobile={resp.isMobile}>
+        <SectionCard title="Testimoni" onSubmit={() => saveSection('testimonials')} T={T} mobile={resp.isMobile} isActive={form.testimonials?.is_active !== false} onToggleActive={() => updateField('testimonials', 'is_active', !form.testimonials?.is_active)}>
           <Row mobile={resp.isMobile}>
             <Field label="Title" value={form.testimonials?.title || ''} onChange={v => updateField('testimonials', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Mereka Sudah Membuktikannya" />
             <Field label="Subtitle" value={form.testimonials?.subtitle || ''} onChange={v => updateField('testimonials', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Testimoni dari siswa yang berhasil" />
@@ -371,7 +373,7 @@ export default function AdminLandingPage() {
 
       {/* ──────── CTA ──────── */}
       {activeTab === 'cta' && (
-        <SectionCard title="CTA (Call to Action)" onSubmit={() => saveSection('cta')} T={T} mobile={resp.isMobile}>
+        <SectionCard title="CTA (Call to Action)" onSubmit={() => saveSection('cta')} T={T} mobile={resp.isMobile} isActive={form.cta?.is_active !== false} onToggleActive={() => updateField('cta', 'is_active', !form.cta?.is_active)}>
           <Row mobile={resp.isMobile}>
             <Field label="Title" value={form.cta?.title || ''} onChange={v => updateField('cta', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Siap Meraih Mimpimu?" />
             <Field label="Subtitle" value={form.cta?.subtitle || ''} onChange={v => updateField('cta', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Bergabung dengan 120.000+ siswa..." />
@@ -399,7 +401,7 @@ export default function AdminLandingPage() {
 
       {/* ──────── FOOTER ──────── */}
       {activeTab === 'footer' && (
-        <SectionCard title="Footer" onSubmit={() => saveSection('footer')} T={T} mobile={resp.isMobile}>
+        <SectionCard title="Footer" onSubmit={() => saveSection('footer')} T={T} mobile={resp.isMobile} isActive={form.footer?.is_active !== false} onToggleActive={() => updateField('footer', 'is_active', !form.footer?.is_active)}>
           <Field label="Copyright Text" value={form.footer?.subtitle || ''} onChange={v => updateField('footer', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="© 2026 Kuarta. All rights reserved." />
           <div style={{ marginTop: 16 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -433,7 +435,7 @@ export default function AdminLandingPage() {
 
       {/* ──────── TICKER ──────── */}
       {activeTab === 'ticker' && (
-        <SectionCard title="Ticker (Running Text)" onSubmit={() => saveSection('ticker')} T={T} mobile={resp.isMobile}>
+        <SectionCard title="Ticker (Running Text)" onSubmit={() => saveSection('ticker')} T={T} mobile={resp.isMobile} isActive={form.ticker?.is_active !== false} onToggleActive={() => updateField('ticker', 'is_active', !form.ticker?.is_active)}>
           <p style={{ fontSize: 12, color: T.text3, margin: '0 0 12px' }}>
             Teks yang berjalan di antara Hero dan Program
           </p>
@@ -505,7 +507,7 @@ export default function AdminLandingPage() {
 
       {/* ──────── PROGRAMS ──────── */}
       {activeTab === 'programs' && (
-        <SectionCard title="Program Section" onSubmit={() => saveSection('programs')} T={T} mobile={resp.isMobile}>
+        <SectionCard title="Program Section" onSubmit={() => saveSection('programs')} T={T} mobile={resp.isMobile} isActive={form.programs?.is_active !== false} onToggleActive={() => updateField('programs', 'is_active', !form.programs?.is_active)}>
           <Row mobile={resp.isMobile}>
             <Field label="Title" value={form.programs?.title || ''} onChange={v => updateField('programs', 'title', v)} T={T} inpStyle={inpStyle} placeholder="Pilih Program" />
             <Field label="Subtitle" value={form.programs?.subtitle || ''} onChange={v => updateField('programs', 'subtitle', v)} T={T} inpStyle={inpStyle} placeholder="Sesuai Tujuanmu" />
@@ -674,11 +676,30 @@ export default function AdminLandingPage() {
 
 /* ── Sub-components ── */
 
-function SectionCard({ title, children, onSubmit, T, mobile }) {
+function SectionCard({ title, children, onSubmit, T, mobile, isActive, onToggleActive }) {
   return (
     <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 12, padding: mobile ? 12 : 20, marginBottom: 16 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <h3 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 700, color: T.text, margin: 0 }}>{title}</h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <h3 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: 16, fontWeight: 700, color: T.text, margin: 0 }}>{title}</h3>
+          <div onClick={onToggleActive}
+            style={{
+              width: 36, height: 20, borderRadius: 10,
+              background: isActive ? '#22C55E' : '#555',
+              position: 'relative', cursor: 'pointer', transition: 'background 0.2s',
+              flexShrink: 0,
+            }}>
+            <div style={{
+              width: 16, height: 16, borderRadius: '50%', background: '#fff',
+              position: 'absolute', top: 2,
+              left: isActive ? 18 : 2,
+              transition: 'left 0.2s',
+            }} />
+          </div>
+          <span style={{ fontSize: 11, fontWeight: 600, color: isActive ? '#22C55E' : T.text4 }}>
+            {isActive ? 'Tampil' : 'Sembunyi'}
+          </span>
+        </div>
         <button onClick={onSubmit}
           style={{ background: ORG, color: '#fff', border: 'none', borderRadius: 8, padding: '7px 14px', fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
           <Save size={13} /> Simpan
