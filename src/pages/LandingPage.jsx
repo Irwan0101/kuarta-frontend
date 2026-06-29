@@ -135,7 +135,7 @@ export default function LandingPage() {
     );
     document.querySelectorAll("[data-animate]").forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [banners.length, programs.length, sections]);
 
   useEffect(() => {
     if (TESTIMONIALS.length < 2) return;
@@ -190,7 +190,7 @@ export default function LandingPage() {
       if (el) observer.observe(el);
     });
     return () => observer.disconnect();
-  }, []);
+  }, [sections]);
 
   // Close WA panel when clicking outside
   useEffect(() => {
@@ -1102,7 +1102,7 @@ export default function LandingPage() {
                 width: 48, height: 48, background: D.tagBg, borderRadius: 12,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "#FF6B00", marginBottom: 16, fontSize: 22,
-              }}              >{typeof f.icon === 'string' ? f.icon : f.icon}</div>
+              }}              >{f.icon}</div>
               <h3 className="hero-headline" style={{ fontSize: 16, color: D.text, marginBottom: 8 }}>{f.title}</h3>
               <p style={{ fontSize: 13, color: D.text3, lineHeight: 1.7 }}>{f.desc}</p>
             </div>
