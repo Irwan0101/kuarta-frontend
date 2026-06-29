@@ -143,7 +143,7 @@ export default function LandingPage() {
       setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, []);
+  }, [TESTIMONIALS.length]);
 
   useEffect(() => {
     if (HERO_WORDS.length === 0) return;
@@ -163,7 +163,7 @@ export default function LandingPage() {
       }
     }
     return () => clearTimeout(timeout);
-  }, [letterIndex, wordVisible, wordIndex]);
+  }, [letterIndex, wordVisible, wordIndex, HERO_WORDS]);
 
   // Scroll to section
   const scrollToSection = (id) => {
