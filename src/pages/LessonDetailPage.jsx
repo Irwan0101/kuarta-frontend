@@ -56,8 +56,8 @@ function VideoRenderer({ lesson, onComplete }) {
 
 /* ── PDF renderer ── */
 function PdfRenderer({ lesson }) {
-  const fileUrl = lesson.file_url || lesson.content_url || lesson.content;
-  if (!fileUrl) return <div style={{ padding: 40, textAlign: 'center', color: '#888' }}>File tidak tersedia</div>;
+  const fileUrl = lesson.pdf_url;
+  if (!fileUrl) return null;
   return (
     <div style={{ borderRadius: 16, overflow: 'hidden', background: '#fff', minHeight: 500 }}>
       <iframe src={fileUrl} style={{ width: '100%', height: 600, border: 'none' }} title={lesson.title} />
@@ -208,12 +208,17 @@ export default function LessonDetailPage() {
   if (!lesson) return null;
 
   const renderContent = () => {
-    switch (lesson.type) {
-      case 'video': return <VideoRenderer lesson={lesson} onComplete={handleComplete} />;
-      case 'pdf': return <PdfRenderer lesson={lesson} />;
-      case 'quiz': return <QuizRenderer lesson={lesson} onComplete={handleComplete} />;
-      default: return <TextRenderer lesson={lesson} />;
-    }
+    const sections = [];
+    if (lesson.video_url) sections.push(<VideoRenderer lesson={lesson} onComplete={handleComplete} />);
+    if (lesson.description) sections.push(
+      <div key="text" style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 16, padding: 24, lineHeight: 1.8, fontSize: 14 }}>
+        <div dangerouslySetInnerHTML={{ __html: lesson.description }} />
+      </div>
+    );
+    if (lesson.pdf_url) sections.push(<PdfRenderer lesson={lesson} />);
+    if (sections.length === 0) sections.push(<div key="empty" style={{ padding: 40, textAlign: 'center', color: T.text4 }}>Belum ada konten untuk pelajaran ini</div>);
+
+    return <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>{sections}</div>;
   };
 
   return (

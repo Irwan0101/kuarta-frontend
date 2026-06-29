@@ -12,7 +12,7 @@ import {
 } from './adminUtils';
 
 const EMPTY_TOPIC = { program_id: '', title: '', icon: '📖', order_num: '' };
-const EMPTY_LESSON = { title: '', description: '', video_url: '', pdf_url: '', duration_mins: '', type: 'video', is_free: false, order_num: '' };
+const EMPTY_LESSON = { title: '', description: '', video_url: '', pdf_url: '', duration_mins: '', is_free: false, order_num: '' };
 
 export default function AdminMateriPage() {
   const { T } = useTheme();
@@ -84,7 +84,7 @@ export default function AdminMateriPage() {
   const openLessonEdit = (lesson) => {
     setLessonForm({
       title: lesson.title, description: lesson.description ?? '', video_url: lesson.video_url ?? '', pdf_url: lesson.pdf_url ?? '',
-      duration_mins: lesson.duration_mins ?? '', type: lesson.type || 'video',
+      duration_mins: lesson.duration_mins ?? '',
       is_free: lesson.is_free ?? false, order_num: lesson.order_num ?? '',
     });
     setLessonTopicId(lesson.topic_id);
@@ -221,40 +221,20 @@ export default function AdminMateriPage() {
             <FormGroup label="Judul">
               <input style={inp} value={lessonForm.title} onChange={e => setLessonForm(f => ({ ...f, title: e.target.value }))} placeholder="Pengantar TWK" />
             </FormGroup>
-            <FormGroup label="Tipe">
-              <select style={sel} value={lessonForm.type} onChange={e => setLessonForm(f => ({ ...f, type: e.target.value }))}>
-                <option value="video">Video</option>
-                <option value="pdf">PDF</option>
-                <option value="quiz">Quiz</option>
-                <option value="link">Link</option>
-              </select>
+          </FormRow>
+          <FormGroup label="Konten Teks Bacaan">
+            <textarea value={lessonForm.description} onChange={e => setLessonForm(f => ({ ...f, description: e.target.value }))}
+              rows={6} style={{ width: '100%', ...inp, resize: 'vertical', fontFamily: 'monospace', fontSize: 12 }} placeholder="Tulis materi teks di sini... Bisa pakai HTML." />
+          </FormGroup>
+          <FormRow>
+            <FormGroup label="Video YouTube (URL)">
+              <input style={inp} value={lessonForm.video_url} onChange={e => setLessonForm(f => ({ ...f, video_url: e.target.value }))} placeholder="https://www.youtube.com/watch?v=..." />
+              <div style={{ fontSize: 11, color: T.text4, marginTop: 4 }}>Kosongkan jika tidak ada video</div>
+            </FormGroup>
+            <FormGroup label="Upload PDF">
+              <ImageUpload value={lessonForm.pdf_url} onChange={v => setLessonForm(f => ({ ...f, pdf_url: v }))} accept=".pdf,image/*" label="Upload PDF" />
             </FormGroup>
           </FormRow>
-          <FormGroup label="Konten Teks (opsional)">
-            <textarea value={lessonForm.description} onChange={e => setLessonForm(f => ({ ...f, description: e.target.value }))}
-              rows={4} style={{ width: '100%', ...inp, resize: 'vertical' }} placeholder="Tulis materi teks di sini..." />
-          </FormGroup>
-          {lessonForm.type === 'video' && (
-            <FormGroup label="URL Video (YouTube)">
-              <input style={inp} value={lessonForm.video_url} onChange={e => setLessonForm(f => ({ ...f, video_url: e.target.value }))} placeholder="https://www.youtube.com/watch?v=..." />
-              <div style={{ fontSize: 11, color: T.text4, marginTop: 4 }}>Tempel link YouTube — sistem akan otomatis menampilkan video embedded</div>
-            </FormGroup>
-          )}
-          {lessonForm.type === 'pdf' && (
-            <FormRow>
-              <FormGroup label="Upload PDF">
-                <ImageUpload value={lessonForm.pdf_url} onChange={v => setLessonForm(f => ({ ...f, pdf_url: v }))} accept=".pdf,image/*" label="Upload PDF" />
-              </FormGroup>
-              <FormGroup label="Atau URL PDF">
-                <input style={inp} value={lessonForm.pdf_url} onChange={e => setLessonForm(f => ({ ...f, pdf_url: e.target.value }))} placeholder="https://..." />
-              </FormGroup>
-            </FormRow>
-          )}
-          {lessonForm.type === 'link' && (
-            <FormGroup label="URL Tautan">
-              <input style={inp} value={lessonForm.video_url} onChange={e => setLessonForm(f => ({ ...f, video_url: e.target.value }))} placeholder="https://..." />
-            </FormGroup>
-          )}
           <FormRow>
             <FormGroup label="Durasi (menit)">
               <input style={inp} type="number" value={lessonForm.duration_mins} onChange={e => setLessonForm(f => ({ ...f, duration_mins: e.target.value }))} placeholder="15" />
