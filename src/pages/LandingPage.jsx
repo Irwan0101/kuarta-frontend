@@ -6,46 +6,12 @@ import { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, FileText, Star
 
 const PROGRAM_ICONS = { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, Star, Play, Calendar, MessageCircle, GraduationCap };
 
-const DEFAULT_PROGRAMS = [
-  { icon: "Landmark", cat: "CPNS", name: "SKD CPNS – Kedinasan", price: "900.000", videos: 150, tryouts: 30, months: 3, color: "#FF6B00", rating: 4.8 },
-  { icon: "Crosshair", cat: "UNIVERSITAS", name: "UTBK – SNBT", price: "850.000", videos: 180, tryouts: 50, months: 6, color: "#3B82F6", rating: 4.8 },
-  { icon: "BookOpen", cat: "SEKOLAH", name: "Bimbel SD", price: "350.000", videos: 80, tryouts: 0, months: 3, color: "#22C55E", rating: 5.0 },
-  { icon: "BookOpen", cat: "SEKOLAH", name: "Bimbel SMA", price: "550.000", videos: 200, tryouts: 0, months: 6, color: "#8B5CF6", rating: 4.9 },
-  { icon: "Trophy", cat: "OLIMPIADE", name: "Persiapan OSN", price: "600.000", videos: 160, tryouts: 0, months: 6, color: "#F59E0B", rating: 5.0 },
-  { icon: "Briefcase", cat: "KARIER", name: "Persiapan Karier", price: "300.000", videos: 90, tryouts: 0, months: 2, color: "#EC4899", rating: 4.9 },
-];
-
-const DEFAULT_STATS = [
-  { value: "120K+", label: "Siswa Aktif" },
-  { value: "4.9★", label: "Rating Platform" },
-  { value: "98%", label: "Tingkat Lulus" },
-  { value: "500+", label: "Materi & Video" },
-];
-
-const DEFAULT_FEATURES = [
-  { icon: <Video size={22} />, title: "Video HD Interaktif", desc: "Ratusan video berkualitas tinggi dari pengajar berpengalaman, bisa ditonton kapan saja." },
-  { icon: <ClipboardCheck size={22} />, title: "Tryout Mirip Asli", desc: "Simulasi tryout dengan soal yang diperbarui setiap bulan, sesuai kisi-kisi terbaru." },
-  { icon: <Video size={22} />, title: "Live Class Rutin", desc: "Sesi belajar langsung bersama mentor setiap minggu, bisa tanya jawab real-time." },
-  { icon: <BarChart3 size={22} />, title: "Analitik Performa", desc: "Pantau perkembangan nilai dan identifikasi kelemahan dengan grafik yang detail." },
-  { icon: <Trophy size={22} />, title: "Leaderboard Nasional", desc: "Bersaing dengan ribuan siswa dari seluruh Indonesia, motivasi diri setiap hari." },
-  { icon: <Smartphone size={22} />, title: "Akses Multi-Device", desc: "Belajar dari HP, tablet, atau laptop — sinkronisasi otomatis di semua perangkat." },
-];
-
-const DEFAULT_TESTIMONIALS = [
-  { name: "Rizki Firmansyah", role: "Lulus CPNS Kemenkeu 2024", avatar: "RF", score: 478, text: "Berkat Kuarta saya lulus SKD dengan skor tertinggi di batch saya. Tryout-nya sangat mirip soal asli!" },
-  { name: "Siti Rahayu", role: "Mahasiswa UI – Kedokteran", avatar: "SR", score: 820, text: "UTBK-ku naik 150 poin dalam 3 bulan. Live class-nya sangat membantu, mentornya sabar dan profesional." },
-  { name: "Bagas Pratama", role: "Lulus IPDN 2024", avatar: "BP", score: 461, text: "Platform terbaik untuk persiapan kedinasan. Materinya lengkap, tryout-nya akurat, harganya sangat terjangkau." },
-];
-
-
 const NAV_ITEMS = [
   { label: "Program",   id: "programs"     },
   { label: "Fitur",     id: "features"     },
   { label: "Testimoni", id: "testimonials" },
   { label: "Harga",     id: "cta"          },
 ];
-
-const WA_NUMBER = "6281234567890"; // Ganti dengan nomor WA aktif
 
 const WA_TEMPLATES = [
   {
@@ -145,17 +111,18 @@ export default function LandingPage() {
           : `${Number(s.target).toLocaleString()}`,
         label: s.label,
       }))
-    : DEFAULT_STATS;
+    : [];
 
-  const HERO_WORDS = getCF('hero', 'words', ["Prestasi", "Masa Depan", "Impianmu", "Karirmu", "Nilai Terbaik"]);
-  const FEATURES_ITEMS = getCF('features', 'items', DEFAULT_FEATURES);
-  const PROGRAMS = (getCF('programs', 'items', [])).length > 0
-    ? getCF('programs', 'items', []).map(p => ({
+  const HERO_WORDS = getCF('hero', 'words', []);
+  const FEATURES_ITEMS = getCF('features', 'items', []);
+  const rawPrograms = getCF('programs', 'items', []);
+  const PROGRAMS = rawPrograms.length > 0
+    ? rawPrograms.map(p => ({
         ...p,
         icon: PROGRAM_ICONS[p.icon] || BookOpen,
       }))
-    : DEFAULT_PROGRAMS.map(p => ({ ...p, icon: PROGRAM_ICONS[p.icon] || BookOpen }));
-  const TESTIMONIALS = getCF('testimonials', 'items', DEFAULT_TESTIMONIALS)
+    : [];
+  const TESTIMONIALS = getCF('testimonials', 'items', [])
     .map(t => ({ ...t, avatar: t.avatar || t.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }));
 
   useEffect(() => {
@@ -177,6 +144,7 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
+    if (HERO_WORDS.length === 0) return;
     let timeout;
     if (wordVisible) {
       if (letterIndex < HERO_WORDS[wordIndex].length) {
@@ -800,7 +768,7 @@ export default function LandingPage() {
         }}>
         <div style={{
           position: "absolute", inset: 0,
-          backgroundImage: "url(/bg.png)",
+          backgroundImage: `url(${getCF('hero', 'bg_image', '/bg.png')})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
           opacity: 0.06,
@@ -828,7 +796,7 @@ export default function LandingPage() {
           opacity: 0,
           animation: "fadeUp 0.8s cubic-bezier(0.22,1,0.36,1) 0.15s forwards",
         }}>
-          <img src="/model.png" alt="" style={{
+          <img src={getCF('hero', 'model_image', '/model.png')} alt="" style={{
             width: "100%", height: "auto", objectFit: "contain",
             filter: "drop-shadow(0 20px 60px rgba(255,107,0,0.15))",
           }} />
@@ -862,11 +830,11 @@ export default function LandingPage() {
           }}
         >
           {getF('hero', 'title', 'Raih')}{" "}
-          <span className="glow-text">
+          {HERO_WORDS.length > 0 && <><span className="glow-text">
             {HERO_WORDS[wordIndex].slice(0, letterIndex)}
           </span>
           <span className="word-cursor" />
-          <br />
+          <br /></>}
           <span style={{ color: D.text }}>{getF('hero', 'subtitle', 'Bersama ')}</span>
           <span style={{
             fontFamily: "Inter, sans-serif",
@@ -907,7 +875,7 @@ export default function LandingPage() {
           </button>
         </div>
 
-        <div className="stat-grid" style={{
+        {STATS.length > 0 && <div className="stat-grid" style={{
           display: "flex", gap: 0,
           background: D.statBg,
           border: `1px solid ${D.border}`,
@@ -925,33 +893,19 @@ export default function LandingPage() {
               <div style={{ fontSize: 12, color: D.text3, fontWeight: 500 }}>{s.label}</div>
             </div>
           ))}
-        </div>
+      </div>}
 
-        <div className="hero-scroll" style={{
-          position: "absolute", bottom: 32, left: "50%", transform: "translateX(-50%)",
-          display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
-          opacity: scrollY > 50 ? 0 : 0.4, transition: "opacity 0.3s",
-        }}>
-          <div style={{ fontSize: 11, color: D.text3, letterSpacing: "0.12em" }}>SCROLL</div>
-          <div style={{
-            width: 24, height: 40, border: `2px solid ${D.border}`,
-            borderRadius: 12, display: "flex", justifyContent: "center", padding: 4,
-          }}>
-            <div style={{
-              width: 4, height: 8, background: "#FF6B00", borderRadius: 2,
-              animation: "float 1.5s ease-in-out infinite",
-            }} />
-          </div>
-        </div>
+      {/* ── BANNERS ── */}
       </section>
 
       {/* ── TICKER ── */}
+      {(getCF('ticker', 'items', [])).length > 0 && (
       <div style={{ background: "#FF6B00", padding: "13px 0", overflow: "hidden" }}>
         <div className="ticker-wrap">
           <div className="ticker-inner">
             {[...Array(2)].map((_, ri) => (
               <span key={ri}>
-                {(getCF('ticker', 'items', ['CPNS 2025', 'UTBK SNBT', 'Olimpiade OSN', 'Bimbel SD SMP SMA', 'Persiapan Karier', 'Live Class Rutin', 'Tryout Akurat', 'Kuarta'])).map((t, i) => (
+                {(getCF('ticker', 'items', [])).map((t, i) => (
                   <span key={i} style={{ fontSize: 12, fontWeight: 700, color: "white", marginRight: 44, letterSpacing: "0.08em" }}>
                     ✦ {t}
                   </span>
@@ -960,9 +914,8 @@ export default function LandingPage() {
             ))}
           </div>
         </div>
-      </div>
+      </div>}
 
-      {/* ── BANNERS ── */}
       {banners.length > 0 && (
         <section style={{ padding: "60px 5%", background: D.bgCard2 }} id="banners" data-animate>
           <div className={`section-enter ${isVisible("banners") ? "visible" : ""}`}
@@ -1035,6 +988,7 @@ export default function LandingPage() {
       )}
 
       {/* ── PROGRAMS ── */}
+      {PROGRAMS.length > 0 && (
       <section style={{ padding: "100px 5%", background: D.bg }} id="programs" data-animate>
         <div className={`section-enter ${isVisible("programs") ? "visible" : ""}`}
           style={{ textAlign: "center", marginBottom: 60 }}>
@@ -1116,9 +1070,10 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
-      </section>
+      </section>)}
 
       {/* ── FEATURES ── */}
+      {FEATURES_ITEMS.length > 0 && (
       <section style={{ padding: "80px 5%", background: D.bgCard2 }} id="features" data-animate>
         <div className={`section-enter ${isVisible("features") ? "visible" : ""}`}
           style={{ textAlign: "center", marginBottom: 60 }}>
@@ -1147,9 +1102,10 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
-      </section>
+      </section>)}
 
       {/* ── TESTIMONIALS ── */}
+      {TESTIMONIALS.length > 0 && (
       <section style={{ padding: "100px 5%", background: D.bg }} id="testimonials" data-animate>
         <div className={`section-enter ${isVisible("testimonials") ? "visible" : ""}`}
           style={{ textAlign: "center", marginBottom: 60 }}>
@@ -1207,7 +1163,7 @@ export default function LandingPage() {
             }} />
           ))}
         </div>
-      </section>
+      </section>)}
 
       {/* ── CTA ── */}
       <section style={{

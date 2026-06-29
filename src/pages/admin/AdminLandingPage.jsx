@@ -195,6 +195,18 @@ export default function AdminLandingPage() {
             />
           </div>
 
+          {/* Hero Images */}
+          <Row mobile={resp.isMobile} style={{ marginTop: 12 }}>
+            <div>
+              <label style={lbl}>Background Image</label>
+              <ImageUpload value={getContent('hero').bg_image || ''} onChange={v => updateContent('hero', 'bg_image', v)} label="Upload BG" />
+            </div>
+            <div>
+              <label style={lbl}>Model Image</label>
+              <ImageUpload value={getContent('hero').model_image || ''} onChange={v => updateContent('hero', 'model_image', v)} label="Upload Model" />
+            </div>
+          </Row>
+
           {/* Animated Words */}
           <div style={{ marginTop: 12 }}>
             <label style={lbl}>Animated Words (ketik + Enter untuk tambah)</label>
