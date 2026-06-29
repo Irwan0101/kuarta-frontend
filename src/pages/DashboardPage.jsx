@@ -130,6 +130,61 @@ export default function DashboardPage() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, marginBottom: 24 }}>
           <Card style={{ padding: 0 }}>
+            <div style={{ padding: '18px 20px 14px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text }}>📚 Program Saya</h3>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/belajar')} icon={<ArrowRight size={12} />}>Lihat semua</Button>
+            </div>
+            <div style={{ padding: '10px 0' }}>
+              {programList.length > 0 ? programList.map(p => (
+                <div key={p.id} style={{ padding: '14px 20px', borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }} onClick={() => navigate('/belajar')}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
+                    <div style={{ width: 38, height: 38, background: p.color + '18', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{p.icon}</div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>{p.name}</div>
+                      <div style={{ fontSize: 11, color: T.text4 }}>{p.progress}% selesai</div>
+                    </div>
+                    {!p.enrolled && (
+                      <Button variant="outline" size="sm" onClick={e => { e.stopPropagation(); openPayment({ program: { id: p.id, name: p.name, price: 299000 } }); }}>Daftar</Button>
+                    )}
+                  </div>
+                  <ProgressBar value={p.progress} color={p.color} height={5} />
+                </div>
+              )) : (
+                <div style={{ padding: 20, textAlign:'center', color: T.text3, fontSize: 12 }}>
+                  Belum ada program. <span style={{ color: C.orange, cursor: 'pointer' }} onClick={() => navigate('/program')}>Lihat program</span>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          <Card style={{ padding: 0 }}>
+            <div style={{ padding: '18px 20px 14px', borderBottom: `1px solid ${T.border}` }}>
+              <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text }}>📅 Jadwal Mendatang</h3>
+            </div>
+            <div style={{ padding: '10px 0' }}>
+              {upcomingSchedule.filter(ev => ev.type !== 'none').map(ev => (
+                <div key={ev.id} style={{ padding: '14px 20px', borderBottom: `1px solid ${T.border}`, display: 'flex', gap: 12, cursor: 'pointer' }} onClick={() => navigate(ev.type === 'live' ? '/live' : '/tryout')}>
+                  <div style={{ width: 38, height: 38, background: (ev.type === 'live' ? C.blue : C.orange) + '18', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 18 }}>
+                    {ev.type === 'live' ? '🎥' : '📝'}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 4 }}>{ev.title}</div>
+                    <div style={{ fontSize: 11, color: T.text4 }}>{ev.time ? new Date(ev.time).toLocaleString('id-ID', { weekday: 'short', hour: '2-digit', minute: '2-digit' }) : '-'}</div>
+                  </div>
+                </div>
+              ))}
+              {upcomingSchedule.filter(ev => ev.type === 'none').length > 0 && (
+                <div style={{ padding: '14px 20px', fontSize: 12, color: T.text4 }}>Belum ada jadwal</div>
+              )}
+              <div style={{ padding: '12px 20px' }}>
+                <Button fullWidth variant="ghost" size="sm" onClick={() => navigate('/live')}>Lihat Semua Jadwal</Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
+          <Card style={{ padding: 0 }}>
             <div style={{ padding: '18px 20px 12px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text, marginBottom: 2 }}>Tren Nilai Tryout</h3>
@@ -190,61 +245,6 @@ export default function DashboardPage() {
               )) : (
                 <div style={{ padding: 20, textAlign:'center', color: T.text3, fontSize: 12 }}>Belum ada data tryout</div>
               )}
-            </div>
-          </Card>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20 }}>
-          <Card style={{ padding: 0 }}>
-            <div style={{ padding: '18px 20px 14px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text }}>📚 Program Saya</h3>
-              <Button variant="ghost" size="sm" onClick={() => navigate('/belajar')} icon={<ArrowRight size={12} />}>Lihat semua</Button>
-            </div>
-            <div style={{ padding: '10px 0' }}>
-              {programList.length > 0 ? programList.map(p => (
-                <div key={p.id} style={{ padding: '14px 20px', borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }} onClick={() => navigate('/belajar')}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
-                    <div style={{ width: 38, height: 38, background: p.color + '18', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{p.icon}</div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>{p.name}</div>
-                      <div style={{ fontSize: 11, color: T.text4 }}>{p.progress}% selesai</div>
-                    </div>
-                    {!p.enrolled && (
-                      <Button variant="outline" size="sm" onClick={e => { e.stopPropagation(); openPayment({ program: { id: p.id, name: p.name, price: 299000 } }); }}>Daftar</Button>
-                    )}
-                  </div>
-                  <ProgressBar value={p.progress} color={p.color} height={5} />
-                </div>
-              )) : (
-                <div style={{ padding: 20, textAlign:'center', color: T.text3, fontSize: 12 }}>
-                  Belum ada program. <span style={{ color: C.orange, cursor: 'pointer' }} onClick={() => navigate('/program')}>Lihat program</span>
-                </div>
-              )}
-            </div>
-          </Card>
-
-          <Card style={{ padding: 0 }}>
-            <div style={{ padding: '18px 20px 14px', borderBottom: `1px solid ${T.border}` }}>
-              <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text }}>📅 Jadwal Mendatang</h3>
-            </div>
-            <div style={{ padding: '10px 0' }}>
-              {upcomingSchedule.filter(ev => ev.type !== 'none').map(ev => (
-                <div key={ev.id} style={{ padding: '14px 20px', borderBottom: `1px solid ${T.border}`, display: 'flex', gap: 12, cursor: 'pointer' }} onClick={() => navigate(ev.type === 'live' ? '/live' : '/tryout')}>
-                  <div style={{ width: 38, height: 38, background: (ev.type === 'live' ? C.blue : C.orange) + '18', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 18 }}>
-                    {ev.type === 'live' ? '🎥' : '📝'}
-                  </div>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 4 }}>{ev.title}</div>
-                    <div style={{ fontSize: 11, color: T.text4 }}>{ev.time ? new Date(ev.time).toLocaleString('id-ID', { weekday: 'short', hour: '2-digit', minute: '2-digit' }) : '-'}</div>
-                  </div>
-                </div>
-              ))}
-              {upcomingSchedule.filter(ev => ev.type === 'none').length > 0 && (
-                <div style={{ padding: '14px 20px', fontSize: 12, color: T.text4 }}>Belum ada jadwal</div>
-              )}
-              <div style={{ padding: '12px 20px' }}>
-                <Button fullWidth variant="ghost" size="sm" onClick={() => navigate('/live')}>Lihat Semua Jadwal</Button>
-              </div>
             </div>
           </Card>
         </div>
