@@ -930,11 +930,13 @@ export default function LandingPage() {
               <a href={banners[activeBanner]?.cta_link || '#'}
                 style={{ display: "block", textDecoration: "none", color: "inherit" }}>
                 <div style={{ position: "relative", aspectRatio: "21/9", overflow: "hidden" }}>
-                  <img
-                    src={banners[activeBanner]?.image_url}
-                    alt={banners[activeBanner]?.title || ''}
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
+                  {banners[activeBanner]?.image_url && (
+                    <img
+                      src={banners[activeBanner].image_url}
+                      alt={banners[activeBanner]?.title || ''}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                    />
+                  )}
                   <div style={{
                     position: "absolute", inset: 0,
                     background: "linear-gradient(90deg, rgba(0,0,0,0.6) 0%, transparent 60%)",
