@@ -24,6 +24,19 @@ const SUBJECTS = [
   'Tes Wawasan Kebangsaan (TWK)',
   'Tes Intelejensia Umum (TIU)',
   'Tes Karakteristik Pribadi (TKP)',
+  'Matematika',
+  'Fisika',
+  'Kimia',
+  'Biologi',
+  'Bahasa Inggris',
+  'Bahasa Indonesia',
+  'Sejarah',
+  'Ekonomi',
+  'Geografi',
+  'Sosiologi',
+  'Kedokteran',
+  'Teknik',
+  'Umum',
 ];
 
 function statusOf(scheduled_at) {
