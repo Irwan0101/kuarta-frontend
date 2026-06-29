@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plus, Trash2, Save, EyeOff, Eye, MoveUp, MoveDown, Flag, Star, MessageCircle, Rocket, Link2, Trophy, Tag, Palette, Image, BookOpen, Settings as SettingsIcon, Hash } from 'lucide-react';
+import { Plus, Trash2, Save, EyeOff, Eye, MoveUp, MoveDown, Flag, Star, MessageCircle, Rocket, Link2, Trophy, Tag, Palette, Image, BookOpen, Settings as SettingsIcon, Hash, GripVertical } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
 import { useConfirm } from '@/hooks/useConfirm';
@@ -82,7 +82,7 @@ export default function AdminLandingPage() {
         else if (t.key === 'ticker') count = sec?.content?.items?.length || 0;
         else if (t.key === 'cta') count = sec ? 1 : 0;
         else if (t.key === 'footer') count = sec?.content?.links?.length || 0;
-        else if (t.key === 'programs') count = sec ? 1 : 0;
+        else if (t.key === 'programs') count = sec?.content?.items?.length || 0;
         else if (t.key === 'settings') count = Object.keys(settings).length;
         return { ...t, count };
       }));
@@ -516,6 +516,133 @@ export default function AdminLandingPage() {
                 transition: 'left 0.2s',
               }} />
             </div>
+          </div>
+
+          {/* Program items CRUD */}
+          <div style={{ marginTop: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <label style={{ ...lbl, margin: 0, fontSize: 13, color: T.text, fontWeight: 700 }}>Daftar Program ({getContent('programs').items?.length || 0})</label>
+              <button onClick={() => {
+                const items = [...(getContent('programs').items || []), { icon: 'BookOpen', cat: '', name: '', price: '', videos: 0, tryouts: 0, months: 0, color: '#FF6B00', rating: 5.0 }];
+                updateContent('programs', 'items', items);
+              }} style={btnAdd(T)}><Plus size={13} /> Tambah Program</button>
+            </div>
+            {(getContent('programs').items || []).length === 0 && (
+              <div style={{ textAlign: 'center', padding: 24, color: T.text4, fontSize: 12, border: `1px dashed ${T.border}`, borderRadius: 8 }}>
+                Belum ada program. Klik "Tambah Program" untuk mulai.
+              </div>
+            )}
+            {(getContent('programs').items || []).map((item, i) => (
+              <div key={i} style={{
+                ...cardStyle, padding: 14, marginBottom: 8,
+                borderColor: T.border2, position: 'relative',
+              }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                  <div style={{ flex: 1 }}>
+                    <Row mobile={resp.isMobile}>
+                      <div>
+                        <label style={lbl}>Nama Program *</label>
+                        <input value={item.name} onChange={e => {
+                          const items = [...(getContent('programs').items || [])];
+                          items[i] = { ...items[i], name: e.target.value };
+                          updateContent('programs', 'items', items);
+                        }} style={inpStyle()} placeholder="SKD CPNS – Kedinasan" />
+                      </div>
+                      <div>
+                        <label style={lbl}>Kategori</label>
+                        <input value={item.cat} onChange={e => {
+                          const items = [...(getContent('programs').items || [])];
+                          items[i] = { ...items[i], cat: e.target.value };
+                          updateContent('programs', 'items', items);
+                        }} style={inpStyle()} placeholder="CPNS" />
+                      </div>
+                    </Row>
+                    <Row mobile={resp.isMobile}>
+                      <div>
+                        <label style={lbl}>Price</label>
+                        <input value={item.price} onChange={e => {
+                          const items = [...(getContent('programs').items || [])];
+                          items[i] = { ...items[i], price: e.target.value };
+                          updateContent('programs', 'items', items);
+                        }} style={inpStyle()} placeholder="900.000" />
+                      </div>
+                      <div>
+                        <label style={lbl}>Color</label>
+                        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                          <input type="color" value={item.color} onChange={e => {
+                            const items = [...(getContent('programs').items || [])];
+                            items[i] = { ...items[i], color: e.target.value };
+                            updateContent('programs', 'items', items);
+                          }} style={{ width: 36, height: 36, border: 'none', borderRadius: 6, cursor: 'pointer', background: 'none' }} />
+                          <input value={item.color} onChange={e => {
+                            const items = [...(getContent('programs').items || [])];
+                            items[i] = { ...items[i], color: e.target.value };
+                            updateContent('programs', 'items', items);
+                          }} style={{ flex: 1, ...inpStyle() }} placeholder="#FF6B00" />
+                        </div>
+                      </div>
+                    </Row>
+                    <Row mobile={resp.isMobile}>
+                      <div>
+                        <label style={lbl}>Icon</label>
+                        <select value={item.icon} onChange={e => {
+                          const items = [...(getContent('programs').items || [])];
+                          items[i] = { ...items[i], icon: e.target.value };
+                          updateContent('programs', 'items', items);
+                        }} style={inpStyle()}>
+                          <option value="Landmark">Landmark</option>
+                          <option value="Crosshair">Crosshair</option>
+                          <option value="BookOpen">BookOpen</option>
+                          <option value="Trophy">Trophy</option>
+                          <option value="Briefcase">Briefcase</option>
+                          <option value="Video">Video</option>
+                          <option value="Star">Star</option>
+                          <option value="GraduationCap">GraduationCap</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={lbl}>Rating</label>
+                        <input type="number" step="0.1" min="0" max="5" value={item.rating} onChange={e => {
+                          const items = [...(getContent('programs').items || [])];
+                          items[i] = { ...items[i], rating: parseFloat(e.target.value) || 0 };
+                          updateContent('programs', 'items', items);
+                        }} style={inpStyle()} placeholder="4.8" />
+                      </div>
+                    </Row>
+                    <Row mobile={resp.isMobile}>
+                      <div>
+                        <label style={lbl}>Videos</label>
+                        <input type="number" value={item.videos} onChange={e => {
+                          const items = [...(getContent('programs').items || [])];
+                          items[i] = { ...items[i], videos: parseInt(e.target.value) || 0 };
+                          updateContent('programs', 'items', items);
+                        }} style={inpStyle()} placeholder="150" />
+                      </div>
+                      <div>
+                        <label style={lbl}>Tryouts</label>
+                        <input type="number" value={item.tryouts} onChange={e => {
+                          const items = [...(getContent('programs').items || [])];
+                          items[i] = { ...items[i], tryouts: parseInt(e.target.value) || 0 };
+                          updateContent('programs', 'items', items);
+                        }} style={inpStyle()} placeholder="30" />
+                      </div>
+                      <div>
+                        <label style={lbl}>Months</label>
+                        <input type="number" value={item.months} onChange={e => {
+                          const items = [...(getContent('programs').items || [])];
+                          items[i] = { ...items[i], months: parseInt(e.target.value) || 0 };
+                          updateContent('programs', 'items', items);
+                        }} style={inpStyle()} placeholder="3" />
+                      </div>
+                    </Row>
+                  </div>
+                  <button onClick={() => {
+                    const items = (getContent('programs').items || []).filter((_, j) => j !== i);
+                    updateContent('programs', 'items', items);
+                  }} style={{ ...btnSm(T), color: '#EF4444', flexShrink: 0, marginTop: 18 }}><Trash2 size={13} /></button>
+                </div>
+              </div>
+            ))}
           </div>
         </SectionCard>
       )}

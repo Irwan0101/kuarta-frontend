@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import axios from 'axios';
 import SEO from '@/components/SEO';
+import PromotionPopup from '@/components/features/PromotionPopup';
 import { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, FileText, Star, Play, Calendar, ArrowRight, ClipboardCheck, BarChart3, Smartphone, MessageCircle, GraduationCap, Moon, Sun, HelpCircle, DollarSign } from 'lucide-react';
 
-const PROGRAMS = [
-  { icon: Landmark, cat: "CPNS", name: "SKD CPNS – Kedinasan", price: "900.000", videos: 150, tryouts: 30, months: 3, color: "#FF6B00", rating: 4.8 },
-  { icon: Crosshair, cat: "UNIVERSITAS", name: "UTBK – SNBT", price: "850.000", videos: 180, tryouts: 50, months: 6, color: "#3B82F6", rating: 4.8 },
-  { icon: BookOpen, cat: "SEKOLAH", name: "Bimbel SD", price: "350.000", videos: 80, tryouts: 0, months: 3, color: "#22C55E", rating: 5.0 },
-  { icon: BookOpen, cat: "SEKOLAH", name: "Bimbel SMA", price: "550.000", videos: 200, tryouts: 0, months: 6, color: "#8B5CF6", rating: 4.9 },
-  { icon: Trophy, cat: "OLIMPIADE", name: "Persiapan OSN", price: "600.000", videos: 160, tryouts: 0, months: 6, color: "#F59E0B", rating: 5.0 },
-  { icon: Briefcase, cat: "KARIER", name: "Persiapan Karier", price: "300.000", videos: 90, tryouts: 0, months: 2, color: "#EC4899", rating: 4.9 },
+const PROGRAM_ICONS = { Landmark, Crosshair, BookOpen, Trophy, Briefcase, Video, Star, Play, Calendar, MessageCircle, GraduationCap };
+
+const DEFAULT_PROGRAMS = [
+  { icon: "Landmark", cat: "CPNS", name: "SKD CPNS – Kedinasan", price: "900.000", videos: 150, tryouts: 30, months: 3, color: "#FF6B00", rating: 4.8 },
+  { icon: "Crosshair", cat: "UNIVERSITAS", name: "UTBK – SNBT", price: "850.000", videos: 180, tryouts: 50, months: 6, color: "#3B82F6", rating: 4.8 },
+  { icon: "BookOpen", cat: "SEKOLAH", name: "Bimbel SD", price: "350.000", videos: 80, tryouts: 0, months: 3, color: "#22C55E", rating: 5.0 },
+  { icon: "BookOpen", cat: "SEKOLAH", name: "Bimbel SMA", price: "550.000", videos: 200, tryouts: 0, months: 6, color: "#8B5CF6", rating: 4.9 },
+  { icon: "Trophy", cat: "OLIMPIADE", name: "Persiapan OSN", price: "600.000", videos: 160, tryouts: 0, months: 6, color: "#F59E0B", rating: 5.0 },
+  { icon: "Briefcase", cat: "KARIER", name: "Persiapan Karier", price: "300.000", videos: 90, tryouts: 0, months: 2, color: "#EC4899", rating: 4.9 },
 ];
 
 const DEFAULT_STATS = [
@@ -99,6 +102,8 @@ export default function LandingPage() {
   // ── Load dynamic landing sections ──
   const [sections, setSections] = useState({});
   const [banners, setBanners] = useState([]);
+  const [promotions, setPromotions] = useState([]);
+  const [showPromo, setShowPromo] = useState(false);
   const [activeBanner, setActiveBanner] = useState(0);
   const [waNumber, setWaNumber] = useState('6285222473457');
   useEffect(() => {
@@ -106,10 +111,13 @@ export default function LandingPage() {
     Promise.all([
       axios.get(`${BASE}/landing/sections`).then(r => r.data || {}).catch(() => ({})),
       axios.get(`${BASE}/landing/banners`).then(r => Array.isArray(r.data) ? r.data : []).catch(() => []),
+      axios.get(`${BASE}/landing/promotions`).then(r => Array.isArray(r.data) ? r.data : []).catch(() => []),
       axios.get(`${BASE}/landing/settings/wa_number`).then(r => r.data?.number || '6285222473457').catch(() => '6285222473457'),
-    ])      .then(([secs, bnr, wa]) => {
+    ])      .then(([secs, bnr, promo, wa]) => {
       setSections(secs);
       setBanners(bnr);
+      setPromotions(promo);
+      if (promo.length > 0) setShowPromo(true);
       if (wa) setWaNumber(wa);
     });
   }, []);
@@ -141,6 +149,12 @@ export default function LandingPage() {
 
   const HERO_WORDS = getCF('hero', 'words', ["Prestasi", "Masa Depan", "Impianmu", "Karirmu", "Nilai Terbaik"]);
   const FEATURES_ITEMS = getCF('features', 'items', DEFAULT_FEATURES);
+  const PROGRAMS = (getCF('programs', 'items', [])).length > 0
+    ? getCF('programs', 'items', []).map(p => ({
+        ...p,
+        icon: PROGRAM_ICONS[p.icon] || BookOpen,
+      }))
+    : DEFAULT_PROGRAMS.map(p => ({ ...p, icon: PROGRAM_ICONS[p.icon] || BookOpen }));
   const TESTIMONIALS = getCF('testimonials', 'items', DEFAULT_TESTIMONIALS)
     .map(t => ({ ...t, avatar: t.avatar || t.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() }));
 
@@ -1127,7 +1141,7 @@ export default function LandingPage() {
                 width: 48, height: 48, background: D.tagBg, borderRadius: 12,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 color: "#FF6B00", marginBottom: 16, fontSize: 22,
-              }}>{f.icon}</div>
+              }}              >{typeof f.icon === 'string' ? f.icon : f.icon}</div>
               <h3 className="hero-headline" style={{ fontSize: 16, color: D.text, marginBottom: 8 }}>{f.title}</h3>
               <p style={{ fontSize: 13, color: D.text3, lineHeight: 1.7 }}>{f.desc}</p>
             </div>
@@ -1234,8 +1248,8 @@ export default function LandingPage() {
             </button>
           </div>
           <div style={{ display: "flex", gap: 24, justifyContent: "center", marginTop: 28, flexWrap: "wrap" }}>
-            {["✓ Tanpa kartu kredit", "✓ Akses instan", "✓ Bisa dibatalkan kapan saja"].map((t, i) => (
-              <span key={i} style={{ fontSize: 13, color: D.text3 }}>{t}</span>
+            {getCF('cta', 'guarantees', ["Tanpa kartu kredit", "Akses instan", "Bisa dibatalkan kapan saja"]).map((t, i) => (
+              <span key={i} style={{ fontSize: 13, color: D.text3 }}>✓ {t}</span>
             ))}
           </div>
         </div>
@@ -1256,7 +1270,7 @@ export default function LandingPage() {
 
           <div className="footer-links" style={{ display: "flex", gap: 28 }}>
             {(getCF('footer', 'links', [{label: "Tentang"},{label: "Program"},{label: "Blog"},{label: "Kontak"},{label: "Privasi"}])).map(item => (
-              <a key={item.label} className="nav-link" style={{ fontSize: 13, color: D.text2 }} href={item.href || '#'}>{item.label}</a>
+              <a key={item.label} className="nav-link" style={{ fontSize: 13, color: D.text2 }} href={item.url || item.href || '#'}>{item.label}</a>
             ))}
           </div>
 
@@ -1396,6 +1410,7 @@ export default function LandingPage() {
         </div>
       </div>
     </div>
+    {showPromo && <PromotionPopup promotions={promotions} onClose={() => setShowPromo(false)} />}
     </>
   );
 }
