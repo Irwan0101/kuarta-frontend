@@ -160,72 +160,72 @@ function ProgramCard({ prog, T, C, onSelect, onAddToCart }) {
         </div>
 
         <div style={{
-          display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between', gap: 8,
           paddingTop: 12, borderTop: `1px solid ${T.border}`,
           marginTop: 'auto',
         }}>
-          <div style={{ minWidth: 0 }}>
+          <div style={{
+            display: 'flex', alignItems: 'baseline', gap: 4,
+            marginBottom: 10,
+          }}>
             {isFree ? (
-              <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 16, color: C.green }}>Gratis</span>
+              <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 17, color: C.green }}>Gratis</span>
             ) : (
               <>
-                <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 17, color: C.orange }}>
+                <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 18, color: C.orange }}>
                   {formatIDR(prog.price)}
                 </span>
-                <span style={{ fontSize: 10.5, color: T.text4, marginLeft: 3 }}>/bln</span>
+                <span style={{ fontSize: 11, color: T.text4 }}>/bln</span>
               </>
+            )}
+            {prog.student_count > 0 && (
+              <span style={{ fontSize: 10.5, color: T.text4, marginLeft: 'auto' }}>
+                <Users size={10} style={{ marginRight: 2, verticalAlign: 'middle' }} />
+                {prog.student_count}
+              </span>
             )}
           </div>
 
           {prog.is_enrolled ? (
             <div style={{
               background: C.green + '18', color: C.green,
-              fontSize: 11, fontWeight: 700,
-              padding: '7px 14px', borderRadius: 8,
+              fontSize: 12, fontWeight: 700, textAlign: 'center',
+              padding: '8px 14px', borderRadius: 8,
               border: `1.5px solid ${C.green}40`,
-              whiteSpace: 'nowrap',
             }}>
-              ✓ Dimiliki
+              ✓ Sudah Dimiliki
             </div>
           ) : (
-            <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
               <button
                 onClick={e => { e.stopPropagation(); onAddToCart(prog); }}
                 style={{
-                  width: 34, height: 34,
-                  background: T.bg3,
-                  color: T.text4,
+                  width: 38, height: 38, flexShrink: 0,
+                  background: T.bg3, color: T.text4,
                   border: `1.5px solid ${T.border}`,
-                  borderRadius: 8,
-                  fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                  borderRadius: 8, cursor: 'pointer',
                   transition: 'all 0.2s',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  flexShrink: 0,
                 }}
                 title="Tambah ke Keranjang"
                 onMouseEnter={e => { e.currentTarget.style.background = C.orange + '18'; e.currentTarget.style.borderColor = C.orange; e.currentTarget.style.color = C.orange; }}
                 onMouseLeave={e => { e.currentTarget.style.background = T.bg3; e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text4; }}
               >
-                <ShoppingCart size={13} />
+                <ShoppingCart size={14} />
               </button>
               <button
                 onClick={e => { e.stopPropagation(); onSelect(prog); }}
                 style={{
-                  padding: '7px 18px',
-                  background: C.orange,
-                  color: T.bg,
-                  border: 'none',
-                  borderRadius: 8,
-                  fontSize: 12, fontWeight: 800, cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  display: 'flex', alignItems: 'center', gap: 4,
+                  flex: 1, padding: '9px 18px',
+                  background: C.orange, color: T.bg,
+                  border: 'none', borderRadius: 8,
+                  fontSize: 13, fontWeight: 800, cursor: 'pointer',
+                  transition: 'opacity 0.2s',
                   whiteSpace: 'nowrap',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
                 onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
               >
-                Daftar
+                Daftar Sekarang
               </button>
             </div>
           )}
