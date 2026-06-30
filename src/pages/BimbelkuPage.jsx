@@ -129,6 +129,7 @@ export default function BimbelkuPage() {
   const streakCount = useAuthStore.getState().user?.streak_count || 0;
   const totalWatchMins = allLessons.filter(l => l.completed).reduce((a, l) => a + (l.duration_mins || 0), 0);
   const resumeLesson = allLessons.find(l => !l.completed) || allLessons[0];
+  const videoLesson = allLessons.find(l => l.type === 'video' && !l.completed) || allLessons.find(l => l.type === 'video');
 
   return (
     <>
@@ -193,7 +194,9 @@ export default function BimbelkuPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, marginBottom: 24, alignItems: 'start' }}>
               {/* Left: Video + Info */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <VideoPlayer C={C} T={T} lesson={resumeLesson} onPlay={() => resumeLesson && navigate(`/belajar/${resumeLesson.id}`)} />
+                {videoLesson ? (
+                  <VideoPlayer C={C} T={T} lesson={videoLesson} onPlay={() => navigate(`/belajar/${videoLesson.id}`)} />
+                ) : null}
                 <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, padding: '16px 20px' }}>
                   <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8, fontFamily: 'Syne, sans-serif' }}>
                     {activeProgram?.name || activeProgram?.program_name || 'Program'}
