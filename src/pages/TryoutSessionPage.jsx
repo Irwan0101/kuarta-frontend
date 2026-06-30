@@ -38,6 +38,8 @@ export default function TryoutSessionPage() {
           number: i + 1,
           subject: q.category,
           text: q.question_text,
+          groupStimulus: q.group_stimulus,
+          timeLimitSecs: q.time_limit_secs,
           options: [
             { id: 'A', text: q.option_a },
             { id: 'B', text: q.option_b },
@@ -70,6 +72,10 @@ export default function TryoutSessionPage() {
 
   const handleAnswer = (optId) => setAnswers(a => ({ ...a, [current.id]: optId }));
   const toggleFlag = () => setFlagged(f => ({ ...f, [current.id]: !f[current.id] }));
+
+  // Determine per-question time limit
+  const questionTimeLimit = current?.timeLimitSecs;
+  const isFirstInGroup = current && questionTimeLimit && (!currentIdx || questions[currentIdx - 1].groupStimulus !== current.groupStimulus);
 
   const handleSubmit = async () => {
     setSubmitting(true);
@@ -142,6 +148,11 @@ export default function TryoutSessionPage() {
                 <div style={{ background: SUBJECT_COLORS[current.subject] + '22', color: SUBJECT_COLORS[current.subject], fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 13, padding: '4px 12px', borderRadius: 8 }}>
                   {current.subject} — No. {current.number}
                 </div>
+                {questionTimeLimit && (
+                  <div style={{ background: '#22C55E18', color: '#22C55E', border: '1px solid #22C55E40', borderRadius: 8, padding: '4px 10px', fontSize: 11, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Clock size={11} /> {questionTimeLimit}s
+                  </div>
+                )}
                 <button onClick={toggleFlag} style={{
                   display: 'flex', alignItems: 'center', gap: 5, background: flagged[current.id] ? '#F59E0B22' : T.bg4,
                   color: flagged[current.id] ? '#F59E0B' : T.text4, border: `1px solid ${flagged[current.id] ? '#F59E0B' : T.border}`,
@@ -150,6 +161,13 @@ export default function TryoutSessionPage() {
                   <Flag size={12} /> {flagged[current.id] ? 'Ragu-ragu' : 'Tandai'}
                 </button>
               </div>
+
+              {current.groupStimulus && (
+                <div style={{ background: T.bg2, border: `1px solid ${C.orange}30`, borderRadius: 14, padding: '16px 20px', marginBottom: 16 }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: C.orange, textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>Teks Soal</div>
+                  <div style={{ fontSize: 14, color: T.text2, lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>{current.groupStimulus}</div>
+                </div>
+              )}
 
               <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, padding: '20px 22px', marginBottom: 20, fontSize: 15, color: T.text, lineHeight: 1.7 }}>
                 {current.text}

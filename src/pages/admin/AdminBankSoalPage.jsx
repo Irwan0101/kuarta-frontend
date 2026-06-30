@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Plus, Edit2, Trash2, Search, ChevronLeft, ChevronRight, HelpCircle, Upload, Link2, FileText, X, Loader2, Download } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, ChevronLeft, ChevronRight, HelpCircle, Upload, Link2, FileText, X, Loader2, Download, Clock, Layers } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 import { useTheme } from '@/hooks/useTheme';
@@ -12,7 +12,7 @@ import {
 
 const CATS = ['TWK', 'TIU', 'TKP'];
 const OPTS = ['a', 'b', 'c', 'd', 'e'];
-const EMPTY = { question_text: '', option_a: '', option_b: '', option_c: '', option_d: '', option_e: '', correct_answer: 'a', category: 'TIU', explanation: '', difficulty: 'medium', tryout_id: '' };
+const EMPTY = { question_text: '', option_a: '', option_b: '', option_c: '', option_d: '', option_e: '', correct_answer: 'a', category: 'TIU', explanation: '', difficulty: 'medium', tryout_id: '', group_id: '', time_limit_secs: '' };
 const PER = 20;
 const CAT_COLORS = { TWK: ORG, TIU: BLUE, TKP: GREEN };
 const DIFF_LABELS = { easy: 'Mudah', medium: 'Sedang', hard: 'Sulit' };
@@ -42,12 +42,19 @@ export default function AdminBankSoalPage() {
   const [allTryouts,   setAllTryouts]   = useState([]);
   const [assignTO,     setAssignTO]     = useState('');
   const [assigning,    setAssigning]    = useState(false);
+  const [groups,       setGroups]       = useState([]);
+  const [groupModal,   setGroupModal]   = useState(null);
+  const [groupForm,    setGroupForm]    = useState({ title: '', description: '', stimulus: '' });
+  const [groupSaving,  setGroupSaving]  = useState(false);
   const fileRef = useRef(null);
 
   useEffect(() => {
     adminApi.getPrograms()
       .then(p => setPrograms(Array.isArray(p) ? p : []))
       .catch(() => setPrograms([]));
+    adminApi.getQuestionGroups()
+      .then(g => setGroups(Array.isArray(g) ? g : []))
+      .catch(() => setGroups([]));
   }, []);
 
   useEffect(() => {
@@ -75,27 +82,37 @@ export default function AdminBankSoalPage() {
 
   useEffect(() => { load(); }, [load]);
 
+  const reloadGroups = () => {
+    adminApi.getQuestionGroups()
+      .then(g => setGroups(Array.isArray(g) ? g : []))
+      .catch(() => {});
+  };
+
   const totalPages = Math.ceil(total / PER);
 
-  const openAdd = () => { setForm({ ...EMPTY, tryout_id: tryouts[0]?.id || '' }); setModal('create'); };
+  const openAdd = () => setForm({ ...EMPTY, tryout_id: tryouts[0]?.id || '' });
   const openEdit = (q) => {
     setForm({
       question_text: q.question_text, option_a: q.option_a, option_b: q.option_b,
       option_c: q.option_c, option_d: q.option_d, option_e: q.option_e || '',
       correct_answer: q.correct_answer, category: q.category || 'TIU',
       explanation: q.explanation || '', difficulty: q.difficulty || 'medium',
+      group_id: q.group_id || '', time_limit_secs: q.time_limit_secs || '',
     });
     setModal(q);
   };
 
   const handleSave = async () => {
     if (!form.question_text) return toast.error('Soal wajib diisi');
+    const payload = { ...form };
+    if (payload.group_id === '') payload.group_id = null;
+    if (payload.time_limit_secs === '') payload.time_limit_secs = null;
     setSaving(true);
     try {
       if (modal === 'create') {
         if (!form.tryout_id) return toast.error('Pilih tryout terlebih dahulu');
-        await adminApi.addQuestion(form.tryout_id, form);
-      } else await adminApi.updateQuestion(modal.id, form);
+        await adminApi.addQuestion(form.tryout_id, payload);
+      } else await adminApi.updateQuestion(modal.id, payload);
       setModal(null); load();
     } catch (e) { toast.error(e?.message || 'Gagal menyimpan.'); }
     finally { setSaving(false); }
@@ -170,6 +187,7 @@ export default function AdminBankSoalPage() {
         subtitle={`${total} soal`}
         action={
           <div style={{ display: 'flex', gap: 8 }}>
+            <Btn onClick={() => setGroupModal('create')} variant="outline" color={GREEN}><Layers size={14} /> Kelompok</Btn>
             <Btn onClick={() => setImportModal(true)} variant="outline" color={ORG}><Upload size={14} /> Import</Btn>
             <Btn onClick={openAssign} variant="outline" color={BLUE} disabled={!questions.length}><Link2 size={14} /> Assign ke Tryout</Btn>
             <Btn onClick={openAdd} disabled={!selProg}><Plus size={14} /> Tambah Soal</Btn>
@@ -217,7 +235,7 @@ export default function AdminBankSoalPage() {
                         checked={selectedQ.length === questions.length && questions.length > 0}
                         style={{ accentColor: ORG, cursor: 'pointer' }} />
                     </th>
-                    {['No', 'Soal', 'Tryout', 'Kategori', 'Kesulitan', 'Jawaban', { label: 'Aksi', right: true }].map((c, i) => {
+                    {['No', 'Soal', 'Tryout', 'Kelompok', 'Kategori', 'Kesulitan', 'Durasi', 'Jawaban', { label: 'Aksi', right: true }].map((c, i) => {
                       const isObj = typeof c === 'object';
                       return <th key={i} style={{ padding: '10px 12px', fontSize: 11, fontWeight: 700, color: T.text4, textTransform: 'uppercase', letterSpacing: '0.06em', textAlign: isObj && c.right ? 'right' : 'left' }}>{isObj ? c.label : c}</th>;
                     })}
@@ -231,16 +249,24 @@ export default function AdminBankSoalPage() {
                           style={{ accentColor: ORG, cursor: 'pointer' }} />
                       </td>
                       <td style={{ padding: '10px 12px', fontSize: 12, color: T.text4 }}>{(page - 1) * PER + i + 1}</td>
-                      <td style={{ padding: '10px 12px', fontSize: 13, color: T.text, maxWidth: 300, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={q.question_text}>
+                      <td style={{ padding: '10px 12px', fontSize: 13, color: T.text, maxWidth: 250, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={q.question_text}>
                         {q.question_text}
                       </td>
                       <td style={{ padding: '10px 12px', fontSize: 12, color: T.text3 }}>{q.tryout_title || (q.program_name || '-')}</td>
+                      <td style={{ padding: '10px 12px', fontSize: 12 }}>
+                        {q.group_title
+                          ? <span style={{ background: BLUE + '18', color: BLUE, padding: '2px 8px', borderRadius: 99, fontSize: 11, fontWeight: 700 }}>{q.group_title}</span>
+                          : <span style={{ color: T.text4, fontSize: 11 }}>—</span>}
+                      </td>
                       <td style={{ padding: '10px 12px' }}>
                         <span style={{ fontSize: 11, fontWeight: 700, color: CAT_COLORS[q.category] || T.text3, background: (CAT_COLORS[q.category] || T.text3) + '18', padding: '2px 8px', borderRadius: 99 }}>
                           {q.category || '-'}
                         </span>
                       </td>
                       <td style={{ padding: '10px 12px', fontSize: 12, color: T.text3 }}>{DIFF_LABELS[q.difficulty] || q.difficulty || '-'}</td>
+                      <td style={{ padding: '10px 12px', fontSize: 12, color: T.text3 }}>
+                        {q.time_limit_secs ? <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}><Clock size={11} />{q.time_limit_secs}s</span> : '—'}
+                      </td>
                       <td style={{ padding: '10px 12px', fontSize: 12, fontWeight: 700, color: GREEN }}>{q.correct_answer?.toUpperCase() || '-'}</td>
                       <td style={{ padding: '10px 12px', textAlign: 'right' }}>
                         <div style={{ display: 'flex', gap: 4, justifyContent: 'flex-end' }}>
@@ -278,7 +304,7 @@ export default function AdminBankSoalPage() {
 
       {/* Add/Edit Modal */}
       {modal && (
-        <Modal title={modal === 'create' ? 'Tambah Soal' : 'Edit Soal'} onClose={() => setModal(null)} width={640}>
+        <Modal title={modal === 'create' ? 'Tambah Soal' : 'Edit Soal'} onClose={() => setModal(null)} width={700}>
           {modal === 'create' && (
             <FormGroup label="Tryout">
               <select style={{ ...inp, cursor: 'pointer' }} value={form.tryout_id} onChange={setF('tryout_id')}>
@@ -309,6 +335,17 @@ export default function AdminBankSoalPage() {
               </select>
             </FormGroup>
           </FormRow>
+          <FormRow>
+            <FormGroup label="Kelompok Soal">
+              <select style={{ ...inp, cursor: 'pointer' }} value={form.group_id} onChange={setF('group_id')}>
+                <option value="">— Tidak Ada —</option>
+                {groups.map(g => <option key={g.id} value={g.id}>{g.title} ({g.question_count || 0} soal)</option>)}
+              </select>
+            </FormGroup>
+            <FormGroup label="Batas Waktu (detik)">
+              <input style={inp} type="number" min="0" value={form.time_limit_secs} onChange={setF('time_limit_secs')} placeholder="Kosong = pakai durasi tryout" />
+            </FormGroup>
+          </FormRow>
           <FormGroup label="Pembahasan">
             <textarea style={{ ...inp, resize: 'vertical', minHeight: 50 }} value={form.explanation} onChange={setF('explanation')} placeholder="Penjelasan jawaban..." />
           </FormGroup>
@@ -316,6 +353,47 @@ export default function AdminBankSoalPage() {
             <Btn variant="outline" color={T.text4} onClick={() => setModal(null)}>Batal</Btn>
             <Btn onClick={handleSave} disabled={saving || !form.question_text}>{saving ? 'Menyimpan...' : 'Simpan'}</Btn>
           </div>
+        </Modal>
+      )}
+
+      {/* Group Management Modal */}
+      {groupModal && (
+        <Modal title={groupModal === 'create' ? 'Buat Kelompok Soal' : 'Edit Kelompok Soal'} onClose={() => { setGroupModal(null); setGroupForm({ title: '', description: '', stimulus: '' }); }} width={600}>
+          <FormGroup label="Nama Kelompok">
+            <input style={inp} value={groupForm.title} onChange={e => setGroupForm(f => ({ ...f, title: e.target.value }))} placeholder="Misal: Bacaan 1, Teks PW, ..." />
+          </FormGroup>
+          <FormGroup label="Deskripsi (opsional)">
+            <input style={inp} value={groupForm.description} onChange={e => setGroupForm(f => ({ ...f, description: e.target.value }))} placeholder="Penjelasan singkat" />
+          </FormGroup>
+          <FormGroup label="Teks Stimulus">
+            <textarea style={{ ...inp, resize: 'vertical', minHeight: 120, fontFamily: 'monospace', fontSize: 13 }} value={groupForm.stimulus}
+              onChange={e => setGroupForm(f => ({ ...f, stimulus: e.target.value }))}
+              placeholder="Teks bacaan, paragraf, tabel, atau stimulus lain yang akan ditampilkan di atas soal-soal dalam kelompok ini" />
+            <div style={{ fontSize: 11, color: T.text4, marginTop: 4 }}>Teks ini akan muncul di atas setiap soal yang tergabung dalam kelompok saat tryout.</div>
+          </FormGroup>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 16 }}>
+            <Btn variant="outline" color={T.text4} onClick={() => { setGroupModal(null); setGroupForm({ title: '', description: '', stimulus: '' }); }}>Batal</Btn>
+            <Btn onClick={async () => {
+              if (!groupForm.title) return toast.error('Nama kelompok wajib diisi');
+              setGroupSaving(true);
+              try {
+                if (groupModal === 'create') await adminApi.createQuestionGroup(groupForm);
+                else await adminApi.updateQuestionGroup(groupModal.id, groupForm);
+                toast.success(groupModal === 'create' ? 'Kelompok dibuat' : 'Kelompok diperbarui');
+                setGroupModal(null); setGroupForm({ title: '', description: '', stimulus: '' }); reloadGroups();
+              } catch (e) { toast.error(e?.message || 'Gagal'); }
+              finally { setGroupSaving(false); }
+            }} disabled={groupSaving || !groupForm.title}>{groupSaving ? 'Menyimpan...' : 'Simpan'}</Btn>
+          </div>
+          {groupModal !== 'create' && (
+            <div style={{ marginTop: 16, paddingTop: 12, borderTop: `1px solid ${T.border}` }}>
+              <Btn variant="outline" color={RED} size="sm" onClick={async () => {
+                if (!(await confirm('Hapus kelompok ini? Soal di dalamnya tidak akan terhapus.'))) return;
+                try { await adminApi.deleteQuestionGroup(groupModal.id); toast.success('Kelompok dihapus'); setGroupModal(null); reloadGroups(); }
+                catch (e) { toast.error(e?.message || 'Gagal'); }
+              }}><Trash2 size={12} /> Hapus Kelompok</Btn>
+            </div>
+          )}
         </Modal>
       )}
 
@@ -349,7 +427,7 @@ export default function AdminBankSoalPage() {
               <div style={{ fontSize: 13, fontWeight: 600, color: T.text, marginBottom: 8 }}>Paste JSON</div>
               <textarea style={{ ...inp, resize: 'vertical', minHeight: 120, fontFamily: 'monospace', fontSize: 12 }}
                 value={importText} onChange={e => setImportText(e.target.value)}
-                placeholder='[{&quot;question_text&quot;:&quot;...&quot;, &quot;option_a&quot;:&quot;...&quot;, ...}]' />
+                placeholder='[{"question_text":"...", "option_a":"...", ...}]' />
             </div>
           </div>
           {importing && <div style={{ textAlign: 'center', padding: 10, color: ORG, fontSize: 13 }}><Loader2 size={16} style={{ animation: 'spin 1s linear infinite', verticalAlign: 'middle', marginRight: 6 }} /> Mengimport...</div>}
@@ -364,7 +442,7 @@ export default function AdminBankSoalPage() {
       {assignModal && (
         <Modal title="Assign Soal ke Tryout" onClose={() => { setAssignModal(false); setSelectedQ([]); }} width={480}>
           <div style={{ fontSize: 13, color: T.text3, marginBottom: 16 }}>
-            {selectedQ.length || questions.length} soal akan ditambahkan ke tryout:
+            {selectedQ.length} soal akan ditambahkan ke tryout:
           </div>
           <FormGroup label="Pilih Tryout">
             <select style={{ ...inp, cursor: 'pointer', maxHeight: 200 }} value={assignTO} onChange={e => setAssignTO(e.target.value)}>

@@ -139,6 +139,10 @@ export const adminApi = {
   getAllQuestions:(params)       => http.get('/admin/questions', { params }),
   importQuestions:(questions)    => http.post('/admin/questions/import', { questions }),
   importDocx:(file)              => { const fd = new FormData(); fd.append('file', file); return http.post('/admin/questions/import/docx', fd); },
+  getQuestionGroups:()            => http.get('/admin/question-groups'),
+  createQuestionGroup:(payload)   => http.post('/admin/question-groups', payload),
+  updateQuestionGroup:(id, payload) => http.put(`/admin/question-groups/${id}`, payload),
+  deleteQuestionGroup:(id)        => http.delete(`/admin/question-groups/${id}`),
   getTryoutQuestionLinks:(id)    => http.get(`/admin/tryouts/${id}/question-links`),
   linkQuestionsToTryout:(id, question_ids) =>
     http.post(`/admin/tryouts/${id}/questions/link`, { question_ids }),
