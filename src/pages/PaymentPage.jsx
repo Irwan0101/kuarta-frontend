@@ -8,11 +8,11 @@ import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
-import { paymentApi, programsApi } from '@/lib/api';
+import { paymentApi, programsApi, publicApi } from '@/lib/api';
 import { formatIDR, formatDate } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
-/* ── Helper fallback icon jika database tidak menyediakan icon/emoji ── */
+/* ── Helper fallback icon ──────────────────────────────────────── */
 const getProgramIcon = (slug) => {
   if (slug?.includes('sd')) return '📗';
   if (slug?.includes('smp')) return '📘';
@@ -140,27 +140,29 @@ export default function PaymentPage() {
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('bank');
   const [loading, setLoading] = useState(false);
-  const [pageLoading, setPageLoading] = useState(true); // Spinner loader halaman awal
+  const [pageLoading, setPageLoading] = useState(true);
+  const [settings, setSettings] = useState({ serviceFee: 0, paymentMethods: [], banks: [] });
 
-  const serviceFee = 5000;
-  // Ambil total secara dinamis jika program sudah berhasil di-load
-  const total = selectedProgram ? (Number(selectedProgram.price) + serviceFee) : serviceFee;
+  const total = selectedProgram ? (Number(selectedProgram.price) + (settings.serviceFee || 0)) : 0;
 
   // 🌟 Ambil data program real-time dari Database via API
   useEffect(() => {
     const fetchData = async () => {
       try {
         setPageLoading(true);
-        const [programs, history] = await Promise.all([
+        const [programs, history, pubSettings] = await Promise.all([
           programsApi.getAll().catch(() => []),
           paymentApi.getHistory().catch(() => null),
+          publicApi.getSettings().catch(() => ({})),
         ]);
+        const cfg = pubSettings.payment_config || {};
+        setSettings({ serviceFee: cfg.service_fee ?? 0, paymentMethods: cfg.payment_methods || [], banks: cfg.banks || [] });
 
         if (programs && programs.length > 0) {
           const formatted = programs.map(prog => ({
             ...prog,
             price: Number(prog.price),
-            icon: getProgramIcon(prog.slug),
+            icon: prog.icon || '📚',
           }));
           setDbPrograms(formatted);
           setSelectedProgram(formatted[0]);
@@ -474,7 +476,7 @@ export default function PaymentPage() {
                   }}>
                     <span style={{ color: T.text4 }}>Biaya Layanan</span>
                     <span style={{ color: T.text, fontWeight: 600 }}>
-                      {formatIDR(serviceFee)}
+                      {formatIDR(settings.serviceFee)}
                     </span>
                   </div>
                 </div>
@@ -516,14 +518,10 @@ export default function PaymentPage() {
                   gridTemplateColumns: 'repeat(3, 1fr)',
                   gap: 8,
                 }}>
-                  {[
-                    { id: 'bank', icon: '🏦', label: 'Transfer Bank' },
-                    { id: 'gopay', icon: '💚', label: 'GoPay' },
-                    { id: 'ovo', icon: '💜', label: 'OVO' },
-                    { id: 'dana', icon: '🔵', label: 'DANA' },
-                    { id: 'qris', icon: '🟡', label: 'QRIS' },
-                    { id: 'cc', icon: '💳', label: 'Kartu Kredit' },
-                  ].map(method => (
+                  {(settings.paymentMethods.length > 0 ? settings.paymentMethods : [
+                    { id: 'bank', label: 'Transfer Bank' },
+                    { id: 'other', label: 'Lainnya' },
+                  ]).map(method => (
                     <button
                       key={method.id}
                       onClick={() => setSelectedPaymentMethod(method.id)}
@@ -627,7 +625,7 @@ export default function PaymentPage() {
               gap: 8,
               flexWrap: 'wrap',
             }}>
-              {['BCA', 'Mandiri', 'BRI', 'GoPay', 'OVO', 'QRIS', 'Visa/MC'].map(bank => (
+              {(settings.banks.length > 0 ? settings.banks : ['BCA', 'Mandiri', 'BRI']).map(bank => (
                 <span
                   key={bank}
                   style={{

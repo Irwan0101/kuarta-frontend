@@ -18,20 +18,26 @@ function getYouTubeId(url) {
 }
 
 /* ── Video renderer ── */
-function VideoRenderer({ lesson, onComplete }) {
+function VideoRenderer({ lesson, onComplete, durationMins }) {
   const [watched, setWatched] = useState(0);
-  const [intervalId, setIntervalId] = useState(null);
   const vidId = getYouTubeId(lesson.video_url);
+  const threshold = durationMins ? durationMins * 60 * 0.8 : 300;
 
   useEffect(() => {
-    if (vidId) {
-      const id = setInterval(() => {
-        setWatched(w => { const nw = w + 5; return nw >= 60 ? (clearInterval(id), 60) : nw; });
-      }, 5000);
-      setIntervalId(id);
-      return () => clearInterval(id);
-    }
+    if (!vidId) return;
+    const id = setInterval(() => {
+      setWatched(w => {
+        const nw = w + 5;
+        if (nw >= threshold) { clearInterval(id); return threshold; }
+        return nw;
+      });
+    }, 5000);
+    return () => clearInterval(id);
   }, [vidId]);
+
+  useEffect(() => {
+    if (vidId && watched >= threshold) onComplete();
+  }, [watched]);
 
   if (!vidId) {
     return (
@@ -144,6 +150,11 @@ function QuizRenderer({ lesson, onComplete }) {
           Kumpulkan Jawaban
         </Button>
       )}
+      {submitted && (
+        <div style={{ marginTop: 12, textAlign: 'center' }}>
+          <Button variant="outline" onClick={onComplete}>Tandai Selesai</Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -209,7 +220,8 @@ export default function LessonDetailPage() {
 
   const renderContent = () => {
     const sections = [];
-    if (lesson.video_url) sections.push(<VideoRenderer lesson={lesson} onComplete={handleComplete} />);
+    if (lesson.video_url) sections.push(<VideoRenderer key="video" lesson={lesson} onComplete={handleComplete} durationMins={lesson.duration_mins} />);
+    if (lesson.questions?.length > 0) sections.push(<QuizRenderer key="quiz" lesson={lesson} onComplete={handleComplete} />);
     if (lesson.description) sections.push(
       <div key="text" style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 16, padding: 24, lineHeight: 1.8, fontSize: 14 }}>
         <div dangerouslySetInnerHTML={{ __html: lesson.description }} />
@@ -240,7 +252,7 @@ export default function LessonDetailPage() {
           </h1>
         </div>
         <div style={{ display: 'flex', gap: 12, fontSize: 12, color: T.text4 }}>
-          {lesson.duration_secs && <span><Clock size={12} /> {Math.round(lesson.duration_secs / 60)} menit</span>}
+          {lesson.duration_mins && <span><Clock size={12} /> {lesson.duration_mins} menit</span>}
           {lesson.type && <span>• {lesson.type.toUpperCase()}</span>}
         </div>
       </div>

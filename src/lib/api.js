@@ -43,6 +43,7 @@ export const programsApi = {
   getAll:     ()          => http.get('/programs'),
   getOne:     (slug)      => http.get(`/programs/${slug}`),
   getEnrolled:()          => http.get('/programs/user/enrolled'),
+  getCategories:()        => http.get('/programs/categories'),
 };
 
 export const tryoutApi = {
@@ -194,5 +195,9 @@ export const adminApi = {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     }).then(r => r.data);
   },
+};
+export const publicApi = {
+  getSettings:   ()          => http.get('/settings/public'),
+  getCategories: ()          => http.get('/programs/categories'),
 };
 export default http;

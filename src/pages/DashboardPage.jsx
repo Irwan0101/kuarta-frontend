@@ -64,8 +64,8 @@ export default function DashboardPage() {
 
   const hour = new Date().getHours();
   const greet = hour < 12 ? 'Selamat Pagi' : hour < 17 ? 'Selamat Siang' : 'Selamat Malam';
-  const streak = user?.streak_count || 7;
-  const totalStudyHours = programs.reduce((a, p) => a + (p.total_hours || 0), 0) || 142;
+  const streak = user?.streak_count || 0;
+  const totalStudyHours = programs.reduce((a, p) => a + (p.total_hours || 0), 0) || 0;
 
   const scoreHistory = history.slice(0, 7).reverse().map(t => ({
     label: t.created_at ? new Date(t.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }) : (t.title || '').substring(0, 8),
@@ -96,7 +96,6 @@ export default function DashboardPage() {
     progress: p.total_lessons > 0 ? Math.round((p.completed_lessons || 0) / p.total_lessons * 100) : 0,
     icon: p.icon || '📚',
     color: C.orange,
-    enrolled: true,
   }));
 
   return (
@@ -122,10 +121,10 @@ export default function DashboardPage() {
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
-          <StatCard icon={<ClipboardCheck size={20} />} label="Total Tryout" value={doneTryouts.length} trend={doneTryouts.length > 0 ? 5 : 0} color={C.orange} delay={0} />
-          <StatCard icon={<Target size={20} />} label="Rata-rata Nilai" value={avgScore} trend={avgScore > 0 ? 4 : 0} color={C.blue} delay={80} sub="Dari semua sesi tryout" />
-          <StatCard icon={<Clock size={20} />} label="Jam Belajar" value={totalStudyHours} trend={12} color={C.green} delay={160} sub="Bulan ini" />
-          <StatCard icon={<BookOpen size={20} />} label="Program Aktif" value={programList.length} trend={0} color={C.yellow} delay={240} />
+          <StatCard icon={<ClipboardCheck size={20} />} label="Total Tryout" value={doneTryouts.length} color={C.orange} delay={0} />
+          <StatCard icon={<Target size={20} />} label="Rata-rata Nilai" value={avgScore} color={C.blue} delay={80} sub="Dari semua sesi tryout" />
+          <StatCard icon={<Clock size={20} />} label="Jam Belajar" value={totalStudyHours} color={C.green} delay={160} sub="Bulan ini" />
+          <StatCard icon={<BookOpen size={20} />} label="Program Aktif" value={programList.length} color={C.yellow} delay={240} />
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, marginBottom: 24 }}>
@@ -143,9 +142,6 @@ export default function DashboardPage() {
                       <div style={{ fontSize: 13, fontWeight: 700, color: T.text, marginBottom: 2 }}>{p.name}</div>
                       <div style={{ fontSize: 11, color: T.text4 }}>{p.progress}% selesai</div>
                     </div>
-                    {!p.enrolled && (
-                      <Button variant="outline" size="sm" onClick={e => { e.stopPropagation(); openPayment({ program: { id: p.id, name: p.name, price: 299000 } }); }}>Daftar</Button>
-                    )}
                   </div>
                   <ProgressBar value={p.progress} color={p.color} height={5} />
                 </div>

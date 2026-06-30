@@ -5,15 +5,8 @@ import { Camera, Save, Lock, Crown, LogOut, Shield, Bell, CreditCard, Eye, EyeOf
 import { useTheme } from '@/hooks/useTheme';
 import { useConfirm } from '@/hooks/useConfirm';
 import { useAuthStore } from '@/store/authStore';
-import { authApi, paymentApi } from '@/lib/api';
+import { authApi, paymentApi, programsApi } from '@/lib/api';
 import toast from 'react-hot-toast';
-
-/* ─── Constants ──────────────────────────────────────────────────── */
-const TARGETS = [
-  'SKD CPNS 2026 — Formasi Umum',
-  'SKD CPNS 2026 — Sekolah Kedinasan',
-  'UTBK SNBT 2026',
-];
 
 const NAV_ITEMS = [
   { id: 'info',      icon: Shield,      label: 'Informasi Pribadi' },
@@ -63,15 +56,18 @@ function Toast({ msg, type, T, C }) {
 
 /* ─── Info tab ───────────────────────────────────────────────────── */
 function InfoTab({ profile, onUpdate, T, C }) {
-  const [form, setForm]     = useState({ name: '', phone: '', city: '', target: TARGETS[0], bio: '' });
+  const [form, setForm]     = useState({ name: '', phone: '', city: '', target: '', bio: '' });
+  const [categories, setCategories] = useState([]);
   const [status, setStatus] = useState({ loading: false, msg: '', type: '' });
+
+  useEffect(() => { programsApi.getCategories().then(r => setCategories(Array.isArray(r) ? r : [])).catch(() => {}); }, []);
 
   useEffect(() => {
     if (profile) setForm({
       name:   profile.name   || '',
       phone:  profile.phone  || '',
       city:   profile.city   || '',
-      target: profile.target || TARGETS[0],
+      target: profile.target_exam || '',
       bio:    profile.bio    || '',
     });
   }, [profile]);
@@ -81,7 +77,7 @@ function InfoTab({ profile, onUpdate, T, C }) {
   const handleSave = async () => {
     setStatus({ loading: true, msg: '', type: '' });
     try {
-      const updated = await authApi.updateProfile(form);
+      const updated = await authApi.updateProfile({ ...form, target_exam: form.target });
       onUpdate(updated);
       setStatus({ loading: false, msg: 'Profil berhasil disimpan!', type: 'success' });
     } catch (err) {
@@ -115,7 +111,8 @@ function InfoTab({ profile, onUpdate, T, C }) {
         </div>
         <FormGroup label="Target Ujian" T={T}>
           <select style={{ ...is }} value={form.target} onChange={set('target')}>
-            {TARGETS.map(t => <option key={t} value={t}>{t}</option>)}
+            <option value="">Pilih target ujian</option>
+            {categories.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </FormGroup>
         <FormGroup label="Bio Singkat" T={T}>
@@ -214,17 +211,17 @@ function PasswordTab({ T, C }) {
   );
 }
 
-/* ─── Notif tab (local state only — no dedicated API endpoint) ───── */
-const NOTIF_DEFAULTS = [
-  { key: 'live',    label: 'Pengingat Jadwal Live Class', on: true  },
-  { key: 'tryout',  label: 'Hasil Tryout Tersedia',       on: true  },
-  { key: 'streak',  label: 'Streak Harian',               on: true  },
-  { key: 'promo',   label: 'Promosi & Diskon',            on: false },
-  { key: 'materi',  label: 'Update Materi Baru',          on: true  },
+/* ─── Notif tab ──────────────────────────────────────────────────── */
+const NOTIF_ITEMS = [
+  { key: 'live',   label: 'Pengingat Jadwal Live Class' },
+  { key: 'tryout', label: 'Hasil Tryout Tersedia'       },
+  { key: 'streak', label: 'Streak Harian'               },
+  { key: 'promo',  label: 'Promosi & Diskon'            },
+  { key: 'materi', label: 'Update Materi Baru'          },
 ];
 
 function NotifTab({ T, C }) {
-  const [notifs, setNotifs] = useState(NOTIF_DEFAULTS);
+  const [notifs, setNotifs] = useState(NOTIF_ITEMS.map(n => ({ ...n, on: true })));
   const toggle = (key) => setNotifs(n => n.map(x => x.key === key ? { ...x, on: !x.on } : x));
 
   return (
@@ -260,7 +257,9 @@ function NotifTab({ T, C }) {
 }
 
 /* ─── Langganan tab ──────────────────────────────────────────────── */
-function LanggananTab({ transactions, loadingTx, T, C }) {
+function LanggananTab({ profile, transactions, loadingTx, T, C }) {
+  const expiresAt = profile?.plan_expires_at ? new Date(profile.plan_expires_at) : null;
+  const isActive = expiresAt && expiresAt > new Date();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* Active plan */}
@@ -273,11 +272,24 @@ function LanggananTab({ transactions, loadingTx, T, C }) {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <Crown size={20} color="#F59E0B" />
-                <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 16, color: T.text }}>Paket Premium</div>
+                <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 16, color: T.text }}>
+                  {profile?.plan === 'premium' || profile?.plan === 'vip' ? 'Paket Premium' : 'Paket Free'}
+                </div>
               </div>
-              <span style={{ fontSize: 11, padding: '4px 10px', borderRadius: 20, background: '#22C55E20', color: '#22C55E', fontWeight: 700 }}>Aktif</span>
+              {isActive && (
+                <span style={{ fontSize: 11, padding: '4px 10px', borderRadius: 20, background: '#22C55E20', color: '#22C55E', fontWeight: 700 }}>Aktif</span>
+              )}
             </div>
-            <div style={{ fontSize: 13, color: T.text3, marginBottom: 4 }}>Aktif hingga <strong style={{ color: T.text }}>28 Februari 2027</strong></div>
+            {expiresAt ? (
+              <div style={{ fontSize: 13, color: T.text3, marginBottom: 4 }}>
+                {isActive ? 'Aktif hingga ' : 'Berakhir pada '}
+                <strong style={{ color: T.text }}>
+                  {expiresAt.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+                </strong>
+              </div>
+            ) : (
+              <div style={{ fontSize: 13, color: T.text3, marginBottom: 4 }}>Tidak ada langganan aktif</div>
+            )}
             <div style={{ fontSize: 12, color: T.text4 }}>Akses penuh: semua materi, tryout, live class & rekaman</div>
           </div>
           <button style={{ padding: '11px 24px', background: '#F59E0B', color: '#fff', fontWeight: 700, fontSize: 13, border: 'none', borderRadius: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7 }}>
@@ -537,7 +549,7 @@ export default function ProfilPage() {
           {activeNav === 'info'      && <InfoTab       profile={profile} onUpdate={handleUpdate} T={T} C={C} />}
           {activeNav === 'password'  && <PasswordTab   T={T} C={C} />}
           {activeNav === 'notif'     && <NotifTab      T={T} C={C} />}
-          {activeNav === 'langganan' && <LanggananTab  transactions={transactions} loadingTx={loadingTx} T={T} C={C} />}
+          {activeNav === 'langganan' && <LanggananTab profile={profile} transactions={transactions} loadingTx={loadingTx} T={T} C={C} />}
         </div>
       </div>
       </div>

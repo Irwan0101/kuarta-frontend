@@ -49,7 +49,7 @@ function SyllabusItem({ item, C, T, onClick }) {
         {item.completed ? <CheckCircle size={12} color={C.orange} /> : <Circle size={12} color={T.text4} />}
       </div>
       <span style={{ flex: 1, fontSize: 13, color: item.completed ? T.text3 : T.text2 }}>{item.title}</span>
-      {item.duration_secs && <span style={{ fontSize: 11, color: T.text4 }}>{Math.round(item.duration_secs / 60)}m</span>}
+      {item.duration_mins && <span style={{ fontSize: 11, color: T.text4 }}>{item.duration_mins}m</span>}
       <ChevronRight size={13} color={T.text4} />
     </div>
   );
@@ -129,8 +129,9 @@ export default function BimbelkuPage() {
   const doneLessons = allLessons.filter(l => l.completed).length;
   const totalDone = programs.reduce((a, p) => a + (p.completed_lessons || p.doneModules || 0), 0);
   const totalMods = programs.reduce((a, p) => a + (p.total_lessons || p.totalModules || 0), 0);
-  const streakCount = useAuthStore.getState().user?.streak_count || 7;
-  const totalHours = programs.reduce((a, p) => a + (p.total_hours || 0), 0) || 142;
+  const streakCount = useAuthStore.getState().user?.streak_count || 0;
+  const totalHours = programs.reduce((a, p) => a + (p.total_hours || 0), 0) || 0;
+  const totalWatchMins = allLessons.filter(l => l.completed).reduce((a, l) => a + (l.duration_mins || 0), 0);
   const firstLesson = allLessons.length > 0 ? allLessons[0] : null;
 
   return (
@@ -150,7 +151,7 @@ export default function BimbelkuPage() {
             { icon: <BookOpen size={18} color={C.orange} />, label: 'Modul Selesai', val: totalMods > 0 ? `${doneLessons}/${totalLessons}` : `${totalDone}/${totalMods}`, bg: C.orange },
             { icon: <Flame size={18} color="#F59E0B" />, label: 'Streak Belajar', val: `${streakCount} Hari`, bg: '#F59E0B' },
             { icon: <Target size={18} color={C.blue} />, label: 'Program Aktif', val: String(programs.length), bg: C.blue },
-            { icon: <Clock size={18} color={C.green} />, label: 'Jam Belajar', val: `${totalHours} Jam`, bg: C.green },
+            { icon: <Clock size={18} color={C.green} />, label: 'Jam Belajar', val: `${Math.round(totalWatchMins / 60)} Jam`, bg: C.green },
           ].map(s => (
             <div key={s.label} style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 12, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
               <div style={{ width: 36, height: 36, borderRadius: 9, background: s.bg + '18', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>{s.icon}</div>

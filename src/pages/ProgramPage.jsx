@@ -16,49 +16,14 @@ import { programsApi } from '@/lib/api';
 import { formatIDR } from '@/lib/utils';
 import toast from 'react-hot-toast';
 
-/* ── Category Filter Config ─────────────────────────────────────── */
-const CATEGORIES = [
-  { id: 'all',        label: 'Semua Program',   icon: '🏆' },
-  { id: 'sekolah',    label: 'SD / SMP / SMA',  icon: '📚' },
-  { id: 'universitas',label: 'Masuk PTN',        icon: '🎯' },
-  { id: 'cpns',       label: 'CPNS / ASN',       icon: '🏛️' },
-  { id: 'karier',     label: 'Karier & Skills',  icon: '💼' },
-];
-
-/* ── Helper: program icon by slug ───────────────────────────────── */
-const getProgramIcon = (slug = '') => {
-  if (slug.includes('sd'))                       return '📗';
-  if (slug.includes('smp'))                      return '📘';
-  if (slug.includes('sma'))                      return '📙';
-  if (slug.includes('osn'))                      return '🏆';
-  if (slug.includes('utbk') || slug.includes('snbt')) return '🎯';
-  if (slug.includes('cpns') || slug.includes('kedinasan')) return '🏛️';
-  if (slug.includes('karier'))                   return '💼';
-  if (slug.includes('english'))                  return '🌐';
-  return '📖';
-};
-
-const getProgramCategory = (slug = '') => {
-  if (slug.includes('sd'))                       return 'sekolah';
-  if (slug.includes('smp'))                      return 'sekolah';
-  if (slug.includes('sma'))                      return 'sekolah';
-  if (slug.includes('osn'))                      return 'sekolah';
-  if (slug.includes('utbk') || slug.includes('snbt')) return 'universitas';
-  if (slug.includes('cpns') || slug.includes('kedinasan')) return 'cpns';
-  if (slug.includes('karier') || slug.includes('english')) return 'karier';
-  return 'all';
-};
-
-const getProgramGradient = (slug = '') => {
-  if (slug.includes('sd'))       return 'linear-gradient(135deg, #1e3a5f, #0f2027)';
-  if (slug.includes('smp'))      return 'linear-gradient(135deg, #1a2a4a, #0a1628)';
-  if (slug.includes('sma'))      return 'linear-gradient(135deg, #1f1535, #0e0a1f)';
-  if (slug.includes('utbk'))     return 'linear-gradient(135deg, #3b1f1f, #1f0f0f)';
-  if (slug.includes('cpns'))     return 'linear-gradient(135deg, #1a2a4a, #0d1a30)';
-  if (slug.includes('karier'))   return 'linear-gradient(135deg, #0f2e2e, #061a1a)';
-  if (slug.includes('english'))  return 'linear-gradient(135deg, #1a2a1a, #0a1a0a)';
-  if (slug.includes('osn'))      return 'linear-gradient(135deg, #2a1a3a, #1a0f2a)';
-  return 'linear-gradient(135deg, #1a1a2e, #0f0f1a)';
+/* ── Category metadata ──────────────────────────────────────────── */
+const CATEGORY_META = {
+  sekolah:     { label: 'SD / SMP / SMA',  icon: '📚' },
+  universitas: { label: 'Masuk PTN',        icon: '🎯' },
+  cpns:        { label: 'CPNS / ASN',       icon: '🏛️' },
+  karier:      { label: 'Karier & Skills',  icon: '💼' },
+  olimpiade:   { label: 'Olimpiade',        icon: '🏆' },
+  bahasa:      { label: 'Bahasa',           icon: '🌐' },
 };
 
 /* ── Badge Component ─────────────────────────────────────────────── */
@@ -111,8 +76,8 @@ function Stars({ rating, C }) {
 /* ── Program Card ────────────────────────────────────────────────── */
 function ProgramCard({ prog, T, C, onSelect, onAddToCart }) {
   const [hovered, setHovered] = useState(false);
-  const icon     = prog.icon || getProgramIcon(prog.slug);
-  const gradient = prog.gradient || getProgramGradient(prog.slug);
+  const icon     = prog.icon || CATEGORY_META[prog.category]?.icon || '📖';
+  const gradient = prog.bg_gradient || '';
   const reviewK  = prog.review_count >= 1000
     ? (prog.review_count / 1000).toFixed(1) + 'k'
     : prog.review_count;
@@ -445,13 +410,19 @@ export default function ProgramPage() {
   const [searchQuery,  setSearchQuery]  = useState('');
   const [loading,      setLoading]      = useState(true);
   const [enrolled,     setEnrolled]     = useState([]);
+  const [categories,   setCategories]   = useState([]);
 
 /* ── Fetch programs from API ── */
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const allPrograms = await programsApi.getAll();
+        const [allPrograms, cats] = await Promise.all([
+          programsApi.getAll(),
+          programsApi.getCategories().catch(() => []),
+        ]);
+        setCategories(cats);
+        const catOptions = [{ id: 'all', label: 'Semua Program' }, ...cats.map(c => ({ id: c, label: c }))];
         const enrolledPrograms = await programsApi.getEnrolled().catch(() => []);
 
         const enrolledIds = Array.isArray(enrolledPrograms)
@@ -461,9 +432,9 @@ export default function ProgramPage() {
         const progs = (allPrograms || []).map(p => ({
           ...p,
           price:        Number(p.price),
-          icon:         p.icon         || getProgramIcon(p.slug),
-          gradient:     p.gradient     || getProgramGradient(p.slug),
-          category_slug: p.category_slug || getProgramCategory(p.slug),
+          icon:         p.icon || CATEGORY_META[p.category]?.icon || '📖',
+          gradient:     p.bg_gradient || '',
+          category_slug: p.category || '',
           is_enrolled:  enrolledIds.includes(p.id),
         }));
 
@@ -603,7 +574,7 @@ export default function ProgramPage() {
           flexWrap: 'wrap',
           flex: 1,
         }}>
-          {CATEGORIES.map(cat => (
+          {[{ id: 'all', label: 'Semua Program', icon: '🏆' }, ...categories.map(c => ({ id: c, ...CATEGORY_META[c] }))].map(cat => (
             <button
               key={cat.id}
               onClick={() => setActiveFilter(cat.id)}
@@ -652,7 +623,7 @@ export default function ProgramPage() {
       }}>
         Menampilkan <strong style={{ color: T.text }}>{filtered.length}</strong> program
         {searchQuery && ` untuk "${searchQuery}"`}
-        {activeFilter !== 'all' && ` • ${CATEGORIES.find(c => c.id === activeFilter)?.label}`}
+        {activeFilter !== 'all' && ` • ${CATEGORY_META[activeFilter]?.label || activeFilter}`}
       </div>
 
       {/* Program Grid */}

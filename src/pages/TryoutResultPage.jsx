@@ -172,7 +172,7 @@ export default function TryoutResultPage() {
             <div>
               <div style={{ fontSize:11, color: T.text4 }}>Poin Hadiah</div>
               <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:16, color: T.text }}>
-                +{passed ? 100 : 30} poin
+                +{tryout?.reward_points || (passed ? 100 : 30)} poin
               </div>
             </div>
           </div>

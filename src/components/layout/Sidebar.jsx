@@ -20,14 +20,14 @@ const USER_MENU = [
     section: 'Menu Utama',
     items: [
       { to: '/dashboard',    icon: LayoutDashboard, label: 'Dashboard' },
-      { to: '/program',      icon: GraduationCap,   label: 'Program Bimbel', badge: '8' },
-      { to: '/belajar',      icon: PlayCircle,      label: 'Belajarku',      badge: '3', badgeColor: 'green' },
+      { to: '/program',      icon: GraduationCap,   label: 'Program Bimbel' },
+      { to: '/belajar',      icon: PlayCircle,      label: 'Belajarku' },
     ],
   },
   {
     section: 'Fitur Unggulan',
     items: [
-      { to: '/tryout',       icon: ClipboardCheck,  label: 'Tryout SKD/UTBK', badge: 'Live', badgeColor: 'blue' },
+      { to: '/tryout',       icon: ClipboardCheck,  label: 'Tryout SKD/UTBK' },
       { to: '/live',         icon: Video,           label: 'Kelas Live' },
       { to: '/leaderboard',  icon: Trophy,          label: 'Leaderboard' },
     ],
