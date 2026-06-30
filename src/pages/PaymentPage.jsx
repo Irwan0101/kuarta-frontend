@@ -236,6 +236,9 @@ export default function PaymentPage() {
     toast.success('Pembayaran berhasil! Selamat belajar.');
     setLoading(false);
 
+    // Sync status with backend
+    try { await paymentApi.syncStatus(orderId); } catch (_) {}
+
     // Reload payment history
     setTimeout(() => {
       const newTx = {
