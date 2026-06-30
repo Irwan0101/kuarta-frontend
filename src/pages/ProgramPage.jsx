@@ -161,19 +161,19 @@ function ProgramCard({ prog, T, C, onSelect, onAddToCart }) {
 
         <div style={{
           display: 'flex', alignItems: 'center',
-          justifyContent: 'space-between',
+          justifyContent: 'space-between', gap: 8,
           paddingTop: 12, borderTop: `1px solid ${T.border}`,
           marginTop: 'auto',
         }}>
-          <div>
+          <div style={{ minWidth: 0 }}>
             {isFree ? (
               <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 16, color: C.green }}>Gratis</span>
             ) : (
               <>
-                <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 16, color: C.orange }}>
+                <span style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 17, color: C.orange }}>
                   {formatIDR(prog.price)}
                 </span>
-                <span style={{ fontSize: 11, color: T.text4, marginLeft: 4 }}>/bln</span>
+                <span style={{ fontSize: 10.5, color: T.text4, marginLeft: 3 }}>/bln</span>
               </>
             )}
           </div>
@@ -184,38 +184,48 @@ function ProgramCard({ prog, T, C, onSelect, onAddToCart }) {
               fontSize: 11, fontWeight: 700,
               padding: '7px 14px', borderRadius: 8,
               border: `1.5px solid ${C.green}40`,
+              whiteSpace: 'nowrap',
             }}>
               ✓ Dimiliki
             </div>
           ) : (
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
               <button
                 onClick={e => { e.stopPropagation(); onAddToCart(prog); }}
                 style={{
-                  background: T.bg3, color: hovered ? C.orange : T.text3,
-                  border: `1.5px solid ${hovered ? C.orange + '60' : T.border}`,
-                  borderRadius: 8, padding: '7px 10px',
+                  width: 34, height: 34,
+                  background: T.bg3,
+                  color: T.text4,
+                  border: `1.5px solid ${T.border}`,
+                  borderRadius: 8,
                   fontSize: 12, fontWeight: 700, cursor: 'pointer',
                   transition: 'all 0.2s',
-                  display: 'flex', alignItems: 'center', gap: 4,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  flexShrink: 0,
                 }}
                 title="Tambah ke Keranjang"
+                onMouseEnter={e => { e.currentTarget.style.background = C.orange + '18'; e.currentTarget.style.borderColor = C.orange; e.currentTarget.style.color = C.orange; }}
+                onMouseLeave={e => { e.currentTarget.style.background = T.bg3; e.currentTarget.style.borderColor = T.border; e.currentTarget.style.color = T.text4; }}
               >
                 <ShoppingCart size={13} />
               </button>
               <button
                 onClick={e => { e.stopPropagation(); onSelect(prog); }}
                 style={{
-                  background: hovered ? C.orange : 'transparent',
-                  color: hovered ? T.bg : C.orange,
-                  border: `1.5px solid ${C.orange}`,
-                  borderRadius: 8, padding: '7px 16px',
-                  fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                  padding: '7px 18px',
+                  background: C.orange,
+                  color: T.bg,
+                  border: 'none',
+                  borderRadius: 8,
+                  fontSize: 12, fontWeight: 800, cursor: 'pointer',
                   transition: 'all 0.2s',
-                  display: 'flex', alignItems: 'center', gap: 5,
+                  display: 'flex', alignItems: 'center', gap: 4,
+                  whiteSpace: 'nowrap',
                 }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = '0.85'; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = '1'; }}
               >
-                {hovered ? 'Beli' : 'Pilih'} <ChevronRight size={13} />
+                Daftar
               </button>
             </div>
           )}
