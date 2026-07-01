@@ -7,6 +7,7 @@ import {
 import { RefreshCw, Users, BookOpen, FileText, DollarSign, Zap, Database } from 'lucide-react';
 import { adminApi } from '@/lib/api';
 import { useTheme } from '@/hooks/useTheme';
+import toast from 'react-hot-toast';
 import {
   PageHeader, Card, CardHead, Spinner, ErrorBox, Badge,
   ORG, GREEN, BLUE, RED,
@@ -253,7 +254,7 @@ export default function AdminDashboardPage() {
       } else {
         msg = e?.response?.data?.error || e?.error || e?.message || msg;
       }
-      alert(msg);
+      toast.error(msg);
     }
   };
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import { FileText, Clock, Users, Play } from 'lucide-react';
+import { FileText, Clock, Users, Play, ClipboardList, Target, CheckCircle, Medal } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Badge, ProgressBar } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -48,19 +48,21 @@ export default function TryoutPage() {
       <div style={{ width: '100%' }}>
         <div style={{ display: 'grid', gridTemplateColumns: resp.isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
           {[
-            { icon: '📝', label: 'Total Dikerjakan', val: String(stats.total), color: C.orange },
-            { icon: '🎯', label: 'Rata-rata Nilai',  val: String(stats.avgScore), color: C.blue },
-            { icon: '✅', label: 'Lulus',             val: String(stats.passed), color: C.green },
-            { icon: '🏆', label: 'Peringkat Terbaik', val: stats.bestRank, color: C.yellow },
-          ].map((s, i) => (
+            { icon: ClipboardList, label: 'Total Dikerjakan', val: String(stats.total), color: C.orange },
+            { icon: Target, label: 'Rata-rata Nilai',  val: String(stats.avgScore), color: C.blue },
+            { icon: CheckCircle, label: 'Lulus',             val: String(stats.passed), color: C.green },
+            { icon: Medal, label: 'Peringkat Terbaik', val: stats.bestRank, color: C.yellow },
+          ].map((s, i) => {
+            const Icon = s.icon;
+            return (
             <div key={i} style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 36, height: 36, background: s.color + '18', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17 }}>{s.icon}</div>
+              <div style={{ width: 36, height: 36, background: s.color + '18', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', color: s.color }}><Icon size={17} /></div>
               <div>
                 <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: T.text }}>{s.val}</div>
                 <div style={{ fontSize: 11, color: T.text4 }}>{s.label}</div>
               </div>
             </div>
-          ))}
+          )})}
         </div>
 
         <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
@@ -83,8 +85,8 @@ export default function TryoutPage() {
               const passed = t.my_score != null && t.passing_score != null && t.my_score >= t.passing_score;
               return (
                 <div key={t.id} style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 16, padding: '18px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <div style={{ width: 48, height: 48, background: btnColor + '18', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 22 }}>
-                    {status === 'done' ? '📋' : '📝'}
+                  <div style={{ width: 48, height: 48, background: btnColor + '18', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, color: btnColor }}>
+                    {status === 'done' ? <ClipboardList size={22} /> : <FileText size={22} />}
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5, flexWrap: 'wrap' }}>
