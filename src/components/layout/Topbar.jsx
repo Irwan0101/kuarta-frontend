@@ -7,16 +7,18 @@ import { useUIStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import { notifApi } from '@/lib/api';
+import useResponsive from '@/hooks/useResponsive';
 import { Avatar } from '@/components/ui/Avatar';
 import NotifPanel from './NotifPanel';
 import CartDrawer from '@/components/features/CartDrawer';
 
 export default function Topbar({ title, breadcrumb }) {
     const { T, C, dark, toggleTheme } = useTheme();
-    const { toggleNotif, notifOpen, unreadCount, setMobileSidebar } = useUIStore();
+    const { toggleNotif, notifOpen, unreadCount, setUnreadCount, setMobileSidebar, mobileSidebarOpen } = useUIStore();
     const { user } = useAuthStore();
     const { getCount } = useCartStore();
     const navigate = useNavigate();
+    const resp = useResponsive();
     const [search, setSearch] = useState('');
     const [searchOpen, setSearchOpen] = useState(false);
     const [cartOpen, setCartOpen] = useState(false);
@@ -41,17 +43,16 @@ export default function Topbar({ title, breadcrumb }) {
         }}>
             {/* Mobile hamburger */}
             <button
-                onClick={() => setMobileSidebar(true)}
-                className="mobile-menu-btn"
+                onClick={() => setMobileSidebar(!mobileSidebarOpen)}
                 style={{
-                    display: 'none', // overridden by media query via class
+                    display: resp.isMobileOrTablet ? 'flex' : 'none',
                     background: T.bg4, border: 'none', borderRadius: 8,
                     width: 34, height: 34, cursor: 'pointer',
                     alignItems: 'center', justifyContent: 'center',
-                    color: T.text3,
+                    color: T.text3, flexShrink: 0,
                 }}
             >
-                <Menu size={18} />
+                {mobileSidebarOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
 
             {/* Title / breadcrumb */}

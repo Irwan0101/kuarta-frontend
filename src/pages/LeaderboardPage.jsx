@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/authStore';
 import { Avatar } from '@/components/ui/Avatar';
 import { Card } from '@/components/ui/Card';
 import { tryoutApi } from '@/lib/api';
+import useResponsive from '@/hooks/useResponsive';
 
 const TIPS = [
   { icon: <Target size={14} />, color: '#FF6B00', text: 'Fokus tingkatkan TKP — nilai terbesar' },
@@ -18,6 +19,7 @@ const MEDAL = ['🥇', '🥈', '🥉'];
 export default function LeaderboardPage() {
   const { T, C } = useTheme();
   const { user } = useAuthStore();
+  const resp = useResponsive();
   const [entries, setEntries] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -63,12 +65,12 @@ export default function LeaderboardPage() {
               </div>
             )}
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 20 }}>
-              <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, overflow: 'hidden' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: resp.isMobile ? '1fr' : '1fr 280px', gap: 20 }}>
+              <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, overflowX: resp.isMobile ? 'auto' : undefined, overflow: resp.isMobile ? undefined : 'hidden' }}>
                 <div style={{ padding: '14px 20px', borderBottom: `1px solid ${T.border}` }}>
                   <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, color: T.text }}>Top Pejuang Kuarta</div>
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '52px 1fr 100px 80px', padding: '10px 20px', borderBottom: `1px solid ${T.border}`, background: T.bg3 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '52px 1fr 100px 80px', padding: '10px 20px', borderBottom: `1px solid ${T.border}`, background: T.bg3, minWidth: resp.isMobile ? 400 : undefined }}>
                   {['Rank', 'Peserta', 'Program', 'Skor'].map((h, i) => (
                     <div key={h} style={{ fontSize: 10, fontWeight: 700, color: T.text4, textTransform: 'uppercase', textAlign: i >= 2 ? 'right' : 'left' }}>{h}</div>
                   ))}

@@ -7,6 +7,7 @@ import { Badge, ProgressBar } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
 import { tryoutApi } from '@/lib/api';
+import useResponsive from '@/hooks/useResponsive';
 
 const DIFF_COLORS = { Mudah: '#22C55E', Sedang: '#F59E0B', Sulit: '#EF4444', medium: '#F59E0B', easy: '#22C55E', hard: '#EF4444' };
 const STATUS_MAP  = { done: ['✓ Selesai', '#22C55E'], available: ['Mulai Tryout', '#FF6B00'], upcoming: ['Segera Hadir', '#3B82F6'] };
@@ -14,6 +15,7 @@ const STATUS_MAP  = { done: ['✓ Selesai', '#22C55E'], available: ['Mulai Tryou
 export default function TryoutPage() {
   const { T, C } = useTheme();
   const navigate = useNavigate();
+  const resp = useResponsive();
   const [tryouts, setTryouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
@@ -44,7 +46,7 @@ export default function TryoutPage() {
     <>
       <SEO title="Tryout" description="Tryout CPNS, UTBK, OSN dan berbagai ujian lainnya." url="/tryout" noindex />
       <div style={{ width: '100%' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: resp.isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
           {[
             { icon: '📝', label: 'Total Dikerjakan', val: String(stats.total), color: C.orange },
             { icon: '🎯', label: 'Rata-rata Nilai',  val: String(stats.avgScore), color: C.blue },

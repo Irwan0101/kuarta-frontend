@@ -10,6 +10,7 @@ import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import { paymentApi, programsApi, publicApi } from '@/lib/api';
 import { formatIDR, formatDate } from '@/lib/utils';
+import useResponsive from '@/hooks/useResponsive';
 import toast from 'react-hot-toast';
 
 /* ── Helper fallback icon ──────────────────────────────────────── */
@@ -133,6 +134,7 @@ export default function PaymentPage() {
   const { T, C } = useTheme();
   const clearCart = useCartStore(s => s.clearCart);
   const navigate = useNavigate();
+  const resp = useResponsive();
 
   // 🌟 State Baru untuk menampung data program asli dari Database
   const [dbPrograms, setDbPrograms] = useState([]);
@@ -298,7 +300,7 @@ export default function PaymentPage() {
       {/* Main Grid */}
       <div style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 380px',
+        gridTemplateColumns: resp.isMobile ? '1fr' : resp.isTablet ? '1fr' : '1fr 380px',
         gap: 24,
       }}>
 
@@ -518,7 +520,7 @@ export default function PaymentPage() {
                 </div>
                 <div style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(3, 1fr)',
+                  gridTemplateColumns: resp.isMobile ? 'repeat(2, 1fr)' : 'repeat(3, 1fr)',
                   gap: 8,
                 }}>
                   {(settings.paymentMethods.length > 0 ? settings.paymentMethods : [

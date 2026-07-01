@@ -11,6 +11,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useConfirm } from '@/hooks/useConfirm';
 import { useUIStore } from '@/store/uiStore';
 import { useAuthStore } from '@/store/authStore';
+import useResponsive from '@/hooks/useResponsive';
 import { Avatar } from '@/components/ui/Avatar';
 import { truncate } from '@/lib/utils';
 
@@ -85,9 +86,10 @@ export default function Sidebar() {
   const isAdmin       = user?.role === 'admin';
   const isMentor      = user?.role === 'mentor';
   const menuGroups    = isAdmin ? ADMIN_MENU : isMentor ? MENTOR_MENU : USER_MENU;
+  const resp = useResponsive();
   const collapsed     = !sidebarOpen;
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  const isMobile = resp.isMobileOrTablet;
 
   if (isMobile && !mobileSidebarOpen) return null;
 

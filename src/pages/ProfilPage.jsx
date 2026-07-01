@@ -6,6 +6,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useConfirm } from '@/hooks/useConfirm';
 import { useAuthStore } from '@/store/authStore';
 import { authApi, paymentApi, programsApi } from '@/lib/api';
+import useResponsive from '@/hooks/useResponsive';
 import toast from 'react-hot-toast';
 
 const NAV_ITEMS = [
@@ -95,7 +96,7 @@ function InfoTab({ profile, onUpdate, T, C }) {
       </div>
       <div style={{ padding: '20px 22px' }}>
         <Toast msg={status.msg} type={status.type} T={T} C={C} />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: resp.isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
           <FormGroup label="Nama Lengkap" T={T}>
             <input style={is} value={form.name} onChange={set('name')} />
           </FormGroup>
@@ -187,7 +188,7 @@ function PasswordTab({ T, C }) {
       </div>
       <div style={{ padding: '20px 22px' }}>
         <Toast msg={status.msg} type={status.type} T={T} C={C} />
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: resp.isMobile ? '1fr' : '1fr 1fr', gap: 16 }}>
           <PasswordField label="Password Lama"  field="oldPassword"  showKey="old"     />
           <PasswordField label="Password Baru"  field="newPassword"  showKey="new"     />
         </div>
@@ -343,6 +344,7 @@ export default function ProfilPage() {
   const { T, C }          = useTheme();
   const { user, setUser, logout } = useAuthStore();
   const { confirm, modal: confirmModal } = useConfirm();
+  const resp = useResponsive();
 
   const [activeNav, setActiveNav]   = useState('info');
   const [profile, setProfile]       = useState(null);
@@ -448,7 +450,7 @@ export default function ProfilPage() {
         <p style={{ fontSize: 13, color: T.text3 }}>Kelola informasi akun dan preferensi belajar</p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '260px 1fr', gap: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: resp.isMobile ? '1fr' : resp.isTablet ? '1fr' : '260px 1fr', gap: 20 }}>
         {/* ── Left sidebar ── */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Profile card */}
