@@ -8,6 +8,15 @@ import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
 import { programsApi, materiApi, tryoutApi } from '@/lib/api';
 
+function useMedia() {
+  const [mq, setMq] = useState({ sm: false, md: false, lg: true });
+  useEffect(() => {
+    const fn = () => setMq({ sm: window.innerWidth < 640, md: window.innerWidth >= 640 && window.innerWidth < 1024, lg: window.innerWidth >= 1024 });
+    fn(); window.addEventListener('resize', fn); return () => window.removeEventListener('resize', fn);
+  }, []);
+  return mq;
+}
+
 const ACHIEVEMENT_ICONS = { flame: Flame, target: Target, book: BookOpen, zap: Zap };
 
 function VideoPlayer({ C, T, lesson, onPlay }) {
@@ -68,6 +77,7 @@ function RadarTooltip({ active, payload, T }) {
 export default function BimbelkuPage() {
   const { T, C } = useTheme();
   const navigate = useNavigate();
+  const mq = useMedia();
 
   const [programs, setPrograms] = useState([]);
   const [modules, setModules] = useState([]);
@@ -191,7 +201,7 @@ export default function BimbelkuPage() {
             </div>
 
             {/* Main content */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 20, marginBottom: 24, alignItems: 'start' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: mq.sm ? '1fr' : mq.md ? '1fr' : '1fr 340px', gap: 20, marginBottom: 24, alignItems: 'start' }}>
               {/* Left: Video + Info */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {videoLesson ? (
@@ -236,7 +246,7 @@ export default function BimbelkuPage() {
               </div>
 
               {/* Right: Syllabus */}
-              <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: 600 }}>
+              <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: mq.sm ? 400 : 600 }}>
                 <div style={{ padding: '14px 18px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexShrink: 0 }}>
                   <div>
                     <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, color: T.text }}>Materi</div>
@@ -263,7 +273,7 @@ export default function BimbelkuPage() {
             </div>
 
             {/* Bottom: Radar + Achievements */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: mq.sm ? '1fr' : mq.md ? '1fr 1fr' : '1fr 1fr', gap: 20 }}>
               <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, padding: '16px 20px' }}>
                 <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 14, color: T.text, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
                   <BarChart2 size={16} color={C.orange} /> Peta Kemampuan

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Play, ArrowRight, Flame, ClipboardCheck, Target, Clock, BookOpen } from 'lucide-react';
@@ -12,6 +12,15 @@ import { useAuthStore } from '@/store/authStore';
 import { useUIStore } from '@/store/uiStore';
 import { formatIDR, formatDate } from '@/lib/utils';
 import { tryoutApi, programsApi, liveApi } from '@/lib/api';
+
+function useMedia() {
+  const [mq, setMq] = useState({ sm: false, md: false, lg: true });
+  useEffect(() => {
+    const fn = () => setMq({ sm: window.innerWidth < 640, md: window.innerWidth >= 640 && window.innerWidth < 1024, lg: window.innerWidth >= 1024 });
+    fn(); window.addEventListener('resize', fn); return () => window.removeEventListener('resize', fn);
+  }, []);
+  return mq;
+}
 
 function ChartTooltip({ active, payload, label, T, C }) {
   if (!active || !payload?.length) return null;
@@ -32,6 +41,7 @@ export default function DashboardPage() {
   const { user } = useAuthStore();
   const { openPayment } = useUIStore();
   const navigate = useNavigate();
+  const mq = useMedia();
 
   const [tryouts, setTryouts] = useState([]);
   const [programs, setPrograms] = useState([]);
@@ -80,12 +90,7 @@ export default function DashboardPage() {
   const upcomingSchedule = schedule
     .filter(s => new Date(s.scheduled_at) > now)
     .slice(0, 3)
-    .map(s => ({
-      id: s.id,
-      title: s.title || s.topic || 'Live Class',
-      time: new Date(s.scheduled_at),
-      type: 'live',
-    }));
+    .map(s => ({ id: s.id, title: s.title || s.topic || 'Live Class', time: new Date(s.scheduled_at), type: 'live' }));
   if (upcomingSchedule.length === 0) {
     upcomingSchedule.push({ id: 'default', title: 'Belum ada jadwal', time: null, type: 'none' });
   }
@@ -98,17 +103,19 @@ export default function DashboardPage() {
     color: C.orange,
   }));
 
+  const cardGrid = mq.sm ? '1fr' : mq.md ? '1fr 1fr' : '1fr 320px';
+
   return (
     <>
       <SEO title="Dashboard" url="/dashboard" noindex />
       <div style={{ width: '100%' }}>
-        <div style={{ background: `linear-gradient(135deg, ${C.orange}22 0%, ${C.orange}08 60%, transparent 100%)`, border: `1px solid ${C.orange}30`, borderRadius: 20, padding: '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, gap: 16, flexWrap: 'wrap' }}>
+        <div style={{ background: `linear-gradient(135deg, ${C.orange}22 0%, ${C.orange}08 60%, transparent 100%)`, border: `1px solid ${C.orange}30`, borderRadius: 20, padding: mq.sm ? '16px' : '20px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, gap: 16, flexWrap: 'wrap' }}>
           <div>
             <div style={{ fontSize: 12, color: C.orange, fontWeight: 700, marginBottom: 4, letterSpacing: '0.05em' }}>{greet.toUpperCase()} 👋</div>
-            <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: T.text, marginBottom: 4 }}>{user?.name?.split(' ')[0] || 'Pengguna'}!</h2>
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: mq.sm ? 18 : 22, color: T.text, marginBottom: 4 }}>{user?.name?.split(' ')[0] || 'Pengguna'}!</h2>
             <p style={{ fontSize: 13, color: T.text3 }}>Kamu sudah belajar <strong style={{ color: C.orange }}>{totalStudyHours} jam</strong> bulan ini. Luar biasa! 🔥</p>
           </div>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
               <Flame size={20} color="#F59E0B" />
               <div>
@@ -120,22 +127,22 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginBottom: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: `repeat(auto-fill, minmax(${mq.sm ? '140px' : '200px'}, 1fr))`, gap: 16, marginBottom: 24 }}>
           <StatCard icon={<ClipboardCheck size={20} />} label="Total Tryout" value={doneTryouts.length} color={C.orange} delay={0} />
           <StatCard icon={<Target size={20} />} label="Rata-rata Nilai" value={avgScore} color={C.blue} delay={80} sub="Dari semua sesi tryout" />
           <StatCard icon={<Clock size={20} />} label="Jam Belajar" value={totalStudyHours} color={C.green} delay={160} sub="Bulan ini" />
           <StatCard icon={<BookOpen size={20} />} label="Program Aktif" value={programList.length} color={C.yellow} delay={240} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20, marginBottom: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: cardGrid, gap: 20, marginBottom: 24 }}>
           <Card style={{ padding: 0 }}>
-            <div style={{ padding: '18px 20px 14px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: mq.sm ? '14px 16px 12px' : '18px 20px 14px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text }}>📚 Program Saya</h3>
               <Button variant="ghost" size="sm" onClick={() => navigate('/belajar')} icon={<ArrowRight size={12} />}>Lihat semua</Button>
             </div>
             <div style={{ padding: '10px 0' }}>
               {programList.length > 0 ? programList.map(p => (
-                <div key={p.id} style={{ padding: '14px 20px', borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }} onClick={() => navigate('/belajar')}>
+                <div key={p.id} style={{ padding: mq.sm ? '12px 16px' : '14px 20px', borderBottom: `1px solid ${T.border}`, cursor: 'pointer' }} onClick={() => navigate('/belajar')}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
                     <div style={{ width: 38, height: 38, background: p.color + '18', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18 }}>{p.icon}</div>
                     <div style={{ flex: 1 }}>
@@ -154,12 +161,12 @@ export default function DashboardPage() {
           </Card>
 
           <Card style={{ padding: 0 }}>
-            <div style={{ padding: '18px 20px 14px', borderBottom: `1px solid ${T.border}` }}>
+            <div style={{ padding: mq.sm ? '14px 16px 12px' : '18px 20px 14px', borderBottom: `1px solid ${T.border}` }}>
               <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text }}>📅 Jadwal Mendatang</h3>
             </div>
             <div style={{ padding: '10px 0' }}>
               {upcomingSchedule.filter(ev => ev.type !== 'none').map(ev => (
-                <div key={ev.id} style={{ padding: '14px 20px', borderBottom: `1px solid ${T.border}`, display: 'flex', gap: 12, cursor: 'pointer' }} onClick={() => navigate(ev.type === 'live' ? '/live' : '/tryout')}>
+                <div key={ev.id} style={{ padding: mq.sm ? '12px 16px' : '14px 20px', borderBottom: `1px solid ${T.border}`, display: 'flex', gap: 12, cursor: 'pointer' }} onClick={() => navigate(ev.type === 'live' ? '/live' : '/tryout')}>
                   <div style={{ width: 38, height: 38, background: (ev.type === 'live' ? C.blue : C.orange) + '18', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 18 }}>
                     {ev.type === 'live' ? '🎥' : '📝'}
                   </div>
@@ -179,9 +186,9 @@ export default function DashboardPage() {
           </Card>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 20 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: cardGrid, gap: 20 }}>
           <Card style={{ padding: 0 }}>
-            <div style={{ padding: '18px 20px 12px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: mq.sm ? '14px 16px 12px' : '18px 20px 12px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
                 <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text, marginBottom: 2 }}>Tren Nilai Tryout</h3>
                 <div style={{ fontSize: 12, color: T.text4 }}>{doneTryouts.length > 0 ? `${doneTryouts.length} tryout terakhir` : 'Belum ada data'}</div>
@@ -195,7 +202,7 @@ export default function DashboardPage() {
                 ))}
               </div>
             </div>
-            <div style={{ padding: '16px 8px', height: 220 }}>
+            <div style={{ padding: '16px 8px', height: mq.sm ? 180 : 220 }}>
               {scoreHistory.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={scoreHistory} margin={{ top: 0, right: 16, left: -20, bottom: 0 }}>
@@ -222,7 +229,7 @@ export default function DashboardPage() {
           </Card>
 
           <Card style={{ padding: 0 }}>
-            <div style={{ padding: '18px 20px 12px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ padding: mq.sm ? '14px 16px 12px' : '18px 20px 12px', borderBottom: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <h3 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: 15, color: T.text }}>🏆 Riwayat Tryout</h3>
               <span style={{ fontSize: 11, color: C.orange, cursor: 'pointer', fontWeight: 600 }} onClick={() => navigate('/leaderboard')}>Lihat semua</span>
             </div>
