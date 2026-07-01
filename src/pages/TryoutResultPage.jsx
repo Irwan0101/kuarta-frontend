@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import SEO from '@/components/SEO';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { CheckCircle, XCircle, MinusCircle, Clock, Trophy, ArrowLeft, BarChart3 } from 'lucide-react';
+import { CheckCircle, XCircle, MinusCircle, Clock, Trophy, ArrowLeft, BarChart3, ThumbsUp, Frown } from 'lucide-react';
 import useResponsive from '@/hooks/useResponsive';
 import { useTheme } from '@/hooks/useTheme';
 import { tryoutApi } from '@/lib/api';
@@ -67,7 +67,7 @@ export default function TryoutResultPage() {
             alignItems:'center', justifyContent:'center', fontSize:30,
             background: passed ? C.green + '22' : C.orange + '22',
           }}>
-            {passed ? '🎉' : '😔'}
+            {passed ? <ThumbsUp size={30} /> : <Frown size={30} />}
           </div>
           <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:800, fontSize:22, color: T.text, marginBottom:4 }}>
             {result.tryout_title || 'Hasil Tryout'}
@@ -102,7 +102,7 @@ export default function TryoutResultPage() {
             color: passed ? C.green : C.orange,
             fontWeight:700, fontSize:13,
           }}>
-            {passed ? '✅ LULUS' : '❌ TIDAK LULUS'}
+            {passed ? 'LULUS' : 'TIDAK LULUS'}
           </div>
         </div>
       </Card>
@@ -172,7 +172,7 @@ export default function TryoutResultPage() {
             <div>
               <div style={{ fontSize:11, color: T.text4 }}>Poin Hadiah</div>
               <div style={{ fontFamily:"'Syne',sans-serif", fontWeight:700, fontSize:16, color: T.text }}>
-                +{tryout?.reward_points || (passed ? 100 : 30)} poin
+                +{passed ? 100 : 30} poin
               </div>
             </div>
           </div>
