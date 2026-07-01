@@ -129,7 +129,7 @@ export default function BimbelkuPage() {
   const streakCount = useAuthStore.getState().user?.streak_count || 0;
   const totalWatchMins = allLessons.filter(l => l.completed).reduce((a, l) => a + (l.duration_mins || 0), 0);
   const resumeLesson = allLessons.find(l => !l.completed) || allLessons[0];
-  const videoLesson = allLessons.find(l => l.type === 'video' && !l.completed) || allLessons.find(l => l.type === 'video');
+  const videoLesson = allLessons.find(l => l.type === 'video' && l.video_url && !l.completed) || allLessons.find(l => l.type === 'video' && l.video_url);
 
   return (
     <>
@@ -196,6 +196,19 @@ export default function BimbelkuPage() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {videoLesson ? (
                   <VideoPlayer C={C} T={T} lesson={videoLesson} onPlay={() => navigate(`/belajar/${videoLesson.id}`)} />
+                ) : resumeLesson ? (
+                  <div onClick={() => navigate(`/belajar/${resumeLesson.id}`)} style={{ borderRadius: 16, overflow: 'hidden', background: '#0d0d0d', position: 'relative', aspectRatio: '16/9', cursor: 'pointer' }}>
+                    <div style={{ position: 'absolute', inset: 0, background: `linear-gradient(135deg, ${C.orange}20 0%, #1a0a00 50%, #000 100%)` }} />
+                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 56, height: 56, borderRadius: '50%', background: C.orange, border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Play size={22} color="#fff" fill="#fff" />
+                      </div>
+                      <span style={{ color: '#fff', fontSize: 12, fontWeight: 600, textAlign: 'center' }}>Lanjutkan Belajar</span>
+                    </div>
+                    <div style={{ position: 'absolute', bottom: 10, left: 12, fontSize: 11, color: 'rgba(255,255,255,.6)' }}>
+                      {resumeLesson.title}
+                    </div>
+                  </div>
                 ) : null}
                 <div style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 14, padding: '16px 20px' }}>
                   <div style={{ fontSize: 16, fontWeight: 700, color: T.text, marginBottom: 8, fontFamily: 'Syne, sans-serif' }}>
