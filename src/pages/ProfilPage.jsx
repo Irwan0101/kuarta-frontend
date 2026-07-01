@@ -420,10 +420,10 @@ export default function ProfilPage() {
 
   // Stats derived from profile / store
   const stats = [
-    { label: 'Skor Tertinggi', value: profile?.highest_score ?? user?.highest_score ?? '—', color: '#FF6B00' },
-    { label: 'Rank Nasional',  value: profile?.rank          ? `#${profile.rank}`          : '—', color: '#F59E0B' },
-    { label: 'Day Streak',     value: profile?.streak        ? `${profile.streak}🔥`        : '—', color: '#EF4444' },
-    { label: 'Poin Reward',    value: profile?.points        != null ? Number(profile.points).toLocaleString('id-ID') : '—', color: '#22C55E' },
+    { label: 'Skor Tertinggi', value: profile?.best_score ?? user?.best_score ?? '—', color: '#FF6B00' },
+    { label: 'Program Aktif',  value: profile?.active_programs ?? user?.active_programs ?? '—', color: '#6366F1' },
+    { label: 'Day Streak',     value: profile?.streak_count ?? user?.streak_count ?? '—', color: '#EF4444' },
+    { label: 'Poin Reward',    value: (profile?.reward_points ?? user?.reward_points ?? 0).toLocaleString('id-ID'), color: '#22C55E' },
   ];
 
   if (loadingProfile) return (
@@ -500,9 +500,9 @@ export default function ProfilPage() {
             }}>
               <Crown size={11} /> {profile?.plan || 'Member'}
             </div>
-            {profile?.plan_expiry && (
+            {profile?.plan_expires_at && (
               <div style={{ fontSize: 11, color: T.text4, marginBottom: 16 }}>
-                Aktif hingga {new Date(profile.plan_expiry).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                Aktif hingga {new Date(profile.plan_expires_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
               </div>
             )}
             {/* Stats grid */}
