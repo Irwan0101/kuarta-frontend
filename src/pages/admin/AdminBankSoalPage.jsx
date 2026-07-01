@@ -75,7 +75,7 @@ export default function AdminBankSoalPage() {
       setQuestions(res.questions ?? []);
       setTotal(res.total ?? 0);
     } catch (e) {
-      setError(e?.message || 'Gagal memuat soal.');
+      setError(e?.error || e?.message || 'Gagal memuat soal.');
       setQuestions([]);
     } finally { setLoading(false); }
   }, [page, selProg, selCat, search]);
