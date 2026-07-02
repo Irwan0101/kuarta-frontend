@@ -4,6 +4,7 @@ import SEO from '@/components/SEO';
 import {
   ArrowLeft, CheckCircle, Circle, Clock, Check, Loader2, ChevronRight,
 } from 'lucide-react';
+import { Button } from '@/components/ui';
 import { useTheme } from '@/hooks/useTheme';
 import { materiApi } from '@/lib/api';
 import toast from 'react-hot-toast';
@@ -172,22 +173,28 @@ export default function LessonDetailPage() {
   const [currentIdx, setCurrentIdx] = useState(-1);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
     setCompleted(false);
     materiApi.getLesson(id).then(async (data) => {
+      if (cancelled) return;
       setLesson(data);
       setCompleted(data.completed || false);
-
       try {
         const modules = await materiApi.getModules(data.program_id || data.topic_id);
+        if (cancelled) return;
         const flat = modules.flatMap(m => m.lessons || []);
         setAllLessons(flat);
         setCurrentIdx(flat.findIndex(l => String(l.id) === String(id)));
       } catch (_) {}
     }).catch(() => {
+      if (cancelled) return;
       toast.error('Gagal memuat materi');
       navigate('/belajar');
-    }).finally(() => setLoading(false));
+    }).finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => { cancelled = true; };
   }, [id]);
 
   const handleComplete = async () => {
@@ -220,7 +227,7 @@ export default function LessonDetailPage() {
 
   const renderContent = () => {
     const sections = [];
-    if (lesson.video_url) sections.push(<VideoRenderer key="video" lesson={lesson} onComplete={handleComplete} durationMins={lesson.duration_mins} />);
+    if (lesson.type === 'video' && lesson.video_url) sections.push(<VideoRenderer key="video" lesson={lesson} onComplete={handleComplete} durationMins={lesson.duration_mins} />);
     if (lesson.questions?.length > 0) sections.push(<QuizRenderer key="quiz" lesson={lesson} onComplete={handleComplete} />);
     if (lesson.description) sections.push(
       <div key="text" style={{ background: T.bg2, border: `1px solid ${T.border}`, borderRadius: 16, padding: 24, lineHeight: 1.8, fontSize: 14 }}>
