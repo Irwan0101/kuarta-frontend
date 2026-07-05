@@ -146,6 +146,10 @@ export function FormGroup({ label, children }) {
   );
 }
 
+export function TableWrapper({ children }) {
+  return <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>{children}</div>;
+}
+
 export function TableHead({ cols }) {
   return (
     <thead>

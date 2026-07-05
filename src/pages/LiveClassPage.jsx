@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import SEO from '@/components/SEO';
 import { Play, Bell, FileText, Users, ChevronRight, Video } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { Avatar } from '@/components/ui/Avatar';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
@@ -71,6 +72,7 @@ function ClassCard({ cls, T, C, isLive }) {
 
 export default function LiveClassPage() {
   const { T, C } = useTheme();
+  const resp = useResponsive();
   const [tab, setTab] = useState('jadwal');
   const [liveClasses, setLiveClasses] = useState([]);
   const [recordings, setRecordings] = useState([]);
@@ -96,7 +98,7 @@ export default function LiveClassPage() {
       <div style={{ width: '100%' }}>
         <div style={{ marginBottom: 24, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 22, color: T.text, marginBottom: 4 }}>🎥 Kelas Live Kuarta</h2>
+            <h2 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: resp.isMobile ? 18 : 22, color: T.text, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}><Video size={22} /> Kelas Live Kuarta</h2>
             <p style={{ fontSize: 13, color: T.text3 }}>Sesi tatap muka interaktif dengan mentor terbaik</p>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
@@ -106,7 +108,7 @@ export default function LiveClassPage() {
                 background: tab === t ? C.orange : T.bg3, color: tab === t ? '#fff' : T.text3,
                 border: `1px solid ${tab === t ? C.orange : T.border}`,
               }}>
-                {t === 'jadwal' ? '📅 Jadwal' : '🎬 Rekaman'}
+                {t === 'jadwal' ? 'Jadwal' : 'Rekaman'}
               </button>
             ))}
           </div>

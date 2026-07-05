@@ -10,6 +10,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import { programsApi } from '@/lib/api';
@@ -275,6 +276,7 @@ function StatsBar({ programs, T, C }) {
 
 export default function ProgramPage() {
   const { T, C } = useTheme();
+  const resp = useResponsive();
   const { user } = useAuthStore();
   const addItem = useCartStore(s => s.addItem);
   const navigate = useNavigate();

@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Flag, ChevronLeft, ChevronRight, Clock, Grid } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { tryoutApi } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';
@@ -14,6 +15,7 @@ const SUBJECT_COLORS = { TWK: '#FF6B00', TIU: '#3B82F6', TKP: '#22C55E' };
 export default function TryoutSessionPage() {
   const { id } = useParams();
   const { T, C } = useTheme();
+  const resp = useResponsive();
   const navigate = useNavigate();
 
   const [tryout, setTryout] = useState(null);

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useTheme } from '@/hooks/useTheme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { materiApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -165,6 +166,7 @@ export default function LessonDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { T, C } = useTheme();
+  const resp = useResponsive();
 
   const [lesson, setLesson] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -254,7 +256,7 @@ export default function LessonDetailPage() {
       <div style={{ marginBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
           {completed ? <CheckCircle size={18} color={C.green} /> : <Circle size={18} color={T.text4} />}
-          <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: 20, color: T.text, margin: 0 }}>
+          <h1 style={{ fontFamily: 'Syne, sans-serif', fontWeight: 800, fontSize: resp.isMobile ? 16 : 20, color: T.text, margin: 0 }}>
             {lesson.title}
           </h1>
         </div>

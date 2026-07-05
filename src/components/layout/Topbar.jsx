@@ -78,12 +78,11 @@ export default function Topbar({ title, breadcrumb }) {
 
             {/* Search bar */}
             <div style={{
-                display: 'flex', alignItems: 'center', gap: 8,
+                display: resp.isMobile ? 'none' : 'flex', alignItems: 'center', gap: 8,
                 background: T.bg3, border: `1px solid ${T.border}`,
                 borderRadius: 10, padding: '7px 12px',
                 width: searchOpen ? 220 : 160,
-                transition: 'border-color .2s, width .25s ease' // Combined into one line
-
+                transition: 'border-color .2s, width .25s ease',
             }}
                 onFocus={() => setSearchOpen(true)}
                 onBlur={() => setSearchOpen(false)}
