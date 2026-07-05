@@ -7,7 +7,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useConfirm } from '@/hooks/useConfirm';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
-  Modal, FormGroup, FormRow, TableHead, EmptyRow,
+  Modal, FormGroup, FormRow, TableHead, TableWrapper, EmptyRow,
   ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
@@ -139,7 +139,7 @@ export default function AdminLivePage() {
             ? <div style={{ padding: 32, textAlign: 'center', opacity: .4, fontSize: 13 }}>Belum ada sesi live class.</div>
             : (
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <TableWrapper><table style={{ width: '100%', borderCollapse: 'collapse' }}>
                   <TableHead cols={['Judul', 'Mentor', 'Mata Uji', 'Waktu', 'Durasi', 'Status', { label: 'Aksi', right: true }]} />
                   <tbody>
                     {classes.map(c => {
@@ -195,7 +195,7 @@ export default function AdminLivePage() {
                       );
                     })}
                   </tbody>
-                </table>
+                </table></TableWrapper>
               </div>
             )}
       </Card>

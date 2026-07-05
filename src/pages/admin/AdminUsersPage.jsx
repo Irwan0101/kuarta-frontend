@@ -7,7 +7,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useConfirm } from '@/hooks/useConfirm';
 import {
     PageHeader, Card, CardHead, Btn, Badge, Input, Spinner, ErrorBox,
-    Modal, FormGroup, FormRow, TableHead, EmptyRow, ORG, RED, GREEN, BLUE,
+    Modal, FormGroup, FormRow, TableHead, TableWrapper, EmptyRow, ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
 const ROLE_COLORS = { admin: RED, mentor: '#8B5CF6', premium: '#F59E0B', user: '#3B82F6', free: '#6b7280' };
@@ -100,7 +100,7 @@ export default function AdminUsersPage() {
                 {error && <div style={{ padding: 16 }}><ErrorBox msg={error} /></div>}
 
                 <div style={{ overflowX: 'auto' }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <TableWrapper><table style={{ width: '100%', borderCollapse: 'collapse' }}>
                         <TableHead cols={['#', 'Nama', 'Email', 'Role', 'Terdaftar', { label: 'Aksi', right: true }]} />
                         <tbody>
                             {loading
@@ -138,7 +138,7 @@ export default function AdminUsersPage() {
                                         </tr>
                                     ))}
                         </tbody>
-                    </table>
+                    </table></TableWrapper>
                 </div>
 
                 {/* Pagination */}

@@ -8,7 +8,7 @@ import { useConfirm } from '@/hooks/useConfirm';
 import ImageUpload from '@/components/ui/ImageUpload';
 import {
   PageHeader, Card, CardHead, Btn, Spinner, ErrorBox,
-  Modal, FormGroup, FormRow, TableHead, EmptyRow, ORG, RED, GREEN, BLUE,
+  Modal, FormGroup, FormRow, TableHead, TableWrapper, EmptyRow, ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
 const EMPTY = { name: '', description: '', price: '', icon: '📚', color: ORG, thumbnail_url: '' };
@@ -66,7 +66,7 @@ export default function AdminProgramsPage() {
         <CardHead title="Daftar Program" />
         {error && <div style={{ padding: 16 }}><ErrorBox msg={error} /></div>}
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <TableWrapper><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <TableHead cols={['Program', 'Deskripsi', 'Harga', { label: 'Aksi', right: true }]} />
             <tbody>
               {loading
@@ -102,7 +102,7 @@ export default function AdminProgramsPage() {
                     </tr>
                   ))}
             </tbody>
-          </table>
+          </table></TableWrapper>
         </div>
       </Card>
 

@@ -5,7 +5,7 @@ import { useTheme } from '@/hooks/useTheme';
 import useResponsive from '@/hooks/useResponsive';
 import {
   PageHeader, Card, CardHead, Btn, Spinner, ErrorBox,
-  TableHead, EmptyRow, Modal, Badge, ORG, RED, GREEN, BLUE,
+  TableHead, TableWrapper, EmptyRow, Modal, Badge, ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
 const ACTION_COLORS = {
@@ -74,7 +74,7 @@ export default function AdminAuditLogsPage() {
         {error && <div style={{ padding: resp.isMobile ? 10 : 16 }}><ErrorBox msg={error} /></div>}
 
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <TableWrapper><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <TableHead cols={['#', 'Admin', 'Aksi', 'Entity', 'ID', 'Waktu', { label: 'Detail', right: true }]} />
             <tbody>
               {loading ? <tr><td colSpan={7}><Spinner /></td></tr>
@@ -101,7 +101,7 @@ export default function AdminAuditLogsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></TableWrapper>
         </div>
 
         <div style={{ padding: '12px 16px', borderTop: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

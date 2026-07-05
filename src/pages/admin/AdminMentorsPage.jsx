@@ -8,7 +8,7 @@ import { useConfirm } from '@/hooks/useConfirm';
 import ImageUpload from '@/components/ui/ImageUpload';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
-  Modal, FormGroup, FormRow, TableHead, EmptyRow, ORG, RED, GREEN, BLUE,
+  Modal, FormGroup, FormRow, TableHead, TableWrapper, EmptyRow, ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
 export default function AdminMentorsPage() {
@@ -77,7 +77,7 @@ export default function AdminMentorsPage() {
         <CardHead title="Daftar Mentor" />
         {error && <div style={{ padding: 16 }}><ErrorBox msg={error} /></div>}
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <TableWrapper><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <TableHead cols={['#', 'Nama', 'Email', 'Kota', 'Kelas', 'Sesi', 'Status', { label: 'Aksi', right: true }]} />
             <tbody>
               {loading ? <tr><td colSpan={8}><Spinner /></td></tr>
@@ -113,7 +113,7 @@ export default function AdminMentorsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></TableWrapper>
         </div>
       </Card>
 

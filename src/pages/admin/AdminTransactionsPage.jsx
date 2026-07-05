@@ -7,7 +7,7 @@ import useResponsive from '@/hooks/useResponsive';
 import { useConfirm } from '@/hooks/useConfirm';
 import {
   PageHeader, Card, CardHead, Btn, Badge, Spinner, ErrorBox,
-  Modal, TableHead, EmptyRow, ORG, RED, GREEN, BLUE,
+  Modal, TableHead, TableWrapper, EmptyRow, ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
 const STATUS_COLORS = { paid: GREEN, pending: '#F59E0B', failed: RED, refund: '#8B5CF6' };
@@ -74,7 +74,7 @@ export default function AdminTransactionsPage() {
         {error && <div style={{ padding: resp.isMobile ? 10 : 16 }}><ErrorBox msg={error} /></div>}
 
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <TableWrapper><table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <TableHead cols={['#', 'User', 'Program', 'Jumlah', 'Status', 'Tanggal', { label: 'Aksi', right: true }]} />
             <tbody>
               {loading ? <tr><td colSpan={7}><Spinner /></td></tr>
@@ -108,7 +108,7 @@ export default function AdminTransactionsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></TableWrapper>
         </div>
 
         <div style={{ padding: '12px 16px', borderTop: `1px solid ${T.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

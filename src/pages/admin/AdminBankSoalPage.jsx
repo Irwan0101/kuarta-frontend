@@ -6,7 +6,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useConfirm } from '@/hooks/useConfirm';
 import {
   PageHeader, Card, CardHead, Btn, Spinner, ErrorBox,
-  Modal, FormGroup, FormRow,
+  Modal, FormGroup, FormRow, TableWrapper,
   ORG, RED, GREEN, BLUE,
 } from './adminUtils';
 
@@ -227,7 +227,7 @@ export default function AdminBankSoalPage() {
             </div>
           : (
             <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <TableWrapper><table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: `1px solid ${T.border}` }}>
                     <th style={{ padding: '10px 12px', width: 40 }}>
@@ -277,7 +277,7 @@ export default function AdminBankSoalPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></TableWrapper>
             </div>
           )}
       </Card>
