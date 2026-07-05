@@ -1,7 +1,9 @@
 import { Skeleton } from '@/components/ui/Badge';
+import { useResponsive } from '@/hooks/useResponsive';
 
 export default function PageSkeleton({ type = 'dashboard', rows = 3 }) {
-  const isMobile = window.innerWidth < 768;
+  const resp = useResponsive();
+  const isMobile = resp.isMobile;
 
   const layouts = {
     dashboard: () => (

@@ -1,8 +1,11 @@
 import { X } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
+import { useResponsive } from '@/hooks/useResponsive';
 
 export const Modal = ({ open, onClose, title, icon, children, width = 480 }) => {
   const { T } = useTheme();
+  const resp = useResponsive();
+  if (resp.isMobile) width = Math.min(width, window.innerWidth - 32);
   if (!open) return null;
 
   return (

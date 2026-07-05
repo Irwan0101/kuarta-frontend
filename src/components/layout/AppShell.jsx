@@ -1,10 +1,11 @@
-// src/components/layout/AppShell.jsx
 import Sidebar from './Sidebar';
 import Topbar  from './Topbar';
 import { useTheme } from '@/hooks/useTheme';
+import { useResponsive } from '@/hooks/useResponsive';
 
 export function AppShell({ children, title, breadcrumb }) {
   const { T } = useTheme();
+  const resp = useResponsive();
 
   return (
     <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: T.bg1 }}>
@@ -16,7 +17,7 @@ export function AppShell({ children, title, breadcrumb }) {
         <main style={{
           flex: 1,
           overflowY: 'auto',
-          padding: '24px',
+          padding: resp.isMobile ? '16px' : '24px',
         }}>
           <div className="page-enter">
             {children}
