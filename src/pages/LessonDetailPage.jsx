@@ -52,7 +52,7 @@ function VideoRenderer({ lesson, onComplete, durationMins }) {
   return (
     <div style={{ borderRadius: 16, overflow: 'hidden', background: '#000', aspectRatio: '16/9' }}>
       <iframe
-        src={`https://www.youtube.com/embed/${vidId}?autoplay=1`}
+        src={`https://www.youtube.com/embed/${vidId}?autoplay=1&modestbranding=1&rel=0&iv_load_policy=3`}
         title={lesson.title}
         style={{ width: '100%', height: '100%', border: 'none' }}
         allow="autoplay; encrypted-media"
