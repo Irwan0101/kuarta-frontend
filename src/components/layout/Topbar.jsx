@@ -24,11 +24,16 @@ export default function Topbar({ title, breadcrumb }) {
     const [cartOpen, setCartOpen] = useState(false);
     const cartCount = getCount();
 
-    useEffect(() => {
+    const fetchNotifs = () => {
         notifApi.getAll().then(res => {
             const list = Array.isArray(res) ? res : res?.notifications || [];
             setUnreadCount(list.filter(n => !n.is_read).length);
         }).catch(() => {});
+    };
+    useEffect(() => {
+        fetchNotifs();
+        const id = setInterval(fetchNotifs, 30000);
+        return () => clearInterval(id);
     }, []);
 
     return (
