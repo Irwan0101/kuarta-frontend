@@ -64,11 +64,17 @@ function VideoRenderer({ lesson, onComplete, durationMins }) {
 
 /* ── PDF renderer ── */
 function PdfRenderer({ lesson }) {
+  const { T } = useTheme();
   const fileUrl = lesson.pdf_url;
   if (!fileUrl) return null;
   return (
-    <div style={{ borderRadius: 16, overflow: 'hidden', background: '#fff', minHeight: 500 }}>
-      <iframe src={fileUrl} style={{ width: '100%', height: 600, border: 'none' }} title={lesson.title} />
+    <div style={{ borderRadius: 16, overflow: 'hidden', minHeight: 500 }}>
+      <embed src={fileUrl} type="application/pdf" style={{ width: '100%', height: 600, border: 'none' }} title={lesson.title} />
+      <div style={{ textAlign: 'center', padding: '8px 12px', borderTop: `1px solid ${T.border}`, background: T.bg2 }}>
+        <a href={fileUrl} target="_blank" rel="noopener noreferrer" style={{ color: T.text3, fontSize: 12 }}>
+          Buka PDF di tab baru ↗
+        </a>
+      </div>
     </div>
   );
 }
