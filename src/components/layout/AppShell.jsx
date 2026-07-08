@@ -1,7 +1,7 @@
 import Sidebar from './Sidebar';
 import Topbar  from './Topbar';
 import { useTheme } from '@/hooks/useTheme';
-import { useResponsive } from '@/hooks/useResponsive';
+import useResponsive from '@/hooks/useResponsive';
 
 export function AppShell({ children, title, breadcrumb }) {
   const { T } = useTheme();

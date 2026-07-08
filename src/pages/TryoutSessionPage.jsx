@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Flag, ChevronLeft, ChevronRight, Clock, Grid } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
-import { useResponsive } from '@/hooks/useResponsive';
+import useResponsive from '@/hooks/useResponsive';
 import { tryoutApi } from '@/lib/api';
 import { Button } from '@/components/ui/Button';
 import { Modal } from '@/components/ui/Modal';

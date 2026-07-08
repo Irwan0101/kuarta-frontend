@@ -10,7 +10,7 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
-import { useResponsive } from '@/hooks/useResponsive';
+import useResponsive from '@/hooks/useResponsive';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
 import { programsApi } from '@/lib/api';

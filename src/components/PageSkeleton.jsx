@@ -1,5 +1,5 @@
 import { Skeleton } from '@/components/ui/Badge';
-import { useResponsive } from '@/hooks/useResponsive';
+import useResponsive from '@/hooks/useResponsive';
 
 export default function PageSkeleton({ type = 'dashboard', rows = 3 }) {
   const resp = useResponsive();

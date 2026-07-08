@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { useTheme } from '@/hooks/useTheme';
-import { useResponsive } from '@/hooks/useResponsive';
+import useResponsive from '@/hooks/useResponsive';
 import { materiApi } from '@/lib/api';
 import toast from 'react-hot-toast';
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import SEO from '@/components/SEO';
 import { Play, Bell, FileText, Users, ChevronRight, Video } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
-import { useResponsive } from '@/hooks/useResponsive';
+import useResponsive from '@/hooks/useResponsive';
 import { Avatar } from '@/components/ui/Avatar';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
