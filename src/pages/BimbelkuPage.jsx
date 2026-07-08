@@ -43,13 +43,13 @@ function SyllabusItem({ item, C, T, onClick }) {
     <div onClick={onClick} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0', cursor: 'pointer', borderBottom: `1px solid ${T.border}` }}>
       <div style={{
         width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
-        background: item.completed ? C.orange + '20' : T.bg4,
-        border: item.completed ? `1.5px solid ${C.orange}` : `1.5px solid ${T.border}`,
+        background: item.completed ? C.green + '20' : T.bg4,
+        border: item.completed ? `1.5px solid ${C.green}` : `1.5px solid ${T.border}`,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
-        {item.completed ? <CheckCircle size={12} color={C.orange} /> : <Circle size={12} color={T.text4} />}
+        {item.completed ? <CheckCircle size={12} color={C.green} /> : <Circle size={12} color={T.text4} />}
       </div>
-      <span style={{ flex: 1, fontSize: 13, color: item.completed ? T.text3 : T.text2 }}>{item.title}</span>
+      <span style={{ flex: 1, fontSize: 13, color: item.completed ? T.text3 : T.text }}>{item.title}</span>
       {item.duration_mins > 0 && <span style={{ fontSize: 11, color: T.text4 }}>{item.duration_mins}m</span>}
       <ChevronRight size={13} color={T.text4} />
     </div>
