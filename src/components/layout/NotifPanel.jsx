@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Bell, CheckCheck, X } from 'lucide-react';
+import { Bell, CheckCheck, X, FileText, CreditCard, Video, Info } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { useUIStore } from '@/store/uiStore';
 import { notifApi } from '@/lib/api';
 import { timeAgo } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/Badge';
 
-const ICONS = { tryout: '📝', payment: '💳', live: '🎥', info: 'ℹ️' };
+const ICON_MAP = { tryout: FileText, payment: CreditCard, live: Video, info: Info };
 
 export default function NotifPanel() {
   const { T, C } = useTheme();
@@ -93,8 +93,11 @@ export default function NotifPanel() {
             display: 'flex', gap: 10, cursor: 'default',
             transition: 'background .15s',
           }}>
-            <div style={{ fontSize: 18, flexShrink: 0, marginTop: 2 }}>
-              {ICONS[n.type] || 'ℹ️'}
+            <div style={{ flexShrink: 0, marginTop: 2 }}>
+              {(() => {
+                const Icon = ICON_MAP[n.type] || Info;
+                return <Icon size={16} color={C.orange} />;
+              })()}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: T.text, marginBottom: 2 }}>{n.title}</div>
