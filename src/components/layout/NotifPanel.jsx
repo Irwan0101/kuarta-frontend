@@ -52,8 +52,11 @@ export default function NotifPanel() {
 
   return (
     <div data-notif-panel style={{
-      position: 'absolute', top: '100%', right: 0, marginTop: 8,
-      width: resp.isMobile ? resp.width - 32 : 360, maxHeight: 480, overflowY: 'auto',
+      ...(resp.isMobile
+        ? { position: 'fixed', left: 16, right: 16, top: 72, zIndex: 999 }
+        : { position: 'absolute', top: '100%', right: 0, width: 360 }),
+      marginTop: 8,
+      maxHeight: resp.isMobile ? 'calc(100vh - 120px)' : 480, overflowY: 'auto',
       background: T.bg2, borderRadius: 16, border: `1px solid ${T.border}`,
       boxShadow: '0 20px 60px rgba(0,0,0,.5)', zIndex: 999,
     }}>
