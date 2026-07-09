@@ -4,7 +4,7 @@ import { useTheme } from '@/hooks/useTheme';
 import { useUIStore } from '@/store/uiStore';
 import { notifApi } from '@/lib/api';
 import { timeAgo } from '@/lib/utils';
-import { Skeleton } from '@/components/ui/Badge';
+import { Loader2 } from 'lucide-react';
 
 const ICON_MAP = { tryout: FileText, payment: CreditCard, live: Video, info: Info };
 
@@ -47,6 +47,9 @@ export default function NotifPanel() {
     return () => document.removeEventListener('click', handler);
   }, [closeNotif]);
 
+  // Debug: log rendering
+  console.log('[NotifPanel] rendering', { loading, notifsLength: notifs.length });
+
   return (
     <div data-notif-panel style={{
       position: 'absolute', top: '100%', right: 0, marginTop: 8,
@@ -78,8 +81,8 @@ export default function NotifPanel() {
       </div>
 
       {loading ? (
-        <div style={{ padding: 16 }}>
-          {[1,2,3].map(i => <Skeleton key={i} height={60} style={{ marginBottom: 8, borderRadius: 8 }} />)}
+        <div style={{ padding: 16, textAlign: 'center', color: T.text4, fontSize: 12 }}>
+          <Loader2 size={18} style={{ animation: 'spin 1s linear infinite' }} />
         </div>
       ) : notifs.length === 0 ? (
         <div style={{ padding: '40px 16px', textAlign: 'center', color: T.text4, fontSize: 13 }}>
