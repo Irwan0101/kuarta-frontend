@@ -5,11 +5,13 @@ import { useUIStore } from '@/store/uiStore';
 import { notifApi } from '@/lib/api';
 import { timeAgo } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import useResponsive from '@/hooks/useResponsive';
 
 const ICON_MAP = { tryout: FileText, payment: CreditCard, live: Video, info: Info };
 
 export default function NotifPanel() {
   const { T, C } = useTheme();
+  const resp = useResponsive();
   const { closeNotif, setUnreadCount } = useUIStore();
   const [notifs, setNotifs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -51,7 +53,7 @@ export default function NotifPanel() {
   return (
     <div data-notif-panel style={{
       position: 'absolute', top: '100%', right: 0, marginTop: 8,
-      width: 360, maxHeight: 480, overflowY: 'auto',
+      width: resp.isMobile ? resp.width - 32 : 360, maxHeight: 480, overflowY: 'auto',
       background: T.bg2, borderRadius: 16, border: `1px solid ${T.border}`,
       boxShadow: '0 20px 60px rgba(0,0,0,.5)', zIndex: 999,
     }}>
