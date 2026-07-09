@@ -56,7 +56,7 @@ function Toast({ msg, type, T, C }) {
 }
 
 /* ─── Info tab ───────────────────────────────────────────────────── */
-function InfoTab({ profile, onUpdate, T, C }) {
+function InfoTab({ profile, onUpdate, T, C, resp }) {
   const [form, setForm]     = useState({ name: '', phone: '', city: '', target: '', bio: '' });
   const [categories, setCategories] = useState([]);
   const [status, setStatus] = useState({ loading: false, msg: '', type: '' });
@@ -140,7 +140,7 @@ function InfoTab({ profile, onUpdate, T, C }) {
 }
 
 /* ─── Password tab ───────────────────────────────────────────────── */
-function PasswordTab({ T, C }) {
+function PasswordTab({ T, C, resp }) {
   const [form, setForm]     = useState({ oldPassword: '', newPassword: '', confirm: '' });
   const [show, setShow]     = useState({ old: false, new: false, confirm: false });
   const [status, setStatus] = useState({ loading: false, msg: '', type: '' });
@@ -548,8 +548,8 @@ export default function ProfilPage() {
 
         {/* ── Right content ── */}
         <div>
-          {activeNav === 'info'      && <InfoTab       profile={profile} onUpdate={handleUpdate} T={T} C={C} />}
-          {activeNav === 'password'  && <PasswordTab   T={T} C={C} />}
+          {activeNav === 'info'      && <InfoTab       profile={profile} onUpdate={handleUpdate} T={T} C={C} resp={resp} />}
+          {activeNav === 'password'  && <PasswordTab   T={T} C={C} resp={resp} />}
           {activeNav === 'notif'     && <NotifTab      T={T} C={C} />}
           {activeNav === 'langganan' && <LanggananTab profile={profile} transactions={transactions} loadingTx={loadingTx} T={T} C={C} />}
         </div>
