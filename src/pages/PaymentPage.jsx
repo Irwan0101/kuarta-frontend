@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
-import { paymentApi, programsApi, publicApi } from '@/lib/api';
+import { paymentApi, programsApi, publicApi, authApi } from '@/lib/api';
 import { formatIDR, formatDate } from '@/lib/utils';
 import useResponsive from '@/hooks/useResponsive';
 import toast from 'react-hot-toast';
@@ -133,6 +133,7 @@ function TransactionItem({ tx, T, C }) {
 export default function PaymentPage() {
   const { T, C } = useTheme();
   const clearCart = useCartStore(s => s.clearCart);
+  const setUser = useAuthStore(s => s.setUser);
   const navigate = useNavigate();
   const resp = useResponsive();
 
@@ -239,7 +240,12 @@ export default function PaymentPage() {
     setLoading(false);
 
     // Sync status with backend
-    try { await paymentApi.syncStatus(orderId); } catch (_) {}
+    try {
+      await paymentApi.syncStatus(orderId);
+      // Refresh user data so store has updated plan
+      const fresh = await authApi.me();
+      if (fresh) setUser(fresh);
+    } catch (_) {}
 
     // Reload payment history
     setTimeout(() => {

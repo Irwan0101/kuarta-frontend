@@ -326,8 +326,8 @@ export default function Sidebar() {
           ))}
         </nav>
 
-        {/* ── Upgrade promo (collapsed hides text) ── */}
-        {!collapsed && (
+        {/* ── Upgrade promo (hidden if already premium/vip) ── */}
+        {!collapsed && user?.plan !== 'premium' && user?.plan !== 'vip' && (
           <div style={{
             margin: '0 12px 12px',
             background: C.orange + '18',

@@ -66,6 +66,7 @@ export const useAuthStore = create(
             logout: () => set({ user: null, token: null, refreshToken: null }),
 
             updateUser: (patch) => set(s => ({ user: { ...s.user, ...patch } })),
+            setUser: (userData) => set({ user: userData }),
 
             refreshAccessToken: async () => {
                 const { refreshToken } = get();
