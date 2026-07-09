@@ -150,10 +150,11 @@ export default function Topbar({ title, breadcrumb }) {
                 {dark ? <Sun size={16} /> : <Moon size={16} />}
             </button>
 
-            {/* Notifications */}
+                        {/* Notifications */}
             <div style={{ position: 'relative' }}>
                 <button
                     onClick={toggleNotif}
+                    data-notif-trigger="true"
                     style={{
                         width: 34, height: 34, background: notifOpen ? C.orange + '18' : T.bg4,
                         border: `1px solid ${notifOpen ? C.orange + '40' : T.border}`,

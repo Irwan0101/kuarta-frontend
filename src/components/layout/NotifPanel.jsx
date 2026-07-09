@@ -41,14 +41,12 @@ export default function NotifPanel() {
 
   useEffect(() => {
     const handler = (e) => {
-      if (!e.target.closest('[data-notif-panel]')) closeNotif();
+      if (!e.target.closest('[data-notif-panel]') && !e.target.closest('[data-notif-trigger]')) closeNotif();
     };
-    document.addEventListener('click', handler);
-    return () => document.removeEventListener('click', handler);
+    // Defer adding listener so it doesn't catch the SAME click that opened the panel
+    const id = setTimeout(() => document.addEventListener('click', handler), 0);
+    return () => { clearTimeout(id); document.removeEventListener('click', handler); };
   }, [closeNotif]);
-
-  // Debug: log rendering
-  console.log('[NotifPanel] rendering', { loading, notifsLength: notifs.length });
 
   return (
     <div data-notif-panel style={{
