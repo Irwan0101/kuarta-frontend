@@ -74,7 +74,7 @@ export const notifApi = {
 };
 
 export const paymentApi = {
-  createOrder:    (programId, method) => http.post('/payment/create', { program_id: programId }),
+  createOrder:    (programId, items) => http.post('/payment/create', items ? { items } : { program_id: programId }),
   getStatus:      (orderId) => http.get(`/payment/status/${orderId}`),
   syncStatus:     (orderId) => http.post(`/payment/sync/${orderId}`),
   getHistory:     ()        => http.get('/payment/history'),

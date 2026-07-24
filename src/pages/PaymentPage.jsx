@@ -138,6 +138,7 @@ export default function PaymentPage() {
   const location = useLocation();
   const resp = useResponsive();
   const cartItems = useCartStore(s => s.items);
+  const fromCart = location.state?.fromCart;
 
   // 🌟 State Baru untuk menampung data program asli dari Database
   const [dbPrograms, setDbPrograms] = useState([]);
@@ -148,7 +149,9 @@ export default function PaymentPage() {
   const [pageLoading, setPageLoading] = useState(true);
   const [settings, setSettings] = useState({ serviceFee: 0, paymentMethods: [], banks: [] });
 
-  const total = selectedProgram ? (Number(selectedProgram.price) + (settings.serviceFee || 0)) : 0;
+  const total = fromCart && cartItems.length > 0
+    ? cartItems.reduce((sum, i) => sum + Number(i.price), 0) + (settings.serviceFee || 0)
+    : selectedProgram ? Number(selectedProgram.price) + (settings.serviceFee || 0) : 0;
 
   // 🌟 Ambil data program real-time dari Database via API
   useEffect(() => {
@@ -212,8 +215,10 @@ export default function PaymentPage() {
     
     setLoading(true);
     try {
-      // 🌟 Mengirim string UUID asli milik DB (e.g. 'c9a646d3-...')
-      const data = await paymentApi.createOrder(selectedProgram.id, 'midtrans'); 
+      const isCart = location.state?.fromCart && cartItems.length > 0;
+      const data = isCart
+        ? await paymentApi.createOrder(null, cartItems.map(i => ({ program_id: i.id, quantity: 1 })))
+        : await paymentApi.createOrder(selectedProgram.id);
 
       const { snap_token, order_id, client_key } = data;
 
@@ -424,7 +429,7 @@ export default function PaymentPage() {
               | Beli Program Baru
             </div>
 
-            {/* Body */}
+              {/* Body */}
             <div style={{ padding: '20px 22px' }}>
 
               {/* Program Selection */}
@@ -438,51 +443,85 @@ export default function PaymentPage() {
                   color: T.text4,
                   marginBottom: 10,
                 }}>
-                  Pilih Program
+                  {fromCart && cartItems.length > 1 ? 'Program Dipilih' : 'Pilih Program'}
                 </label>
-                <select
-                  value={selectedProgram?.id || ''}
-                  onChange={e => {
-                    const prog = dbPrograms.find(p => p.id === e.target.value);
-                    setSelectedProgram(prog);
-                  }}
-                  style={{
-                    width: '100%',
-                    padding: '11px 14px',
-                    background: T.bg3,
-                    border: `1px solid ${T.border}`,
-                    borderRadius: 8,
-                    color: T.text,
-                    fontSize: 13,
-                    fontFamily: 'inherit',
-                    cursor: 'pointer',
-                    transition: 'border-color 0.2s',
-                  }}
-                  onFocus={e => e.currentTarget.style.borderColor = C.orange}
-                  onBlur={e => e.currentTarget.style.borderColor = T.border}
-                >
-                  {dbPrograms.map(p => (
-                    <option key={p.id} value={p.id}>
-                      {p.icon} {p.name} — {formatIDR(p.price)}
-                    </option>
-                  ))}
-                </select>
+
+                {fromCart && cartItems.length > 1 ? (
+                  /* Multi-item display from cart */
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {cartItems.map(item => {
+                      const prog = dbPrograms.find(p => p.id === item.id);
+                      if (!prog) return null;
+                      return (
+                        <div key={item.id} style={{
+                          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                          padding: '10px 14px', background: T.bg3, borderRadius: 8,
+                          border: `1px solid ${T.border}`, fontSize: 13,
+                        }}>
+                          <span style={{ color: T.text }}>{prog.icon} {prog.name}</span>
+                          <span style={{ fontWeight: 700, color: C.orange }}>{formatIDR(Number(prog.price))}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  /* Single program dropdown */
+                  <select
+                    value={selectedProgram?.id || ''}
+                    onChange={e => {
+                      const prog = dbPrograms.find(p => p.id === e.target.value);
+                      setSelectedProgram(prog);
+                    }}
+                    style={{
+                      width: '100%',
+                      padding: '11px 14px',
+                      background: T.bg3,
+                      border: `1px solid ${T.border}`,
+                      borderRadius: 8,
+                      color: T.text,
+                      fontSize: 13,
+                      fontFamily: 'inherit',
+                      cursor: 'pointer',
+                      transition: 'border-color 0.2s',
+                    }}
+                    onFocus={e => e.currentTarget.style.borderColor = C.orange}
+                    onBlur={e => e.currentTarget.style.borderColor = T.border}
+                  >
+                    {dbPrograms.map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.icon} {p.name} — {formatIDR(p.price)}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
 
               {/* Order Summary */}
               {selectedProgram && (
                 <div style={{ marginBottom: 14 }}>
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    fontSize: 13,
-                    marginBottom: 12,
-                  }}>
-                    <span style={{ color: T.text4 }}>Harga Program</span>
-                    <span style={{ color: T.text, fontWeight: 600 }}>
-                      {formatIDR(selectedProgram.price)}
-                    </span>
-                  </div>
+                  {fromCart && cartItems.length > 1 ? (
+                    cartItems.map(item => {
+                      const prog = dbPrograms.find(p => p.id === item.id);
+                      if (!prog) return null;
+                      return (
+                        <div key={item.id} style={{
+                          display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 8,
+                        }}>
+                          <span style={{ color: T.text4 }}>{prog.icon} {prog.name}</span>
+                          <span style={{ color: T.text, fontWeight: 600 }}>{formatIDR(Number(prog.price))}</span>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div style={{
+                      display: 'flex', justifyContent: 'space-between', fontSize: 13, marginBottom: 12,
+                    }}>
+                      <span style={{ color: T.text4 }}>Harga Program</span>
+                      <span style={{ color: T.text, fontWeight: 600 }}>
+                        {formatIDR(selectedProgram.price)}
+                      </span>
+                    </div>
+                  )}
                   <div style={{
                     display: 'flex',
                     justifyContent: 'space-between',
