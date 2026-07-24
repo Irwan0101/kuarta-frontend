@@ -6,7 +6,7 @@ import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tool
 import { useTheme } from '@/hooks/useTheme';
 import { useAuthStore } from '@/store/authStore';
 import { Button } from '@/components/ui/Button';
-import { programsApi, materiApi, tryoutApi } from '@/lib/api';
+import { programsApi, materiApi, tryoutApi, paymentApi } from '@/lib/api';
 import useResponsive from '@/hooks/useResponsive';
 
 const ACHIEVEMENT_ICONS = { flame: Flame, target: Target, book: BookOpen, zap: Zap };
@@ -123,6 +123,22 @@ export default function BimbelkuPage() {
       .then(res => setModules(Array.isArray(res) ? res : []))
       .catch(() => setModules([]));
   }, [activeProgramId]);
+
+  // Auto-sync pending transactions so Belajarku shows updated programs
+  useEffect(() => {
+    paymentApi.getHistory().then(h => {
+      if (!h?.transactions) return;
+      h.transactions.filter(tx => tx.status === 'pending').forEach(tx => {
+        paymentApi.syncStatus(tx.order_id).then(syncRes => {
+          if (syncRes?.status && syncRes.status !== 'pending') {
+            programsApi.getEnrolled().then(list => {
+              if (Array.isArray(list)) setPrograms(list);
+            }).catch(() => {});
+          }
+        }).catch(() => {});
+      });
+    }).catch(() => {});
+  }, []);
 
   const activeProgram = programs.find(p => (p.program_id || p.id) === activeProgramId);
   const allLessons = modules.flatMap(m => m.lessons || []);

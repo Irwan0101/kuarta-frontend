@@ -90,7 +90,7 @@ function TransactionItem({ tx, T, C }) {
           color: T.text,
           marginBottom: 4,
         }}>
-          {tx.program}
+          {tx.multi_names || tx.program}
         </div>
         <div style={{
           fontSize: 11,
@@ -191,6 +191,7 @@ export default function PaymentPage() {
           const mapped = history.transactions.map(tx => ({
             id: tx.order_id || tx.id,
             program: tx.program_name || 'Program',
+            multi_names: tx.multi_names || tx.program_name || 'Program',
             amount: tx.gross_amount || 0,
             status: tx.status === 'settlement' || tx.status === 'success' || tx.status === 'paid' ? 'success' : tx.status === 'deny' || tx.status === 'expire' || tx.status === 'failed' ? 'failed' : tx.status || 'pending',
             date: new Date(tx.created_at || tx.transaction_time),
@@ -198,6 +199,32 @@ export default function PaymentPage() {
             icon: tx.program_icon || getProgramIcon(tx.program_category) || '💳',
           }));
           setTransactions(mapped);
+          // Auto-sync pending transactions in background
+          const pending = history.transactions.filter(tx => tx.status === 'pending');
+          pending.forEach(tx => {
+            paymentApi.syncStatus(tx.order_id).then(async (syncRes) => {
+              if (syncRes?.status && syncRes.status !== 'pending') {
+                try {
+                  const fresh = await authApi.me();
+                  if (fresh) setUser(fresh);
+                } catch (_) {}
+                paymentApi.getHistory().then(h => {
+                  if (h?.transactions) {
+                    setTransactions(h.transactions.map(t => ({
+                      id: t.order_id || t.id,
+                      program: t.program_name || 'Program',
+                      multi_names: t.multi_names || t.program_name || 'Program',
+                      amount: t.gross_amount || 0,
+                      status: t.status === 'settlement' || t.status === 'success' || t.status === 'paid' ? 'success' : t.status === 'deny' || t.status === 'expire' || t.status === 'failed' ? 'failed' : t.status || 'pending',
+                      date: new Date(t.created_at || t.transaction_time),
+                      paymentMethod: t.payment_type || '-',
+                      icon: t.program_icon || getProgramIcon(t.program_category) || '💳',
+                    })));
+                  }
+                }).catch(() => {});
+              }
+            }).catch(() => {});
+          });
         }
     } catch (err) {
       console.error("Gagal menarik data:", err);
@@ -257,24 +284,36 @@ export default function PaymentPage() {
     toast.success('Pembayaran berhasil! Selamat belajar.');
     setLoading(false);
 
-    // Sync status with backend
+    let realStatus = 'success';
+
     try {
-      await paymentApi.syncStatus(orderId);
-      // Refresh user data so store has updated plan
+      const syncRes = await paymentApi.syncStatus(orderId);
+      if (syncRes?.status) realStatus = syncRes.status;
       const fresh = await authApi.me();
       if (fresh) setUser(fresh);
     } catch (_) {}
 
-    // Reload payment history
     setTimeout(() => {
+      const isMulti = location.state?.fromCart && cartItems.length > 0;
+      const names = isMulti
+        ? cartItems.map(i => i.name).join(', ')
+        : selectedProgram?.name || 'Program';
+      const totalAmt = isMulti
+        ? cartItems.reduce((s, i) => s + Number(i.price), 0) + (settings.serviceFee || 0)
+        : (selectedProgram ? Number(selectedProgram.price) + (settings.serviceFee || 0) : 0);
+      const icons = isMulti
+        ? (cartItems[0]?.icon || '💳')
+        : (selectedProgram?.icon || '💳');
+
       const newTx = {
         id: orderId,
-        program: selectedProgram.name,
-        amount: selectedProgram.price,
-        status: 'success',
+        program: names,
+        multi_names: names,
+        amount: totalAmt,
+        status: realStatus,
         date: new Date(),
         paymentMethod: 'Midtrans',
-        icon: selectedProgram.icon,
+        icon: icons,
       };
       setTransactions([newTx, ...transactions]);
     }, 500);
