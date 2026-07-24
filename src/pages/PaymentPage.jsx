@@ -1,6 +1,6 @@
 // src/pages/PaymentPage.jsx
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Shield } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
@@ -135,7 +135,9 @@ export default function PaymentPage() {
   const clearCart = useCartStore(s => s.clearCart);
   const setUser = useAuthStore(s => s.setUser);
   const navigate = useNavigate();
+  const location = useLocation();
   const resp = useResponsive();
+  const cartItems = useCartStore(s => s.items);
 
   // 🌟 State Baru untuk menampung data program asli dari Database
   const [dbPrograms, setDbPrograms] = useState([]);
@@ -168,7 +170,18 @@ export default function PaymentPage() {
             icon: prog.icon || '📚',
           }));
           setDbPrograms(formatted);
-          setSelectedProgram(formatted[0]);
+
+          // Pre-select program based on navigation source
+          const state = location.state;
+          let target = formatted[0];
+          if (state?.selectedProgramId) {
+            const found = formatted.find(p => p.id === state.selectedProgramId);
+            if (found) target = found;
+          } else if (state?.fromCart && cartItems.length > 0) {
+            const found = formatted.find(p => p.id === cartItems[0].id);
+            if (found) target = found;
+          }
+          setSelectedProgram(target);
         }
 
         if (history?.transactions) {
@@ -176,7 +189,7 @@ export default function PaymentPage() {
             id: tx.order_id || tx.id,
             program: tx.program_name || 'Program',
             amount: tx.gross_amount || 0,
-            status: tx.status === 'settlement' ? 'success' : tx.status === 'deny' || tx.status === 'expire' ? 'failed' : tx.status || 'pending',
+            status: tx.status === 'settlement' || tx.status === 'success' || tx.status === 'paid' ? 'success' : tx.status === 'deny' || tx.status === 'expire' || tx.status === 'failed' ? 'failed' : tx.status || 'pending',
             date: new Date(tx.created_at || tx.transaction_time),
             paymentMethod: tx.payment_type || '-',
             icon: tx.program_icon || getProgramIcon(tx.program_category) || '💳',
