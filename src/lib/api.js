@@ -81,6 +81,11 @@ export const paymentApi = {
   validateCoupon: (code)    => http.post('/payment/validate-coupon', { code }),
 };
 
+export const cartApi = {
+  get:  ()      => http.get('/cart'),
+  save: (items) => http.put('/cart', { items }),
+};
+
 export const mentorApi = {
   getAll:      ()             => http.get('/mentor'),
   getList:     ()             => http.get('/mentor'),

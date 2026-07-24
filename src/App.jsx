@@ -1,6 +1,8 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { useUIStore }   from '@/store/uiStore';
+import { useCartStore } from '@/store/cartStore';
 import { useTheme } from '@/hooks/useTheme';
 import { usePageTracker } from '@/hooks/usePageTracker';
 import Sidebar          from '@/components/layout/Sidebar';
@@ -89,6 +91,14 @@ function MentorOnly({ children }) {
   return children;
 }
 
+// ─── CART SYNC (load server cart when user logs in) ─────────
+function CartLoader() {
+  const token = useAuthStore(s => s.token);
+  const loadFromServer = useCartStore(s => s.loadFromServer);
+  useEffect(() => { if (token) loadFromServer(); }, [token]);
+  return null;
+}
+
 // ─── USER APP SHELL ───────────────────────────────────────────────
 function AppLayout({ children }) {
   const { T } = useTheme();
@@ -117,6 +127,7 @@ export default function App() {
 
   return (
     <div style={{ fontFamily: 'DM Sans, sans-serif', color: T.text2 }}>
+      <CartLoader />
       <Routes>
 
         {/* ── Public (redirect jika sudah login) ── */}
