@@ -336,7 +336,7 @@ export default function ProgramPage() {
   }, [activeFilter, searchQuery, programs]);
 
   const handleSelectProgram = (prog) => {
-    navigate('/payment', { state: { selectedProgramId: prog.id } });
+    navigate('/pembayaran', { state: { selectedProgramId: prog.id } });
   };
 
   const handleAddToCart = (prog) => {
