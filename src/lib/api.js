@@ -77,6 +77,7 @@ export const paymentApi = {
   createOrder:    (programId, items) => http.post('/payment/create', items ? { items } : { program_id: programId }),
   getStatus:      (orderId) => http.get(`/payment/status/${orderId}`),
   syncStatus:     (orderId) => http.post(`/payment/sync/${orderId}`),
+  syncAll:        ()        => http.post('/payment/sync-all'),
   getHistory:     ()        => http.get('/payment/history'),
   validateCoupon: (code)    => http.post('/payment/validate-coupon', { code }),
 };

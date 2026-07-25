@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import SEO from '@/components/SEO';
-import { Shield } from 'lucide-react';
+import { Shield, RefreshCw } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { useTheme } from '@/hooks/useTheme';
@@ -408,6 +408,62 @@ export default function PaymentPage() {
                 {label}
               </button>
             ))}
+          </div>
+
+          {/* Sync Button */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+            <button
+              onClick={async () => {
+                setLoading(true);
+                try {
+                  const res = await paymentApi.syncAll();
+                  if (res?.results) {
+                    const updated = res.results.filter(r => r.status !== 'pending');
+                    if (updated.length > 0) {
+                      toast.success(`${updated.length} transaksi berhasil di-sync`);
+                      const fresh = await authApi.me();
+                      if (fresh) setUser(fresh);
+                      const h = await paymentApi.getHistory();
+                      if (h?.transactions) {
+                        setTransactions(h.transactions.map(t => ({
+                          id: t.order_id || t.id,
+                          program: t.program_name || 'Program',
+                          multi_names: t.multi_names || t.program_name || 'Program',
+                          amount: t.gross_amount || 0,
+                          status: t.status === 'settlement' || t.status === 'success' || t.status === 'paid' ? 'success' : t.status === 'deny' || t.status === 'expire' || t.status === 'failed' ? 'failed' : t.status || 'pending',
+                          date: new Date(t.created_at || t.transaction_time),
+                          paymentMethod: t.payment_type || '-',
+                          icon: t.program_icon || getProgramIcon(t.program_category) || '💳',
+                        })));
+                      }
+                    } else {
+                      toast('Tidak ada transaksi pending yang perlu di-sync');
+                    }
+                  }
+                } catch (_) {
+                  toast.error('Gagal sync transaksi');
+                } finally {
+                  setLoading(false);
+                }
+              }}
+              disabled={loading}
+              style={{
+                padding: '6px 14px',
+                background: T.bg2,
+                border: `1px solid ${T.border}`,
+                borderRadius: 8,
+                color: T.text2,
+                fontSize: 11.5,
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.6 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+              }}
+            >
+              <RefreshCw size={13} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+              {loading ? 'Menyinkronkan...' : 'Sync Status'}
+            </button>
           </div>
 
           {/* Transaction List */}
